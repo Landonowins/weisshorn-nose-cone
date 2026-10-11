@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+# outputs of the tool (regenerate with python -m nosecone run ...)
+output/
+# LaTeX build files
+*.aux
+*.log
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.lof
+*.lot
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

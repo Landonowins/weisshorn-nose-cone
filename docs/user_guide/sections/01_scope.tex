@@ -1,0 +1,113 @@
+\section{What the Tool Does, and What It Does Not}
+\label{sec:scope}
+
+\subsection{Purpose}
+
+The \texttt{nosecone} package helps to choose the outer shape of the nose cone of a supersonic sounding rocket:
+its \emph{profile} (cone, ogive, Von K\'arm\'an, \dots), its \emph{fineness ratio} $L/D$ (length over diameter)
+and its \emph{tip radius}. It compares candidates on the quantities a design review asks for (apogee, mass,
+payload room, stability, heating, manufacturability) and produces the CAD geometry of the selected design. It was
+written for the Weisshorn nose cone (2026\_C\_FD\_REPORT-1\_NOSE\_CONE) and reproduces that report exactly, but
+every vehicle-specific number is an input, so the same code serves any ERT rocket.
+
+\subsection{What is computed}
+
+Figure~\ref{fig:chain} shows the chain. Everything starts from a YAML configuration file and a database of
+nose wave-drag coefficients computed with the tool's own CFD solver.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=5mm and 7mm, every node/.style={font=\footnotesize},
+  box/.style={draw, rounded corners=2pt, align=center, minimum height=9mm, text width=31mm, fill=white},
+  inp/.style={box, fill=notebg}, outp/.style={box, fill=codebg}, arr/.style={-{Latex[length=2mm]}, thick}]
+\node[inp] (cfg) {configuration\\(YAML file)};
+\node[inp, right=of cfg] (db) {CFD database\\$C_{D,\rm w}$(profile, $L/D$, $M$)};
+\node[box, right=of db] (euler) {Euler solver\\(new cases, optional)};
+\node[box, below=of db] (wd) {wave-drag model\\interpolation + transonic rise};
+\node[box, below=of cfg] (geo) {geometry\\profile, volume, area, CP};
+\node[box, below=of wd] (drag) {drag build-up\\friction, fins, base, excr.\ ($\times k$)};
+\node[box, below=of drag] (traj) {trajectory\\point mass, ISA, rail};
+\node[box, below=of geo, yshift=-14mm] (mass) {mass, payload fit,\\static-margin change};
+\node[box, right=of traj] (heat) {heating\\tip and shell};
+\node[outp, below=of traj] (res) {sweep, sensitivities, robustness,\\decision matrix};
+\node[outp, below=of mass, yshift=-5mm] (cad) {CAD: CSV, STL, STEP};
+\node[outp, below=of heat, yshift=-5mm] (out) {plots, tables,\\summary, LaTeX};
+\draw[arr] (cfg) -- (geo); \draw[arr] (db) -- (wd); \draw[arr] (euler) -- (db);
+\draw[arr] (wd) -- (drag); \draw[arr] (drag) -- (traj); \draw[arr] (geo) -- (mass); \draw[arr] (geo.east) -- ++(4mm,0) |- (drag.west);
+\draw[arr] (mass.east) -- (traj.west); \draw[arr] (traj) -- (heat); \draw[arr] (traj) -- (res); \draw[arr] (mass) -- (cad);
+\draw[arr] (res) -- (out); \draw[arr] (heat) -- (out);
+\end{tikzpicture}
+\caption{Computation chain of one run (\texttt{python -m nosecone run}). Shaded blue: inputs; grey: outputs.}
+\label{fig:chain}
+\end{figure}
+
+For every nose of the sweep (each profile $\times$ each fineness $\times$ each tip radius) the tool computes:
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+\item \textbf{Geometry}: profile $y(x)$, internal volume, wetted area, angle at the shoulder, tip angle, Barrowman
+centre of pressure, length over which the payload fits.
+\item \textbf{Wave drag} $C_{D,\rm w}(M)$: the pressure drag of the nose caused by its shock and expansion waves,
+read from the CFD database and interpolated.
+\item \textbf{Apogee}: a full ascent with the drag of the whole vehicle, the nose length and the nose mass included.
+\item \textbf{Mass} of the shell and tip, \textbf{payload fit} and nose-bay length, \textbf{static-margin change}
+relative to a baseline nose.
+\end{itemize}
+For the study as a whole: apogee \textbf{sensitivities} (per kg, per 0.01 of $C_D$), the \textbf{robustness} of
+the ranking to the uncertain assumptions, the \textbf{cost of a blunt tip}, the \textbf{temperatures} of the tip
+and the shell on a nominal and a hot-day flight, a weighted \textbf{decision matrix}, and the \textbf{CAD files}
+of the selected design.
+
+\subsection{Models and their validity}
+
+Table~\ref{tab:models} lists the models. They are deliberately simple and fast (a full study takes minutes), which
+is right for comparing shapes, but each has a range outside which its numbers should not be trusted.
+
+\begin{table}[H]
+\centering
+\caption{Models of the tool and their range of validity.}
+\label{tab:models}
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{6.1cm}>{\raggedright\arraybackslash}p{7.6cm}@{}}
+\toprule
+Quantity & Model & Valid for / limitations \\
+\midrule
+Wave drag & Axisymmetric Euler CFD (inviscid, zero angle of attack), tabulated at $M = 1.1$--$1.6$ and
+$L/D = 3$--$5$ (Weisshorn database) & Supersonic, $1.1 \le M \lesssim 2$; slender noses. Interpolated in $M$ and in
+$L/D$ (on $C_{D,\rm w}(L/D)^2$); \emph{held constant} outside the computed range. No viscous effects. \\
+Transonic drag & Smooth (cubic) rise from 0 at $M = 0.8$ to the $M = 1.1$ value at $M = 1$ & An assumption, the
+weakest part of the chain; checked by the robustness study. Replace by RANS data if available. \\
+Rest of the vehicle & Empirical build-up: turbulent flat-plate friction (roughness-limited, compressibility
+corrected), fin pressure drag (Ackeret), OpenRocket base drag, ERT-Sim excrescences; one factor $k$ &
+Order-of-magnitude accuracy only, hence the calibration of $k$ on a known apogee. Trapezoidal fins, no boat tail,
+no protuberances. \\
+Trajectory & 2D point mass, rail, constant thrust, linear mass decrease, ISA troposphere, no wind & Apogee
+estimates and comparisons. No rotation, no 6-DOF, no wind. The atmosphere is valid below
+$\approx\SI{11}{km}$; above that use a better model. \\
+Stability & Barrowman (subsonic, linear), nose $C_{N\alpha} = 2$ & \emph{Changes} of static margin between noses;
+the absolute margin needs the full vehicle (fins, CG) in RocketPy/OpenRocket. \\
+Heating & Fay--Riddell stagnation point; turbulent flat plate with Eckert reference temperature; 1D transient
+conduction, adiabatic inner face; lumped metal tip & Conservative peak temperatures for $M \lesssim 3$. No
+radiation, no internal convection, no transition, no ablation. \\
+Mass & Wetted area $\times$ areal density + tip mass & Scaled from an as-built nose; no coupler, payload or bulkhead. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{What the tool does not do}
+
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+\item \textbf{No structural analysis}: no stresses, buckling, flutter or layup design; the mass is an estimate.
+\item \textbf{No viscous or transonic CFD}: the solver is inviscid and supersonic. For the final design, run RANS
+(e.g.\ Fluent with $k$-$\omega$ SST) at a few Mach numbers.
+\item \textbf{No angle of attack}: normal force and centre of pressure come from Barrowman's formulas, not CFD.
+\item \textbf{No full-vehicle flight simulation}: use RocketPy with the exported $C_{D,\rm w}(M)$ and geometry.
+\item \textbf{No automatic optimisation}: the tool evaluates the noses you list; it does not search for a new shape.
+\item \textbf{No new CFD unless asked}: a profile, fineness or tip radius missing from the database is skipped with
+a message, unless \key{aerodynamics.compute\_missing} is true (then the Euler solver runs, several minutes per case).
+\end{itemize}
+
+\subsection{Reproducibility}
+
+The tool was refactored from the scripts that produced the Weisshorn design report and checked against them:
+with \texttt{configs/weisshorn.yaml} it reproduces the report's tables, quoted numbers, CAD files and figures
+exactly (Appendix~\ref{app:verification}). \texttt{tests/verify\_reference.py} repeats that check; run it after
+any change to the code.

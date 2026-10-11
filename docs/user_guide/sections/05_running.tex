@@ -1,0 +1,178 @@
+\section{Running Studies}
+\label{sec:running}
+
+\subsection{Commands}
+
+Everything goes through one entry point, \texttt{python -m nosecone <command>} (Table~\ref{tab:commands};
+\texttt{python -m nosecone <command> -{}-help} lists the options of each command).
+
+\begin{table}[H]
+\centering
+\caption{Commands. Typical run times on a laptop with the Weisshorn database.}
+\label{tab:commands}
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{9.0cm}>{\raggedright\arraybackslash}p{2.6cm}@{}}
+\toprule
+Command & What it does & Time \\
+\midrule
+\texttt{run CONFIG} & The whole study: sweep, sensitivities, robustness, heating, CAD, plots, tables. Options:
+\texttt{-{}-plots trade,cdw}, \texttt{-{}-no-plots}, \texttt{-{}-latex}, \texttt{-{}-output DIR}, \texttt{-{}-quiet} & 1--5 min \\
+\texttt{export CONFIG} & Only the CAD files of the selected design (CSV, STL, STEP) & seconds \\
+\texttt{validate CONFIG} & Check the file; \texttt{-{}-show} prints all values used & instant \\
+\texttt{describe-config} & Every parameter with unit, range and default (\texttt{-{}-basic}: hide advanced) & instant \\
+\texttt{profiles} & Profile families and built-in profiles & instant \\
+\texttt{cfd CONFIG} & Run the CFD studies of \key{cfd.studies} (\texttt{-{}-study NAME}, \texttt{-{}-workers N}, \texttt{-{}-dry-run}) & 3--10 min per geometry \\
+\texttt{rebuild-database CONFIG} & Recompute the database CSV from the CFD wall-pressure files & 1 min \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A run prints its progress and writes it to \texttt{run.log}. When it finishes, start with \texttt{summary.md}.
+
+\subsection{Worked example 1: a single design}
+\label{sec:single}
+
+\emph{Question: how does a Von K\'arm\'an nose of \SI{810}{mm} ($L/D = 4.5$) with a \SI{4.5}{mm} aluminium tip
+perform on Weisshorn?} The file \texttt{configs/example\_single\_design.yaml} inherits the whole vehicle from
+\texttt{weisshorn.yaml} and only restricts the sweep to that one nose:
+\begin{lstlisting}[language=yaml]
+base: weisshorn.yaml
+project:
+  name: Weisshorn single design
+  output_dir: ../output/example_single_design
+nose:
+  profiles: [vonkarman]          # the "sweep" is a single nose...
+  fineness: [4.5]                # ...at a single fineness
+  design_profile: vonkarman
+  design_fineness: 4.5
+  design_tip_radius_ratio: 0.05  # 4.5 mm spherical tip (r_n / R)
+robustness: {enabled: false}     # nothing to rank with one profile
+trade_matrix: {enabled: false}
+cad: {candidates: false}         # only the design
+output:
+  plots: [profiles, trajectory, breakdown, bluntness, thermal, final]
+\end{lstlisting}
+\begin{lstlisting}[language=bash]
+python -m nosecone run configs/example_single_design.yaml
+\end{lstlisting}
+The console shows each step:
+\begin{lstlisting}[language={}]
+CFD database: 126 points (euler_results.csv)
+Drag factor k = 0.5601 (calibrated: baseline reaches 9000 m)
+Sweep: 1 profiles x 1 fineness x 1 tip radii
+  sensitivities: -142.5 m/kg, -99.8 m per 0.01 of C_D
+Trajectories: M_max 1.47 nominal, 1.56 envelope; apogee 9000 m
+Heating [degC] nominal/envelope: T0 119/156, metal tip 51/72, printed tip 104/138, shell inner 77/104
+Tip r_n/R = 0.05: wave drag +0.6 %, apogee -2 m
+CAD export:
+  STL nose_vonkarman_LD4.5_rn4.5mm_FINAL.stl: 122624 triangles, open edges 0, volume 11.828 L
+  STEP nose_vonkarman_LD4.5_rn4.5mm_FINAL.step: 1 solid, volume 11.842 L
+\end{lstlisting}
+and \texttt{summary.md} gives the answer (some columns left out here):
+\begin{lstlisting}[language={},basicstyle=\ttfamily\scriptsize]
+| shape     | fineness | cd_w_12 | cd_w_14 | cd_w_16 | apogee | d_apogee | mass_g | l3U_mm | bay_mm | dSM_cal |
+| vonkarman | 4.5      | 0.0437  | 0.0425  | 0.0414  | 9060   | +60      | 354    | 254    | 907    | -0.036  |
+\end{lstlisting}
+\textbf{Reading it.} The calibration factor $k = 0.56$ scales the drag of the rest of the vehicle so that the
+\emph{baseline} nose (Von K\'arm\'an at $L/D = 4$, the length of the LVS) reaches the 9~km of the LVO. With that
+vehicle, the \SI{810}{mm} nose flies \SI{60}{m} higher than the baseline (\texttt{d\_apogee}), weighs \SI{354}{g},
+houses \SI{254}{mm} of the 3U payload in its curved part and lowers the static margin by 0.036 calibre. On a
+hot day the aluminium tip stays at \SI{72}{\celsius} while a printed PET-CF tip would reach
+\SI{138}{\celsius} (Figure~\ref{fig:ex1}b). The files to give to Structure are in \texttt{cad/}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{single_fig_final}\\[2mm]
+\includegraphics[width=\textwidth]{single_fig_thermal}
+\caption{Worked example 1. Top: the design drawn to scale (\texttt{fig\_final}). Bottom: (a) shell inner-face
+temperature at three stations, (b) tip temperature (\texttt{fig\_thermal}); solid: nominal flight, dashed: hot day.}
+\label{fig:ex1}
+\end{figure}
+
+\subsection{Worked example 2: a parameter sweep}
+\label{sec:sweep}
+
+\emph{Question: among the power-$\tfrac12$ (Firehorn), LV-Haack and Von K\'arm\'an profiles, which is best on
+Weisshorn, and how long should the nose be?} Any parameter given as a list in \key{nose.profiles},
+\key{nose.fineness} or \key{nose.tip\_radius\_ratios} is swept: here 3 profiles $\times$ 4 fineness ratios.
+\begin{lstlisting}[language=yaml]
+base: weisshorn.yaml
+project:
+  name: Weisshorn sweep
+  output_dir: ../output/example_sweep
+nose:
+  profiles: [power050, lvhaack, vonkarman]
+  fineness: [3.5, 4.0, 4.5, 5.0]
+output:
+  plots: [cdw, trade, robustness, gallery, schematics]
+\end{lstlisting}
+All twelve noses are compared in one table, \texttt{summary.md} (sorted by apogee; here the first rows):
+\begin{lstlisting}[language={},basicstyle=\ttfamily\scriptsize]
+| shape     | fineness | cd_w_14 | apogee | d_apogee | mass_g | l3U_mm | bay_mm | dSM_cal |
+| vonkarman | 5        | 0.0350  | 9099   | +99      | 386    | 282    | 968    | -0.071  |
+| power050  | 5        | 0.0387  | 9075   | +75      | 394    | 241    | 1009   | -0.067  |
+| vonkarman | 4.5      | 0.0425  | 9060   | +60      | 354    | 254    | 907    | -0.036  |
+| power050  | 4.5      | 0.0457  | 9038   | +38      | 361    | 217    | 943    | -0.032  |
+| lvhaack   | 5        | 0.0410  | 9036   | +36      | 411    | 355    | 960    | -0.125  |
+| ...
+\end{lstlisting}
+and on the same plots (Figure~\ref{fig:ex2}). \textbf{Reading it.} From $L/D = 4$ upwards the Von K\'arm\'an nose
+flies highest (8 to 24~m above the power-$\tfrac12$ nose); at $L/D = 3.5$ the power-$\tfrac12$ nose is slightly
+better (6~m). The LV-Haack nose is 63--81~m lower but houses more of the payload (\texttt{l3U\_mm}). Each extra
+\SI{90}{mm} of length ($\Delta L/D = 0.5$) is worth less apogee than the previous one (+85, +60, +39~m for the
+Von K\'arm\'an nose). The robustness plot shows that, at $L/D = 4.5$, the ranking does not change under any of the
+seven modelling scenarios, so the choice does not depend on the uncertain transonic model. Whether to take
+$L/D = 4.5$ or 5 is then a vehicle-length question (\texttt{bay\_mm}), not an aerodynamic one.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{sweep_fig_trade}\\[2mm]
+\includegraphics[width=0.92\textwidth]{sweep_fig_robustness}
+\caption{Worked example 2. Top: apogee change, payload length and static-margin change versus fineness
+(\texttt{fig\_trade}; the cross is the baseline). Bottom: ranking under the robustness scenarios
+(\texttt{fig\_robustness}).}
+\label{fig:ex2}
+\end{figure}
+
+\subsection{The full Weisshorn study}
+
+\texttt{configs/weisshorn.yaml} is the configuration of the design report: seven profiles $\times$ five fineness
+ratios, all plots, and the LaTeX tables and macros of the report (\key{output.latex: true}, written to
+\texttt{output/weisshorn/latex/}). \texttt{python tests/verify\_reference.py} checks that these outputs are still
+identical to the report.
+
+\subsection{Another rocket}
+\label{sec:newrocket}
+
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item Copy \texttt{configs/example\_new\_rocket.yaml} (a complete example for a 152~mm rocket) to
+\texttt{configs/my\_rocket.yaml} and set \key{project.name} and \key{project.output\_dir}.
+\item Fill in \key{vehicle}, \key{engine}, \key{fins} and \key{launch} from your LVO/LVS.
+\item \textbf{Calibration.} If you trust a reference apogee for a reference nose (e.g.\ from RocketPy or a
+previous flight), keep \key{flight.calibrate: true} and set \key{flight.target\_apogee},
+\key{nose.baseline\_profile} and \key{nose.baseline\_fineness}. Otherwise set \key{flight.calibrate: false}: the
+empirical drag build-up is used as is ($k = 1$); apogees are then less accurate, but the comparison between noses
+remains meaningful.
+\item Choose the noses: \key{nose.profiles}, \key{nose.fineness}, and the selected design (\key{design\_*}).
+\item Set or disable the payload (\key{payload.enabled}), check the structure and heating inputs, and adapt
+\key{trade\_matrix.manufacture} and \key{heritage} to your team.
+\item \texttt{python -m nosecone validate configs/my\_rocket.yaml}, then \texttt{run}.
+\end{enumerate}
+The CFD database is non-dimensional (lengths scaled by the base radius), so it holds for any diameter: only
+profiles, fineness ratios or tip radii outside it require new CFD.
+
+\subsection{New CFD cases}
+\label{sec:newcfd}
+
+There are two ways to add wave-drag data.
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+\item \textbf{On demand}: \key{aerodynamics.compute\_missing: true}. Before the sweep, the tool solves every
+profile / tip radius that has no data, at the smallest and largest fineness of the sweep and at the design
+fineness, for \key{aerodynamics.missing\_machs}, in parallel (\key{cfd.workers}). Set
+\key{aerodynamics.user\_database} to keep these results in a separate CSV.
+\item \textbf{Planned studies}: list them in \key{cfd.studies}, run \texttt{python -m nosecone cfd CONFIG}
+(add \texttt{-{}-dry-run} first to see the job list), then \texttt{python -m nosecone rebuild-database CONFIG}.
+\end{itemize}
+One Mach number takes 1--5~minutes on the medium grid ($160\times80$ cells), more near $M = 1.1$; a geometry with
+four Mach numbers takes 5--10~minutes per CPU core. The solver is deterministic: the same case gives the same result
+to the last bit.

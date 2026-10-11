@@ -1,0 +1,59 @@
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+
+\noindent\fbox{\parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{%
+\textbf{Proposed Weisshorn nose cone}\\[3pt]
+\begin{tabular}{@{}p{2.6cm}>{\raggedright\arraybackslash}p{12.8cm}@{}}
+Profile & Von K\'arm\'an (Haack $C=0$), tangent to the body \\
+Length & $L = \FINL$ ($L/D = 4.5$) to the theoretical apex; \FINLPHYS{} physical \\
+Diameter & \SI{180}{mm} \\
+Tip & spherical, $r_n = \SI{4.5}{mm}$ ($r_n/R = 0.05$), machined Al 6082-T6 insert \\
+Shell & CFRP $[0/45/0]_{SO}$, \SI{1.2}{mm} (GFRP if the nose is the RF window), $\approx$\FINMASS{} with tip \\
+Fallback & same profile at $L/D=4$ (\SI{720}{mm}) if the \SI{62}{mm} cannot be found in the \SI{5.4}{m} budget \\
+\end{tabular}}}
+
+\vspace{6pt}
+\noindent The Von K\'arm\'an profile is the member of the Haack family of noses that, according to
+slender-body theory, gives the lowest supersonic pressure drag for a given length and base
+diameter (Section~\ref{sec:profiles}). $L/D$ is the \emph{fineness ratio}, the nose length divided
+by the body diameter. Symbols and abbreviations are listed in the Nomenclature.
+
+\vspace{4pt}
+\noindent Why:
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+\item \textbf{Drag.} Above Mach 1 a shock wave forms ahead of the nose, and the overpressure it
+creates on the nose surface produces a pressure drag called \emph{wave drag}. Wave drag is the
+only part of the vehicle drag that depends on the nose shape (Section~\ref{sec:physics}). Seven
+profiles (cone, tangent ogive, parabola, power $\tfrac12$ and
+$\tfrac34$, LV-Haack, Von K\'arm\'an; Section~\ref{sec:catalogue}) were compared with an
+axisymmetric Euler solver, i.e.\ a CFD code for inviscid compressible flow (validated to $<0.5\,\%$
+against Taylor--Maccoll, the exact solution for a cone, and grid-converged to
+0.5\,\%). The solver was coupled to a trajectory model calibrated on the Launch Vehicle Overview (LVO). At $L/D = 4.5$, Von K\'arm\'an has
+the lowest wave drag at every computed Mach number. It flies \SIrange{18}{22}{m} higher than the
+power noses, \SIrange{69}{79}{m} higher than ogive, parabola and LV-Haack, and \SI{132}{m}
+higher than the cone. It stays first in all seven robustness scenarios. At $-\SI{143}{m/kg}$ (apogee
+lost per kilogram of dry mass), the margin over the ogive is worth about \SI{0.55}{kg} of dry mass.
+\item \textbf{Length.} $L/D = 4.5$ adds \TRADELEN{} over the LVS length (the \SI{720}{mm} nose of the
+Launch Vehicle Sizing) for \SI{62}{mm} of nose
+bay, with diminishing returns beyond that: wave drag falls as $1/(L/D)^2$, while the friction and
+the mass of the nose grow linearly with its length.
+\item \textbf{Heating.} $T_0$, the stagnation temperature (the temperature air reaches when it is
+brought to rest against the tip, and the upper bound for any surface temperature), peaks at \SI{119}{\celsius} (nominal) and \SI{156}{\celsius}
+(hot-day envelope, $M=1.56$). A printed PET-CF tip would exceed its heat-deflection temperature
+(the temperature at which the polymer starts to deform under load);
+the Al tip stays below \TIPAL. The shell inner face reaches \SHELLENV{} in the envelope, close
+to the limit of the DP490 epoxy that bonds the coupler to the shell, so the thermal requirement must be raised from Firehorn's
+\SI{390}{K}/\SI{5}{s}.
+\item \textbf{Integration and stability.} The tangent shoulder (no change of slope where the nose
+meets the body tube) suits the bonded coupler; \FINTHREEU{}
+of the 3U payload fits inside the curved part. The static margin, the distance from the centre of
+gravity to the centre of pressure in body diameters (calibres, cal), changes by \FINDSM{} cal,
+which is negligible.
+\item \textbf{Deliverables.} Profile coordinates, watertight STL solids of all seven designs and
+of the final nose, the full Euler data set, ten numbered recommendations with owners
+(Section~\ref{sec:recommendations}) and the alternatives to use if the priorities change.
+\end{itemize}
+
+\noindent\textbf{Not found in the ERT documentation} (details in Section~\ref{sec:flags}): Alex
+Marseille's nose cone report, any Weisshorn nosecone requirement, the Weisshorn fin geometry and
+mass breakdown, and any supersonic flight data.

@@ -1,0 +1,26 @@
+# Worked example 2 (user guide, section 5.3): parameter sweep on Weisshorn.
+# Three profiles x four fineness ratios, compared on the same plots and in one summary table.
+#     python -m nosecone run configs/example_sweep.yaml
+
+base: weisshorn.yaml
+
+project:
+  name: Weisshorn sweep
+  output_dir: ../output/example_sweep
+
+nose:
+  profiles: [power050, lvhaack, vonkarman]
+  fineness: [3.5, 4.0, 4.5, 5.0]
+
+robustness:
+  fineness: 4.5
+
+trade_matrix:
+  fineness: 4.5
+
+cad:
+  candidates: true               # one STL per profile at the design fineness
+
+output:
+  plots: [cdw, trade, robustness, gallery, schematics]
+  latex: false

@@ -1,0 +1,9 @@
+# Python >= 3.11. Versions pinned to those that produced the Weisshorn design report, so that the
+# results are reproduced bit for bit (newer versions agree to ~1e-12).
+numpy==2.4.2
+scipy==1.17.1
+pandas==3.0.2
+matplotlib==3.10.8
+PyYAML>=6.0
+# Optional: STEP export (OpenCASCADE through gmsh). Without it the tool skips the STEP file.
+gmsh>=4.11

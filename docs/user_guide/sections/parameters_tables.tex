@@ -1,0 +1,280 @@
+\subsection*{\texttt{project}: Project}
+\addcontentsline{toc}{subsection}{\texttt{project}: Project}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{name} & \texttt{Weisshorn} & -- & -- & Vehicle or study name, used in plot titles and file names \\
+\texttt{output\_dir} & \texttt{output} & path & -- & Folder for all outputs (created if missing) \\
+\texttt{plugins} & [\,] & path & -- & Python files imported before the run, e.g. new profile families (see the user guide) \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{vehicle}: Vehicle}
+\addcontentsline{toc}{subsection}{\texttt{vehicle}: Vehicle}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{diameter} & 0.18 & m & > 0 & External (body) diameter D; the nose base diameter \\
+\texttt{length} & 5.4 & m & > 0 & Total vehicle length including the reference nose \\
+\texttt{reference\_nose\_length} & 0.72 & m & > 0 & Nose length included in `length`; the body is length - reference\_nose\_length \\
+\texttt{mass\_wet} & 75 & kg & > 0 & Lift-off mass \\
+\texttt{mass\_dry} & 45 & kg & > 0 & Burn-out mass used by mass\_model 'lvo' \\
+\texttt{surface\_roughness} & 2e-05 & m & >= 0 & Equivalent sand roughness of the skin (painted CFRP \~{} 20 um) \\
+\texttt{nozzle\_exit\_diameter} & 0.075 & m & >= 0 & Nozzle exit diameter; removed from the base area while burning \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{engine}: Engine}
+\addcontentsline{toc}{subsection}{\texttt{engine}: Engine}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{thrust} & 4500 & N & > 0 & Thrust (constant over the burn) \\
+\texttt{burn\_time} & 9.1 & s & > 0 & Burn duration \\
+\texttt{total\_impulse} & 40960 & N s & > 0 & Total impulse (sets the propellant mass for mass\_model 'isp') \\
+\texttt{specific\_impulse} & 200 & s & > 0 & Specific impulse (propellant mass = I\_t / (I\_sp g0)) \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{fins}: Fins}
+\addcontentsline{toc}{subsection}{\texttt{fins}: Fins}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{count} & 4 & -- & [1, 8] & Number of fins \\
+\texttt{root\_chord} & 0.3 & m & > 0 & Root chord \\
+\texttt{tip\_chord} & 0.12 & m & >= 0 & Tip chord \\
+\texttt{span} & 0.16 & m & > 0 & Semi-span (root to tip) \\
+\texttt{sweep} & 0.18 & m & >= 0 & Leading-edge sweep length (root LE to tip LE, axial) \\
+\texttt{thickness} & 0.005 & m & > 0 & Fin thickness \\
+\texttt{edge\_fraction} & 0.15 & -- & (0, 0.5] & Length of each LE/TE wedge of the hexagonal section, as a fraction of the mean chord \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{launch}: Launch}
+\addcontentsline{toc}{subsection}{\texttt{launch}: Launch}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{rail\_length} & 12 & m & > 0 & Launch rail length \\
+\texttt{rail\_elevation} & 84 & \textdegree & (0, 90] & Rail elevation above the horizontal \\
+\texttt{site\_altitude} & 0 & m & [-500, 5000] & Launch site altitude above sea level \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{atmosphere}: Atmosphere}
+\addcontentsline{toc}{subsection}{\texttt{atmosphere}: Atmosphere}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{model} & \texttt{isa\_troposphere} & -- & isa\_troposphere & Atmosphere model \\
+\texttt{ground\_temperature} & 288.15 & K & [200, 340] & Temperature at the launch site (288.15 K = ISA) \\
+\texttt{ground\_pressure} & 101325 & Pa & > 0 & Pressure at the reference altitude of the model \\
+\texttt{lapse\_rate} & 0.0065 & K/m & > 0 & Temperature lapse rate in the troposphere \\
+\texttt{tropopause\_temperature} & 216.65 & K & > 0 & Temperature floor (tropopause / lower stratosphere) \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{flight}: Flight model}
+\addcontentsline{toc}{subsection}{\texttt{flight}: Flight model}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{mass\_model} & \texttt{isp} & -- & isp, lvo & Nominal mass model: 'isp' (propellant = I\_t/(I\_sp g0)) or 'lvo' (wet -> dry) \\
+\texttt{calibrate} & \texttt{true} & -- & -- & Scale the non-nose drag by a factor k so that the baseline reaches target\_apogee \\
+\texttt{target\_apogee} & 9000 & m & > 0 & Apogee the baseline nose must reach when calibrate is true \\
+\texttt{drag\_factor} & 1 & -- & > 0 & Factor k on the non-nose drag when calibrate is false \\
+\texttt{calibration\_bracket}\,$^\ast$ & \texttt{[0.3, 1.5]} & -- & -- & Search interval for k \\
+\texttt{calibration\_tolerance}\,$^\ast$ & 0.0001 & -- & > 0 & Absolute tolerance on k \\
+\texttt{t\_max}\,$^\ast$ & 120 & s & > 0 & Integration time limit (apogee normally ends the integration earlier) \\
+\texttt{max\_step}\,$^\ast$ & 0.02 & s & > 0 & Maximum ODE time step \\
+\texttt{rtol}\,$^\ast$ & 1e-08 & -- & > 0 & ODE relative tolerance \\
+\texttt{atol}\,$^\ast$ & 1e-08 & -- & > 0 & ODE absolute tolerance \\
+\texttt{output\_step}\,$^\ast$ & 0.05 & s & > 0 & Output sampling of the trade-study trajectories (sets M\_max) \\
+\texttt{detail\_output\_step}\,$^\ast$ & 0.02 & s & > 0 & Output sampling of the trajectories used for heating and plots \\
+\texttt{envelope\_mass\_model} & \texttt{lvo} & -- & isp, lvo & Mass model of the hot-day envelope trajectory \\
+\texttt{envelope\_ground\_temperature} & 303.15 & K & [200, 340] & Ground temperature of the hot-day envelope \\
+\texttt{mass\_sensitivity\_step}\,$^\ast$ & 1 & kg & > 0 & Mass step for the apogee sensitivity dz/dm \\
+\texttt{cd\_sensitivity\_step}\,$^\ast$ & 0.01 & -- & > 0 & C\_D step for the apogee sensitivity dz/dC\_D \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{nose}: Nose: design space and selected design}
+\addcontentsline{toc}{subsection}{\texttt{nose}: Nose: design space and selected design}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{profiles} & see text & -- & -- & Profiles compared in the sweep (built-in names or keys of custom\_profiles) \\
+\texttt{fineness} & \texttt{[3, 3.5, 4, 4.5, 5]} & -- & -- & Fineness ratios L/D compared in the sweep \\
+\texttt{baseline\_profile} & \texttt{vonkarman} & -- & -- & Reference nose for apogee and static-margin changes \\
+\texttt{baseline\_fineness} & 4 & -- & > 0 & Fineness of the reference nose \\
+\texttt{baseline\_label} & \texttt{baseline} & -- & -- & How the reference length is called in table captions (e.g. 'LVS length') \\
+\texttt{design\_profile} & \texttt{vonkarman} & -- & -- & Selected profile (CAD export, heating, final drawing) \\
+\texttt{design\_fineness} & 4.5 & -- & > 0 & Selected fineness L/D \\
+\texttt{design\_tip\_radius\_ratio} & 0.05 & -- & [0, 0.5] & Selected spherical tip radius r\_n / R (0 = sharp) \\
+\texttt{tip\_radius\_ratios} & \texttt{[0]} & -- & -- & Tip radii r\_n / R compared in the sweep (needs CFD data for each) \\
+\texttt{shoulder\_length} & 0.06 & m & >= 0 & Cylindrical shoulder behind the curved part (coupler bond) \\
+\texttt{custom\_profiles} & \{\,\} & -- & -- & Extra profiles: name -> \{family: ..., <parameter>: value, label: ...\} \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{aerodynamics}: Aerodynamics (wave-drag model)}
+\addcontentsline{toc}{subsection}{\texttt{aerodynamics}: Aerodynamics (wave-drag model)}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{database} & \texttt{data/euler\_results.csv} & path & -- & CSV of Euler wave-drag results (non-dimensional, reusable for any diameter) \\
+\texttt{user\_database} & (empty) & path & -- & Optional second CSV for cases computed with compute\_missing (empty: they are added to `database`) \\
+\texttt{studies} & \texttt{[main, f45]} & -- & -- & Database studies used for the wave-drag model \\
+\texttt{grid} & \texttt{medium} & -- & coarse, medium, fine & Grid level of the database rows used \\
+\texttt{min\_fineness}\,$^\ast$ & 0 & -- & >= 0 & Database rows below this fineness are ignored \\
+\texttt{max\_fineness}\,$^\ast$ & 5 & -- & > 0 & Database rows above this fineness are ignored \\
+\texttt{machs} & \texttt{[1.1, 1.2, 1.4, 1.6]} & -- & -- & Supersonic Mach numbers at which the wave drag is tabulated \\
+\texttt{transonic\_onset} & 0.8 & -- & [0.5, 1] & Mach number where the nose wave drag starts to rise \\
+\texttt{transonic\_full} & 1 & -- & [0.8, 1.2] & Mach number where the rise reaches the value at transonic\_match \\
+\texttt{transonic\_match} & 1.1 & -- & [1, 1.5] & Lowest Euler Mach number; the model is flat between transonic\_full and this \\
+\texttt{compute\_missing} & \texttt{false} & -- & -- & Run the Euler solver for profiles / fineness / tip radii missing from the database \\
+\texttt{missing\_machs} & \texttt{[1.6, 1.4, 1.2, 1.1]} & -- & -- & Mach sequence for cases computed on demand (highest first) \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{payload}: Payload}
+\addcontentsline{toc}{subsection}{\texttt{payload}: Payload}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{enabled} & \texttt{true} & -- & -- & Evaluate the payload fit and nose-bay length \\
+\texttt{name} & \texttt{3U} & -- & -- & Payload name used in labels \\
+\texttt{length} & 0.3405 & m & > 0 & Payload length \\
+\texttt{width} & 0.1 & m & > 0 & Payload width (square section), used in drawings \\
+\texttt{required\_radius} & 0.077 & m & > 0 & Outer nose radius needed to house the payload section (half-diagonal + clearance + guide + shell) \\
+\texttt{axial\_clearance} & 0.01 & m & >= 0 & Axial margin for the payload bulkhead \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{structure}: Structure (mass model)}
+\addcontentsline{toc}{subsection}{\texttt{structure}: Structure (mass model)}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{shell\_areal\_density} & 0.98 & kg/m\textsuperscript{2} & > 0 & Shell mass per wetted area (Firehorn as-built: 0.98) \\
+\texttt{tip\_mass} & 0.06 & kg & >= 0 & Machined tip insert mass (same for all profiles) \\
+\texttt{shell\_cg\_fraction}\,$^\ast$ & 0.35 & -- & [0, 1] & Shell centre of gravity ahead of the shoulder, as a fraction of L \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{heating}: Heating}
+\addcontentsline{toc}{subsection}{\texttt{heating}: Heating}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{enabled} & \texttt{true} & -- & -- & Run the heating analysis \\
+\texttt{trajectory\_from} & \texttt{design} & -- & design, baseline & Nose used to compute the heating trajectories \\
+\texttt{materials} & see text & -- & -- & Material properties: name -> \{label, short (optional), conductivity [W/(m K)], density [kg/m\^{}3], specific\_heat [J/(kg K)]\} \\
+\texttt{shell\_material} & \texttt{CFRP} & -- & -- & Shell material (key of materials) \\
+\texttt{shell\_thickness} & 0.0012 & m & > 0 & Shell thickness \\
+\texttt{shell\_stations} & \texttt{[0.05 m, 0.5 L, 1.0 L]} & -- & -- & Shell stations: 'x m' from the tip or 'f L' as a fraction of L \\
+\texttt{tip\_material} & \texttt{Al6082} & -- & -- & Tip insert material (lumped model) \\
+\texttt{tip\_length} & 0.08 & m & > 0 & Axial length of the tip insert from the apex \\
+\texttt{printed\_tip\_material} & \texttt{PETCF} & -- & -- & Material of the comparison printed tip (1D wall at the stagnation point) \\
+\texttt{printed\_tip\_thickness} & 0.004 & m & > 0 & Wall thickness of the printed tip \\
+\texttt{wall\_nodes}\,$^\ast$ & 40 & -- & [5, 400] & Nodes through the wall thickness \\
+\texttt{bond\_limit} & 120 & \textdegree C & -- & Adhesive temperature limit drawn on the shell plot \\
+\texttt{bond\_label} & \texttt{DP490 bond limit} & -- & -- & Label of the adhesive limit \\
+\texttt{printed\_tip\_hdt} & \texttt{[70, 80]} & \textdegree C & -- & Heat-deflection temperature range of the printed tip polymer \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{bluntness}: Tip bluntness}
+\addcontentsline{toc}{subsection}{\texttt{bluntness}: Tip bluntness}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{enabled} & \texttt{true} & -- & -- & Evaluate the tip-bluntness study \\
+\texttt{study} & \texttt{blunt} & -- & -- & Database study with blunted noses \\
+\texttt{profile} & \texttt{vonkarman} & -- & -- & Profile of the bluntness study \\
+\texttt{fineness} & 4 & -- & > 0 & Fineness of the bluntness study \\
+\texttt{report\_ratios} & \texttt{[0.05, 0.1]} & -- & -- & Tip radii r\_n/R whose drag and apogee cost are reported \\
+\texttt{report\_mach} & 1.4 & -- & [1, 5] & Mach number at which the drag cost of the tip is reported \\
+\texttt{radius\_range} & \texttt{[0.002, 0.02]} & m & -- & Tip radius range of the heat-transfer curve \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{robustness}: Robustness}
+\addcontentsline{toc}{subsection}{\texttt{robustness}: Robustness}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{enabled} & \texttt{true} & -- & -- & Run the robustness study \\
+\texttt{fineness} & 4.5 & -- & > 0 & Fineness at which all profiles are compared \\
+\texttt{reference\_profile} & \texttt{vonkarman} & -- & -- & Apogees are shown relative to this profile \\
+\texttt{band} & 30 & m & >= 0 & Half-width of the 'equivalent' band in the plot \\
+\texttt{scenarios} & see text & -- & -- & Scenarios: name + any of transonic\_onset, transonic\_factor, drag\_factor\_scale, mass\_model, ground\_temperature \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{trade\_matrix}: Decision matrix}
+\addcontentsline{toc}{subsection}{\texttt{trade\_matrix}: Decision matrix}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{enabled} & \texttt{true} & -- & -- & Build the weighted trade matrix \\
+\texttt{fineness} & 4.5 & -- & > 0 & Fineness at which the matrix is built \\
+\texttt{weights} & see text & -- & -- & Criterion weights (should add up to 1) \\
+\texttt{manufacture} & see text & -- & -- & Judgement score per profile (1-5) \\
+\texttt{heritage} & see text & -- & -- & Judgement score per profile (1-5) \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{validation}: CFD validation plots}
+\addcontentsline{toc}{subsection}{\texttt{validation}: CFD validation plots}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{cone\_study} & \texttt{cones} & -- & -- & Database study of sharp cones (compared with Taylor-Maccoll) \\
+\texttt{cone\_main\_fineness} & 4 & -- & > 0 & Cone of the main study added to the validation plot \\
+\texttt{grid\_study} & \texttt{grid} & -- & -- & Database study of the grid-convergence runs \\
+\texttt{grid\_profile} & \texttt{vonkarman} & -- & -- & Profile of the grid study \\
+\texttt{grid\_fineness} & 4 & -- & > 0 & Fineness of the grid study \\
+\texttt{grid\_machs} & \texttt{[1.4, 1.2]} & -- & -- & Mach numbers of the grid study \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{cfd}: CFD solver and studies}
+\addcontentsline{toc}{subsection}{\texttt{cfd}: CFD solver and studies}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{cp\_dir} & \texttt{data/cfd/cp} & path & -- & Folder of the wall-pressure files (one .npz per case) \\
+\texttt{fields\_dir} & \texttt{data/cfd/fields} & path & -- & Folder of the saved flow fields \\
+\texttt{log} & \texttt{data/euler\_sweep\_log.csv} & path & -- & Run log appended by the solver \\
+\texttt{workers} & 4 & -- & [1, 64] & Parallel processes \\
+\texttt{cfl} & 0.85 & -- & [0.05, 1] & CFL number of the local time stepping \\
+\texttt{fallback\_cfl}\,$^\ast$ & 0.5 & -- & [0.05, 1] & CFL of the restart from free stream if a run diverges \\
+\texttt{max\_iter} & 6000 & -- & >= 100 & Iteration limit per Mach number \\
+\texttt{fine\_iter\_factor}\,$^\ast$ & 2 & -- & [1, 10] & Iteration-limit multiplier on the fine grid \\
+\texttt{tolerance} & 2e-05 & -- & > 0 & Convergence: relative change of C\_D,w over `check` iterations \\
+\texttt{check}\,$^\ast$ & 250 & -- & >= 10 & Iterations between convergence checks \\
+\texttt{first\_order\_iters}\,$^\ast$ & 300 & -- & >= 0 & First-order iterations at the start of the first Mach number \\
+\texttt{grids} & see text & -- & -- & Grid levels: name -> [cells along nose, cells along cylinder, cells normal, first-cell height / R] \\
+\texttt{cylinder\_length}\,$^\ast$ & 5 & R & > 0 & Cylinder behind the nose in the CFD domain \\
+\texttt{upstream\_distance}\,$^\ast$ & 1 & R & > 0 & Distance of the outer boundary ahead of the tip (scaled by 1 + 0.3 L/D) \\
+\texttt{outer\_angle}\,$^\ast$ & 72 & \textdegree & [30, 89] & Asymptotic angle of the outer boundary (hyperbola) \\
+\texttt{save\_fields}\,$^\ast$ & \texttt{[1.4, 1.2]} & -- & -- & Mach numbers at which flow fields are saved (studies with save\_fields: true) \\
+\texttt{studies} & [\,] & -- & -- & Euler studies: list of \{name, profiles, fineness, tip\_radius\_ratios, grid, machs, save\_fields\} \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{cad}: CAD export}
+\addcontentsline{toc}{subsection}{\texttt{cad}: CAD export}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{profile\_csv} & \texttt{true} & -- & -- & Write the profile coordinates of the design (x from the tip, r) in mm \\
+\texttt{profile\_points} & 200 & -- & [10, 100000] & Points of the profile CSV \\
+\texttt{profile\_clustering}\,$^\ast$ & 1.6 & -- & [1, 4] & Clustering exponent towards the tip of the CSV points (1 = uniform) \\
+\texttt{stl} & \texttt{true} & -- & -- & Write watertight STL solids \\
+\texttt{stl\_facets} & 128 & -- & [8, 4096] & Azimuthal facets of the STL \\
+\texttt{stl\_points}\,$^\ast$ & 220 & -- & [10, 100000] & Profile points of the candidate STLs \\
+\texttt{stl\_points\_design}\,$^\ast$ & 400 & -- & [10, 100000] & Profile points of the design STL \\
+\texttt{step} & \texttt{true} & -- & -- & Write a STEP solid of the design (needs the gmsh package) \\
+\texttt{step\_points}\,$^\ast$ & 200 & -- & [10, 5000] & Profile points through which the STEP B-spline is fitted \\
+\texttt{candidates} & \texttt{true} & -- & -- & Also export every profile of the sweep at the design fineness (STL) \\
+\end{longtable}\addtocounter{table}{-1}}
+
+\subsection*{\texttt{output}: Outputs}
+\addcontentsline{toc}{subsection}{\texttt{output}: Outputs}
+{\footnotesize
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.3cm}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{1.9cm}>{\raggedright\arraybackslash}p{6.1cm}@{}}
+\toprule Parameter & Default & Unit & Valid & Meaning \\ \midrule \endhead \bottomrule \endfoot
+\texttt{formats} & \texttt{[pdf, png]} & -- & pdf, png, svg & Figure file formats \\
+\texttt{png\_dpi}\,$^\ast$ & 200 & dpi & [50, 1200] & Resolution of PNG figures \\
+\texttt{plots} & \texttt{[all]} & -- & -- & Plots to draw: 'all' or a list of names (see the user guide) \\
+\texttt{latex} & \texttt{false} & -- & -- & Also write LaTeX tables and macros (design-report style) \\
+\texttt{text\_renderer} & \texttt{auto} & -- & auto, latex, mathtext & Plot text: 'latex' (needs a LaTeX installation), 'mathtext' (built in) or 'auto' \\
+\texttt{plot\_options} & \{\,\} & -- & -- & Per-plot overrides, e.g. \{trajectory: \{xlim: [0, 40]\}\} \\
+\end{longtable}\addtocounter{table}{-1}}
+
