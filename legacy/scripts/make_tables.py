@@ -51,19 +51,20 @@ def tab_matrix(t):
         s = (v - np.nanmin(v)) / (np.nanmax(v) - np.nanmin(v))
         return 1 + 4 * (s if hi_good else 1 - s)
 
+    # relative weights 4:2:2:1, normalised to add up to 1
     crit = [
-        ("Performance (0.40)", 0.40, lin(d.d_apogee)),
-        ("Integration, 3U fit (0.20)", 0.20, lin(d.l3U_mm)),
+        ("Performance", 4, lin(d.d_apogee)),
+        ("Integration, 3U fit", 2, lin(d.l3U_mm)),
         # tangent shoulder 5; kink penalised; cone easiest mould
-        ("Manufacture (0.20)", 0.20, np.array([3, 5, 5, 3, 2, 5, 5], float)),
-        ("Heritage (0.10)", 0.10, np.array([1, 4, 2, 5, 1, 1, 2], float)),
-        ("Stability (0.10)", 0.10, lin(d.dSM_cal)),
+        ("Manufacture", 2, np.array([3, 5, 5, 3, 2, 5, 5], float)),
+        ("Stability", 1, lin(d.dSM_cal)),
     ]
+    wsum = sum(w for _, w, _ in crit)
     rows = []
     tot = np.zeros(len(order))
     for name, w, sc in crit:
-        tot += w * sc
-        rows.append(name + " & " + " & ".join(f"{x:.1f}" for x in sc) + r" \\")
+        tot += w / wsum * sc
+        rows.append(f"{name} ({w / wsum:.2f}) & " + " & ".join(f"{x:.1f}" for x in sc) + r" \\")
     best = int(np.nanargmax(tot))
     cells = [rf"\textbf{{{x:.2f}}}" if i == best else f"{x:.2f}" for i, x in enumerate(tot)]
     rows.append(r"\midrule")
@@ -71,7 +72,7 @@ def tab_matrix(t):
     head = [r"\begin{table}[H]", r"\centering",
             r"\caption{Trade-off matrix at $L/D = 4.5$ (1 = worst, 5 = best). Performance: apogee at "
             r"equal length (Table~\ref{tab:trade}). Integration: 3U length inside the curved part. "
-            r"Manufacture: tangent shoulder, mould and tip. Heritage: flown or built at ERT. "
+            r"Manufacture: tangent shoulder, mould and tip. "
             r"Stability: change in static margin.}",
             r"\label{tab:matrix}", r"\small", r"\begin{adjustbox}{max width=\textwidth}",
             r"\begin{tabular}{@{}lccccccc@{}}", r"\toprule",

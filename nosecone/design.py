@@ -28,6 +28,12 @@ def mach_key(M: float) -> str:
     return f"{M:g}".replace(".", "")
 
 
+def matrix_weights(weights: dict) -> dict:
+    """Decision-matrix weights normalised to add up to 1: {4, 2, 2, 1} -> {4/9, 2/9, 2/9, 1/9}."""
+    total = sum(weights.values())
+    return {c: w / total for c, w in weights.items()}
+
+
 @dataclass
 class Study:
     """Everything needed to evaluate noses for one configuration.
@@ -298,10 +304,10 @@ class Study:
         crit = {"performance": lin(d.d_apogee),
                 "integration": lin(d.l3U_mm) if "l3U_mm" in d else np.full(len(order), np.nan),
                 "manufacture": np.array([tm.manufacture.get(s, np.nan) for s in order], float),
-                "heritage": np.array([tm.heritage.get(s, np.nan) for s in order], float),
                 "stability": lin(d.dSM_cal)}
-        rows = {c: crit[c] for c in tm.weights}
-        total = sum(tm.weights[c] * rows[c] for c in tm.weights)
+        w = matrix_weights(tm.weights)
+        rows = {c: crit[c] for c in w}
+        total = sum(w[c] * rows[c] for c in w)
         m = pd.DataFrame(rows, index=order).T
         m.loc["total"] = total
         return m

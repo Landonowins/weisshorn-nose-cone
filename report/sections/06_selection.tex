@@ -11,15 +11,15 @@ The matrix is a weighted-sum decision method. Each design receives a score $s_i$
 to 5 (best) on each criterion $i$, and its total is $\sum_i w_i s_i$ with weights $w_i$ that add
 up to one. The quantitative criteria are scored linearly between the worst and the best design:
 performance on the apogee change $\Delta z$, integration on the length of 3U inside the curved
-part, and stability on the change in static margin. Manufacture and heritage are judgement
-scores. For manufacture, a tangent shoulder and a standard mould score 5, a shoulder kink is
-penalised, and the cone gets 3 for its simple, developable mould. For heritage, the profile of the
-current Firehorn vehicle scores 5, the ogive of earlier vehicles 4, and profiles without ERT
-flight history lower. Performance carries the largest weight (0.4) because apogee margin is what
-the nose shape mainly affects and what systems engineering trades against mass growth.
-Integration and manufacture (0.2 each) decide whether the design can be housed and built.
-Heritage and stability (0.1 each) matter less: heritage lowers risk without changing the
-hardware, and the static margin varies by less than 0.1 cal between candidates.
+part, and stability on the change in static margin. Manufacture is a judgement score: a tangent
+shoulder and a standard mould score 5, a shoulder kink is penalised, and the cone gets 3 for its
+simple, developable mould. The weights are in the ratio 4:2:2:1. Performance carries the largest
+weight (0.44) because apogee margin is what the nose shape mainly affects and what systems
+engineering trades against mass growth. Integration and manufacture (0.22 each) decide whether
+the design can be housed and built. Stability (0.11) matters least, because the static margin
+varies by less than 0.1 cal between candidates. Only properties of the hardware are scored:
+whether a profile has flown on an earlier ERT vehicle (Table~\ref{tab:profiles}) does not change
+its drag, payload room, manufacture or stability, and is not a criterion.
 
 \input{sections/tab_matrix}
 
@@ -37,15 +37,15 @@ $L/D=4.5$;
 \SI{217}{mm} for power $\tfrac12$ and \SI{152}{mm} for power $\tfrac34$);
 \item its advantage holds at $M \geq 1.2$, so it does not hinge on the transonic model.
 \end{itemize}
-The Firehorn power-$\tfrac12$ nose remains an acceptable alternative (\SI{22}{m} lower) if
-reusing its tooling outweighs the shoulder kink (R10, Section~\ref{sec:recommendations}).
 
-The outcome depends on the weights in one case only. If the weights of performance and
-integration were swapped (payload room 0.4, performance 0.2), the tangent ogive would score
-higher than Von K\'arm\'an (3.98 against 3.89). The selection therefore rests on the premise that
-apogee margin matters more than payload room, which holds as long as the payload is a single 3U
-unit that the Von K\'arm\'an nose can house. If the payload grows, the volume-driven alternatives
-of Table~\ref{tab:alternatives} apply.
+The outcome does not depend on the exact weights. With equal weights on the four criteria,
+Von K\'arm\'an still leads LV-Haack by 0.48 (3.95 against 3.48). With the weights of performance
+and integration swapped (payload room 0.44, performance 0.22), it still scores highest, level
+with LV-Haack (4.10 against 4.09) and ahead of the tangent ogive (3.98). It loses first place,
+to LV-Haack, only if payload room carries more than about half of the total weight. The
+selection therefore rests on the premise that apogee margin matters at least as much as payload
+room, which holds as long as the payload is a single 3U unit that the Von K\'arm\'an nose can
+house. If the payload grows, the volume-driven alternatives of Table~\ref{tab:alternatives} apply.
 
 \subsection{Length}
 

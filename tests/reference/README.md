@@ -12,6 +12,9 @@ Outputs of the original scripts (`legacy/scripts/`) that produced the Weisshorn 
 | `stl_sha256.json` | `cad.py` (see note) | `cad/*.stl` of a run |
 | `figures/*.png` | `figures.py`, `figures_extra.py`, `cad.py` | `--figures` |
 
+`latex/tab_matrix.tex` was regenerated with the revised `make_tables.py` when heritage was removed from
+the decision matrix (report revision of 2026-10-11, weights 4:2:2:1).
+
 Known, intentional differences:
 
 * `latex/tab_check45.tex`: the parabolic row's source label reads `scaled from 4` (the data used are

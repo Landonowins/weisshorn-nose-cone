@@ -48,8 +48,6 @@ shoulder, inside the $r \leq \SI{77}{mm}$ contour (Figure~\ref{fig:final}). & PL
 R9 & Create the missing Weisshorn nosecone requirements: geometry, bay length, mass
 ($\leq\SI{500}{g}$ for the nose structure, Table~\ref{tab:mass}), thermal and tip
 (Section~\ref{sec:next}). & SE & PDR \\
-R10 & Keep the Firehorn power-$\tfrac12$ profile as the documented alternative. It costs
-\SI{22}{m} of apogee and adds a $3.2^\circ$ shoulder kink, but its tooling and process already exist. & FD & -- \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -78,7 +76,6 @@ design to use instead.
 If \dots & choose & cost relative to the recommendation \\
 \midrule
 the LV cannot grow beyond the LVS length & Von K\'arm\'an, \SI{720}{mm} & $-\SI{60}{m}$ apogee \\
-schedule favours reusing Firehorn tooling & Power $\tfrac12$, \SI{810}{mm} & $-\SI{22}{m}$, $3.2^\circ$ kink, bay $+\SI{36}{mm}$ \\
 the payload grows (more volume in the nose) & LV-Haack, \SI{810}{mm} & $-\SI{69}{m}$, bay $-\SI{37}{mm}$, $+\SI{22}{g}$ \\
 the nose must be as short as possible ($L/D \leq 3.5$) & Power $\tfrac12$ & lowest drag at short length \\
 the vehicle becomes faster ($M_{\max} \approx 2$) and the payload leaves the nose & Power $\tfrac34$ or Von K\'arm\'an at $L/D \geq 5$ & re-run the study \\
@@ -88,8 +85,7 @@ a subsonic test vehicle (e.g.\ Aletsch) & Tangent ogive or Von K\'arm\'an & shap
 \end{table}
 
 Each row follows from the results above. A shorter vehicle keeps the same profile and gives up
-the length gain of Section~\ref{sec:selection}. The power-$\tfrac12$ nose is the closest
-alternative in performance and the only one with an existing process. If the payload volume
+the length gain of Section~\ref{sec:selection}. If the payload volume
 becomes the driver, the LV-Haack nose, the minimum-drag shape for a given volume, houses the most
 payload for the smallest drag penalty. On short noses the power-$\tfrac12$ shape has the lowest
 wave drag (Section~\ref{sec:trade}). At higher Mach numbers the wave drag of the power-$\tfrac34$

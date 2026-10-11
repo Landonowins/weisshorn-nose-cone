@@ -272,12 +272,11 @@ class TradeMatrixConfig:
 
     enabled: bool = param(True, doc="Build the weighted trade matrix")
     fineness: float = param(4.5, "-", "Fineness at which the matrix is built", POS)
-    weights: dict = param({"performance": 0.40, "integration": 0.20, "manufacture": 0.20,
-                           "heritage": 0.10, "stability": 0.10}, doc="Criterion weights (should add up to 1)")
+    weights: dict = param({"performance": 4, "integration": 2, "manufacture": 2, "stability": 1},
+                          doc="Relative criterion weights, normalised to add up to 1 (criteria: performance, "
+                              "integration, manufacture, stability)")
     manufacture: dict = param({"cone": 3, "ogive": 5, "parabolic": 5, "power050": 3, "power075": 2,
                                "lvhaack": 5, "vonkarman": 5}, doc="Judgement score per profile (1-5)")
-    heritage: dict = param({"cone": 1, "ogive": 4, "parabolic": 2, "power050": 5, "power075": 1,
-                            "lvhaack": 1, "vonkarman": 2}, doc="Judgement score per profile (1-5)")
 
 
 @dataclass
@@ -487,7 +486,7 @@ def _merge(a: dict, b: dict) -> dict:
     return out
 
 
-_REPLACE = {"weights", "manufacture", "heritage", "grids"}
+_REPLACE = {"weights", "manufacture", "grids"}
 """Mapping parameters that are replaced as a whole (not merged) when a file overrides its base."""
 
 
@@ -594,8 +593,10 @@ def validate(cfg: Config) -> None:
         if "name" not in sc or extra:
             raise ConfigError(f"robustness.scenarios: bad entry {sc} (needs 'name'; unknown keys {sorted(extra)})")
     w = cfg.trade_matrix.weights
-    if set(w) - {"performance", "integration", "manufacture", "heritage", "stability"}:
-        raise ConfigError("trade_matrix.weights: allowed keys are performance, integration, manufacture, heritage, stability")
+    if set(w) - {"performance", "integration", "manufacture", "stability"}:
+        raise ConfigError("trade_matrix.weights: allowed keys are performance, integration, manufacture, stability")
+    if any(not isinstance(v, (int, float)) or v < 0 for v in w.values()) or sum(w.values()) <= 0:
+        raise ConfigError("trade_matrix.weights: weights must be non-negative numbers with a positive sum")
     for st in cfg.cfd.studies:
         missing = {"name", "profiles", "fineness", "machs"} - set(st)
         if missing:
