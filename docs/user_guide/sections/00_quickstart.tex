@@ -1,0 +1,32 @@
+\section*{Quick start}
+\addcontentsline{toc}{section}{Quick start}
+
+\noindent\textbf{From zero to the Weisshorn results in four commands} (Windows; see Section~\ref{sec:install}
+for macOS/Linux):
+\begin{lstlisting}[language=bash]
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+python -m nosecone run configs/weisshorn.yaml
+\end{lstlisting}
+\note{Then open \texttt{output/weisshorn/summary.md}: it lists every nose of the study, best first, with its
+wave drag, apogee, mass, payload room and static-margin change. Figures are in
+\texttt{output/weisshorn/figures/}, CAD files (CSV, STL, STEP) in \texttt{output/weisshorn/cad/}.}
+
+\medskip
+\noindent\textbf{To study another rocket}, copy \texttt{configs/example\_new\_rocket.yaml}, change the values of
+your vehicle (diameter, length, masses, engine, fins) and the noses you want to compare, and run it with the same
+command. You never need to edit the Python code for that: every input is in the YAML file. The parameters
+are described in Section~\ref{sec:parameters}, the outputs in Section~\ref{sec:outputs}.
+
+\medskip
+\noindent\textbf{How this guide is organised.}
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+\item Section~\ref{sec:scope}: what the tool computes, with which models, and where these models stop being valid.
+\item Section~\ref{sec:install}: installation and requirements.
+\item Section~\ref{sec:structure}: the repository and what each module does.
+\item Section~\ref{sec:parameters}: every parameter of the configuration file (meaning, unit, valid range, default).
+\item Section~\ref{sec:running}: running a single design and a parameter sweep, with worked examples for our 180~mm rocket.
+\item Section~\ref{sec:outputs}: how to read every plot and table.
+\item Section~\ref{sec:extending}: adding a profile family, a plot, a parameter, or changing a model.
+\end{itemize}

@@ -1,0 +1,159 @@
+\section{The Configuration File}
+\label{sec:parameters}
+
+\subsection{How the file works}
+
+A study is described by one YAML file (\texttt{configs/weisshorn.yaml} is the complete, commented example). YAML
+is a plain-text format: \emph{sections} contain \emph{parameters} written \texttt{name: value}, indented by two
+spaces; lists are written \texttt{[a, b, c]}; everything after \texttt{\#} is a comment.
+\begin{lstlisting}[language=yaml]
+vehicle:
+  diameter: 0.180        # m
+  mass_wet: 75.0         # kg
+nose:
+  profiles: [ogive, power050, vonkarman]
+  fineness: [4.0, 4.5, 5.0]
+\end{lstlisting}
+
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+\item \textbf{Only what differs from the default is needed.} Every parameter has a default
+(Section~\ref{sec:paramtables}); a file with only a \texttt{vehicle} section is valid.
+\item \textbf{Units are SI} (m, kg, s, N, K) unless the table says otherwise (\textdegree, \textdegree C).
+Write lengths in metres: \texttt{diameter: 0.180}, not \texttt{180}.
+\item \textbf{Relative paths} (database, output folder, CFD folders, plugins) are relative to the file that contains them.
+\item \textbf{Inheritance}: a file that starts with \texttt{base: weisshorn.yaml} takes every value of that file
+and overrides only what it lists (both worked examples of Section~\ref{sec:running} do this). Sections are merged
+parameter by parameter; a list given in the new file replaces the inherited list.
+\item \textbf{Checking}: \texttt{python -m nosecone validate my.yaml} reads the file and stops at the first problem
+with a precise message, e.g.\ \texttt{unknown parameter 'nose.profils' (did you mean 'profiles'?)} or
+\texttt{'launch.rail\_elevation' = 95.0 is outside the valid range (0, 90]}. Add \texttt{-{}-show} to print every
+value the run will use (defaults included). The same file is saved next to the results as
+\texttt{config\_used.yaml}.
+\item \textbf{Plugins}: \key{project.plugins} lists Python files imported before the run; they can add profile
+families (Section~\ref{sec:newfamily}).
+\end{itemize}
+
+\subsection{All parameters}
+\label{sec:paramtables}
+
+The tables below are generated from the code (\texttt{python -m nosecone describe-config -{}-latex}), so they always
+match the installed version. ``Valid'' gives the accepted range or values; parameters marked $^\ast$ are advanced
+numerical settings that normally stay at their default. Parameters whose default is ``see text'' are structured
+values, described in Section~\ref{sec:structured}.
+
+\input{sections/parameters_tables}
+
+\subsection{Structured parameters}
+\label{sec:structured}
+
+\paragraph{\key{nose.profiles} and \key{nose.custom\_profiles}.} The sweep compares the profiles listed in
+\key{nose.profiles}. The built-in names are those of the CFD database: \texttt{cone}, \texttt{ogive} (tangent),
+\texttt{parabolic} ($K' = 1$), \texttt{power050} and \texttt{power075} (power series $n = \tfrac12$, $\tfrac34$),
+\texttt{lvhaack} (Haack $C = \tfrac13$) and \texttt{vonkarman} (Haack $C = 0$). Other members of the same families
+(and of any family added by a plugin) are defined in \key{custom\_profiles}:
+\begin{lstlisting}[language=yaml]
+nose:
+  custom_profiles:
+    power060: {family: power, n: 0.6, label: "Power $n=0.6$"}
+    haack_c015: {family: haack, C: 0.15, label: "Haack $C=0.15$"}
+  profiles: [vonkarman, power060, haack_c015]
+\end{lstlisting}
+The families and their parameters are listed by \texttt{python -m nosecone profiles}: \texttt{cone},
+\texttt{tangent\_ogive}, \texttt{parabolic} ($K$), \texttt{power} ($n$), \texttt{haack} ($C$) and
+\texttt{elliptical}. The \texttt{label} (LaTeX allowed) is used in plots and tables. A custom profile has no CFD
+data until it is computed: set \key{aerodynamics.compute\_missing: true} (Section~\ref{sec:newcfd}).
+
+\paragraph{\key{nose.fineness} and \key{nose.tip\_radius\_ratios}.} The sweep is the product
+profiles $\times$ fineness $\times$ tip radii. The Weisshorn database covers $L/D = 3$--$5$ for sharp noses; a
+fineness outside the computed range is accepted, but its wave drag is extrapolated with $C_{D,\rm w}(L/D)^2$ held
+constant. Tip radii $r_n/R > 0$ need CFD data for the blunted nose at two fineness ratios or more (otherwise the
+case is skipped, or computed if \key{compute\_missing} is set).
+
+\paragraph{\key{heating.materials}.} One entry per material; add your own and refer to it by its key:
+\begin{lstlisting}[language=yaml]
+heating:
+  materials:
+    Ti64: {label: "Ti-6Al-4V", conductivity: 6.7, density: 4430, specific_heat: 526}
+  tip_material: Ti64
+\end{lstlisting}
+\texttt{conductivity} in W/(m\,K), \texttt{density} in kg/m\textsuperscript{3}, \texttt{specific\_heat} in J/(kg\,K);
+\texttt{label} is used in the plots and \texttt{short} (optional) in the LaTeX tables. Materials given in a file are
+added to the default ones (CFRP, Al6082, PETCF).
+
+\paragraph{\key{heating.shell\_stations}.} Positions along the shell where the wall temperature is computed:
+\texttt{"0.05 m"} (distance from the tip) or \texttt{"0.5 L"} (fraction of the profile length).
+
+\paragraph{\key{robustness.scenarios}.} Each scenario is a name plus any of the following changes to the nominal
+model; the apogee of every profile is recomputed and shown relative to \key{robustness.reference\_profile}:
+\begin{lstlisting}[language=yaml]
+robustness:
+  scenarios:
+    - {name: nominal}
+    - {name: "drag rise from M = 0.75", transonic_onset: 0.75}   # Mach of the start of the rise
+    - {name: "transonic peak +20 %", transonic_factor: 1.2}      # wave drag x 1.2 below transonic_match
+    - {name: "rest of vehicle drag +20 %", drag_factor_scale: 1.2}  # k x 1.2
+    - {name: "LVO masses, 30 C day", mass_model: lvo, ground_temperature: 303.15}
+\end{lstlisting}
+
+\paragraph{\key{trade\_matrix}.} \key{weights} gives the weight of each criterion (\texttt{performance}: apogee,
+\texttt{integration}: payload length inside the nose, \texttt{manufacture}, \texttt{heritage}, \texttt{stability}:
+static-margin change); they should add up to one. Performance, integration and stability are scored automatically
+from 1 (worst) to 5 (best) between the worst and the best profile; \key{manufacture} and \key{heritage} are your
+judgement, one score per profile name.
+
+\paragraph{\key{cfd.grids} and \key{cfd.studies}.} A grid level is \texttt{[cells along the nose, cells along the
+cylinder, cells normal to the wall, first-cell height / R]}. A study is a list of CFD runs; each entry is solved for
+every profile $\times$ fineness $\times$ tip radius, from the first Mach number down (each Mach number starts from
+the previous solution):
+\begin{lstlisting}[language=yaml]
+cfd:
+  studies:
+    - {name: main, profiles: [power060], fineness: [3, 4, 5], machs: [1.6, 1.4, 1.2, 1.1]}
+    - {name: blunt, profiles: [vonkarman], fineness: [4.5], tip_radius_ratios: [0.05, 0.1],
+       grid: medium, machs: [1.6, 1.4, 1.2], save_fields: false}
+\end{lstlisting}
+Optional keys of a study: \texttt{tip\_radius\_ratios} (default \texttt{[0]}), \texttt{grid} (default
+\texttt{medium}), \texttt{save\_fields} (save the flow fields at \key{cfd.save\_fields} Mach numbers) and
+\texttt{max\_iter} (iteration limit of this study, instead of \key{cfd.max\_iter}). Results go to
+\key{cfd.\allowbreak cp\_dir}; \texttt{python -m nosecone rebuild-database} turns them into the
+database CSV. The study name becomes the \texttt{study} column of the database; \key{aerodynamics.\allowbreak studies}
+chooses which studies feed
+the wave-drag model (\texttt{main}: the sweep; \texttt{f45}: direct runs at $L/D = 4.5$).
+
+\paragraph{\key{output.plots} and \key{output.plot\_options}.} \key{plots} is \texttt{[all]} or a list of plot
+names: \texttt{profiles}, \texttt{schematics}, \texttt{validation}, \texttt{cdw}, \texttt{cp}, \texttt{trajectory},
+\texttt{breakdown}, \texttt{trade}, \texttt{robustness}, \texttt{bluntness}, \texttt{thermal}, \texttt{final},
+\texttt{gallery}, \texttt{fields}, \texttt{grid}, \texttt{renders} (Section~\ref{sec:plots}). Plots that need data
+the study does not have (e.g.\ \texttt{validation} without cone runs) are skipped with a message. \key{plot\_options}
+overrides cosmetic settings per plot; the axis ranges that depend on the vehicle are automatic unless set:
+\begin{lstlisting}[language=yaml]
+output:
+  plot_options:
+    trajectory: {xlim: [0, 40], ylim: [0, 2.1]}     # time [s] and Mach axes
+    thermal: {xlim: [0, 30], ylim: [0, 175]}        # time [s] and temperature [degC] axes
+\end{lstlisting}
+
+\begin{table}[H]
+\centering
+\caption{Options of \key{output.plot\_options} (defaults in \texttt{PLOT\_DEFAULTS}, \texttt{nosecone/plotting/figures.py}).
+``auto'': chosen from the data. Lengths in mm scale with the diameter.}
+\label{tab:plotopts}
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}p{13.8cm}@{}}
+\toprule
+Plot & Options (default) \\
+\midrule
+\texttt{profiles} & \texttt{fineness} (baseline), \texttt{ylim\_mm} (100), \texttt{tip\_xlim\_mm} (60), \texttt{tip\_ylim\_mm} (38), label positions \\
+\texttt{cdw} & \texttt{fineness} (baseline), \texttt{mach\_range} (0.6, 1.65), \texttt{ylim} (0, 0.125), \texttt{fineness\_ylim} (0.03, 0.14), \texttt{fineness\_mach} (1.4) \\
+\texttt{cp} & \texttt{fineness} (baseline), \texttt{machs} (1.1, 1.4), \texttt{xlim} (0, 1.35), \texttt{ylim} ($-0.25$, 0.45) \\
+\texttt{trajectory} & \texttt{xlim}, \texttt{ylim} (auto), \texttt{mach\_bins\_max} (auto), \texttt{bin\_width} (0.1) \\
+\texttt{breakdown} & \texttt{altitude} (3000 m), \texttt{mach\_range} (0.1 to the highest tabulated Mach), \texttt{annotate\_mach} (1.4) \\
+\texttt{trade} & \texttt{payload\_ylim} (0 to 1.5 payload lengths) \\
+\texttt{bluntness} & \texttt{machs} (1.2, 1.4, 1.6), \texttt{guide} ([kW/(m\textsuperscript{2}K), m] of the $r_n^{-1/2}$ guide line; auto) \\
+\texttt{thermal} & \texttt{xlim}, \texttt{ylim} (auto) \\
+\texttt{fields} & \texttt{machs} (1.4), \texttt{xlim} (auto), \texttt{ylim} ($\pm3.2\,R$), \texttt{clim} ($-0.25$, 0, 0.45) \\
+\texttt{grid}, \texttt{schematics} & \texttt{level} (coarse); \texttt{fineness} (2, drawing only) \\
+\texttt{validation}, \texttt{robustness}, \texttt{gallery} & Mach range, colours and markers; \texttt{gallery}: \texttt{mach} (1.4) \\
+\bottomrule
+\end{tabular}
+\end{table}

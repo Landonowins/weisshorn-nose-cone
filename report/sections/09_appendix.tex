@@ -1,0 +1,48 @@
+\section{Scripts and data}
+\label{app:scripts}
+
+All files are in the working folder \texttt{Nose Cone/} of this study. Python 3.14, NumPy, SciPy,
+pandas, Matplotlib; no other dependency. Table~\ref{tab:files} lists the scripts that implement
+the method chain of Section~\ref{sec:method} and the result files they produce.
+
+\begin{table}[H]
+\centering
+\caption{Scripts and result files.}
+\label{tab:files}
+\small
+\begin{tabular}{@{}lp{10.2cm}@{}}
+\toprule
+File & Content \\
+\midrule
+\texttt{scripts/geometry.py} & profile equations, spherical blunting, volume, wetted area, CP, 3U fit \\
+\texttt{scripts/euler\_axi.py} & axisymmetric Euler solver (grid generator, HLLC/MUSCL, BCs, drag integration) \\
+\texttt{scripts/taylor\_maccoll.py} & exact conical flow, used for validation \\
+\texttt{scripts/run\_sweep.py} & parallel sweeps: \texttt{main} (7 shapes $\times$ 4 fineness $\times$ 5 Mach), \texttt{cones}, \texttt{grid}, \texttt{blunt} \\
+\texttt{scripts/flight.py} & atmosphere, component drag build-up, point-mass ascent \\
+\texttt{scripts/thermal.py} & stagnation and turbulent heating, 1D wall conduction, lumped metal tip \\
+\texttt{scripts/analysis.py} & calibration of $k$, trade table (apogee, mass, CP shift, 3U fit) \\
+\texttt{scripts/figures.py}, \texttt{figstyle.py} & all figures of this report \\
+\texttt{results/euler\_results.csv} & every converged Euler point: shape, $L/D$, $r_n/R$, grid, Mach, $C_{D,\rm w}$ (rebuilt from \texttt{cp/}) \\
+\texttt{scripts/flowfield.py} & direct Euler runs at $L/D=4.5$ with flow-field output \\
+\texttt{scripts/robustness.py} & ranking under perturbed modelling assumptions \\
+\texttt{scripts/cad.py} & STL solids of all designs \\
+\texttt{scripts/figures\_extra.py} & design gallery, pressure fields, drag breakdown, robustness \\
+\texttt{results/fields/*.npz} & flow fields at $L/D=4.5$, $M=1.4$ and 1.2 \\
+\texttt{results/robustness.csv} & apogee of every shape in every scenario \\
+\texttt{results/cad/*.stl} & watertight STL solids (mm) of the seven designs and the final nose \\
+\texttt{scripts/make\_tables.py} & tables and every number quoted in the text (\texttt{sections/macros.tex}) \\
+\texttt{results/euler\_sweep.csv} & run log of completed jobs with iteration counts \\
+\texttt{results/cp/*.npz} & wall pressure distributions of every run \\
+\texttt{results/trade\_table.csv} & trade-study table (Section~\ref{sec:trade}) \\
+\texttt{results/nose\_profile\_final.csv} & final profile coordinates for CAD \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Reproduce everything with:
+\begin{verbatim}
+python run_sweep.py main 6 ; python run_sweep.py cones 3
+python run_sweep.py fast 7 ; python run_sweep.py fast2 3 ; python flowfield.py
+python analysis.py ; python robustness.py ; python make_tables.py
+python figures.py ; python figures_extra.py ; python cad.py
+\end{verbatim}

@@ -1,0 +1,22 @@
+\begin{table}[H]
+\centering
+\caption{Wave drag at $L/D = 4.5$: value used before the direct runs (interpolated in $C_{D,\rm w}(L/D)^2$, or scaled with $1/(L/D)^2$ from a single fineness) against the direct Euler result, and the error of the former.}
+\label{tab:check45}
+\small
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}llccrccrccr@{}}
+\toprule
+ & & \multicolumn{3}{c}{$M=1.2$} & \multicolumn{3}{c}{$M=1.4$} & \multicolumn{3}{c}{$M=1.6$} \\
+Shape & source & interp. & direct & [\%] & interp. & direct & [\%] & interp. & direct & [\%] \\
+\midrule
+Cone & interp. 3--5 & 0.0707 & 0.0708 & -0.2 & 0.0618 & 0.0619 & -0.2 & 0.0566 & 0.0567 & -0.2 \\
+Tangent ogive & interp. 3--5 & 0.0528 & 0.0530 & -0.2 & 0.0515 & 0.0516 & -0.2 & 0.0503 & 0.0504 & -0.2 \\
+Parabolic & interp. 4--5 & 0.0518 & 0.0529 & -2.0 & 0.0505 & 0.0515 & -2.1 & 0.0491 & 0.0502 & -2.3 \\
+Power $n=\tfrac12$ & interp. 3--5 & 0.0449 & 0.0450 & -0.2 & 0.0456 & 0.0457 & -0.3 & 0.0455 & 0.0456 & -0.3 \\
+Power $n=\tfrac34$ & scaled from 4 & 0.0496 & 0.0513 & -3.4 & 0.0446 & 0.0463 & -3.6 & 0.0416 & 0.0432 & -3.7 \\
+LV-Haack & interp. 3--5 & 0.0494 & 0.0496 & -0.3 & 0.0495 & 0.0497 & -0.3 & 0.0490 & 0.0491 & -0.2 \\
+Von K\'arm\'an & interp. 3--5 & 0.0436 & 0.0437 & -0.2 & 0.0424 & 0.0425 & -0.2 & 0.0413 & 0.0414 & -0.2 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}

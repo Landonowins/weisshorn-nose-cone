@@ -1,0 +1,28 @@
+# Worked example 1 (user guide, section 5.2): evaluate ONE nose on Weisshorn.
+#     python -m nosecone run configs/example_single_design.yaml
+# Everything not given here is inherited from weisshorn.yaml.
+
+base: weisshorn.yaml
+
+project:
+  name: Weisshorn single design
+  output_dir: ../output/example_single_design
+
+nose:
+  profiles: [vonkarman]          # the "sweep" is a single nose...
+  fineness: [4.5]                # ...at a single fineness
+  design_profile: vonkarman
+  design_fineness: 4.5
+  design_tip_radius_ratio: 0.05  # 4.5 mm spherical tip
+
+robustness:
+  enabled: false                 # nothing to rank with one profile
+trade_matrix:
+  enabled: false
+
+cad:
+  candidates: false              # only the design
+
+output:
+  plots: [profiles, trajectory, breakdown, bluntness, thermal, final]
+  latex: false

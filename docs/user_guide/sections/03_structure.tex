@@ -1,0 +1,72 @@
+\section{Repository Structure}
+\label{sec:structure}
+
+\needspace{12\baselineskip}
+\subsection{Folders}
+
+\begin{lstlisting}[language={}]
+weisshorn-nose-cone/
+|-- nosecone/              the Python package (all the code)
+|   |-- plotting/          figures (style.py, figures.py)
+|-- configs/               weisshorn.yaml + worked examples
+|-- data/
+|   |-- euler_results.csv  CFD database: wave drag of every case
+|   |-- euler_sweep_log.csv   run log of the CFD solver
+|   |-- cfd/cp/            wall pressure of every CFD point (.npz)
+|   |-- cfd/fields/        flow fields at the design fineness
+|-- plugins/               example plugin (Section 7.1)
+|-- docs/user_guide/       this guide (LaTeX source and PDF)
+|-- report/                the Weisshorn nose-cone design report
+|-- tests/                 verify_reference.py + reference outputs
+|-- legacy/scripts/        the original scripts (not used)
+|-- output/                created by the tool (not in git)
+|-- requirements.txt, README.md
+\end{lstlisting}
+
+\subsection{Modules}
+
+Each module has one job (Table~\ref{tab:modules}). The functions have docstrings and type hints: in Python,
+\texttt{help(nosecone.flight.simulate)} prints the documentation of any function.
+
+\begin{table}[H]
+\centering
+\caption{Modules of the \texttt{nosecone} package, in the order of the computation chain.}
+\label{tab:modules}
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{6.4cm}>{\raggedright\arraybackslash}p{7.0cm}@{}}
+\toprule
+Module & Job & Main contents \\
+\midrule
+\texttt{config} & Read, complete and check the YAML file & \texttt{load()}, the dataclasses of every section (parameters with unit, range, default, description), \texttt{describe()} \\
+\texttt{constants} & Physical constants and model coefficients (the only fixed numbers) & gas constant, $\gamma$, Sutherland, friction, base-drag, heating coefficients, grid-generator constants \\
+\texttt{geometry} & Profiles and their geometric properties & profile families and \texttt{register\_family()}, \texttt{radius()}, blunting, \texttt{volume\_and\_area()}, CP, payload length \\
+\texttt{euler} & Axisymmetric Euler CFD solver & \texttt{make\_grid()}, \texttt{Mesh}, \texttt{EulerAxi} (HLLC, MUSCL, local time stepping) \\
+\texttt{taylor\_maccoll} & Exact cone flow (solver validation) & \texttt{cone\_cp()} \\
+\texttt{cfd} & CFD studies and the database & \texttt{run\_jobs()} (parallel), \texttt{rebuild\_database()}, \texttt{load\_database()} \\
+\texttt{aerodynamics} & Wave-drag model from the database & \texttt{WaveDrag} (interpolation in $M$ and $L/D$, transonic rise) \\
+\texttt{flight} & Atmosphere, drag build-up, trajectory & \texttt{Atmosphere}, \texttt{DragModel}, \texttt{simulate()}, \texttt{calibrate()} \\
+\texttt{stability} & Barrowman stability, nose mass & \texttt{fin\_cna\_xcp()}, \texttt{static\_margin\_shift()}, \texttt{nose\_mass()} \\
+\texttt{heating} & Tip and shell temperatures & \texttt{h\_stagnation()}, \texttt{h\_turbulent()}, \texttt{wall\_response()}, \texttt{tip\_insert()} \\
+\texttt{design} & The study: sweep and derived results & \texttt{Study}: \texttt{sweep()}, \texttt{sensitivities()}, \texttt{robustness()}, \texttt{bluntness()}, \texttt{heating()}, \texttt{trade\_matrix()}, \texttt{catalogue()} \\
+\texttt{export} & CAD and meshing files & profile CSV, \texttt{write\_stl()}, \texttt{write\_step()} (gmsh), \texttt{stl\_check()} \\
+\texttt{plotting} & All figures & \texttt{figures.PLOTS} (one function per plot), \texttt{PLOT\_DEFAULTS}, \texttt{style} \\
+\texttt{reporting} & Tables and summaries & \texttt{summary\_markdown()}, LaTeX tables and macros \\
+\texttt{pipeline} & Runs everything in order & \texttt{run()} \\
+\texttt{cli} & Command line & \texttt{python -m nosecone <command>} \\
+\texttt{plugins}, \texttt{docs} & Plugin loading; documentation helpers & \texttt{load\_plugins()}; parameter tables of this guide \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Using the package from Python}
+
+The command line covers normal use, but every step is also a function. For example, in a Jupyter notebook:
+\begin{lstlisting}[language=Python]
+from nosecone import config, pipeline
+cfg = config.load("configs/weisshorn.yaml")
+cfg.nose.fineness = [4.0, 4.25, 4.5]          # change anything before running
+res = pipeline.run(cfg, plots=["trade"])
+res["trade"].sort_values("apogee")            # pandas DataFrame of the sweep
+st = res["study"]                             # the Study object (wave drag, vehicles, ...)
+st.wave_drag("vonkarman", 4.5)(1.3)           # C_D,w of a nose at M = 1.3
+\end{lstlisting}

@@ -1,0 +1,2 @@
+dz/dm = -142.5 m/kg
+dz/dCD = -9979 m per unit CD (-99.8 m per 0.01)

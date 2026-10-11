@@ -1,0 +1,173 @@
+# =============================================================================================
+#  Weisshorn (ERT 2027, EuRoC L9) nose-cone study: the configuration of the design report
+#  2026_C_FD_REPORT-1_NOSE_CONE. Running it reproduces every number, table and figure of that
+#  report:   python -m nosecone run configs/weisshorn.yaml
+#
+#  Copy this file to start a study for another rocket: change the vehicle, engine, fins and
+#  nose sections; every parameter is described in the user guide (docs/user_guide) and by
+#  `python -m nosecone describe-config`. Parameters left out take their default value.
+#  Relative paths are relative to this file. Units: SI (m, kg, s, K) unless stated.
+# =============================================================================================
+
+project:
+  name: Weisshorn
+  output_dir: ../output/weisshorn
+
+vehicle:                       # Weisshorn LVO (2027_C_SE_LVO) and requirements
+  diameter: 0.180              # external diameter D [m]
+  length: 5.4                  # total length with the reference nose [m]
+  reference_nose_length: 0.72  # nose included in `length` (LVS: Firehorn nose scaled 180/240) [m]
+  mass_wet: 75.0               # [kg]
+  mass_dry: 45.0               # [kg] (used by mass_model 'lvo')
+  surface_roughness: 2.0e-5    # painted CFRP [m]
+  nozzle_exit_diameter: 0.075  # [m]
+
+engine:                        # EthaLOx, constant thrust
+  thrust: 4500.0               # [N]
+  burn_time: 9.1               # [s]
+  total_impulse: 40960.0       # [N s]
+  specific_impulse: 200.0      # [s]
+
+fins:                          # assumed (Weisshorn fins not yet defined)
+  count: 4
+  root_chord: 0.30
+  tip_chord: 0.12
+  span: 0.16
+  sweep: 0.18
+  thickness: 0.005
+  edge_fraction: 0.15
+
+launch:                        # EuRoC rail
+  rail_length: 12.0
+  rail_elevation: 84.0         # [deg]
+  site_altitude: 0.0
+
+atmosphere:
+  model: isa_troposphere
+  ground_temperature: 288.15   # ISA day [K]
+
+flight:
+  mass_model: isp              # propellant from I_t/(I_sp g0): burn-out mass 54.1 kg
+  calibrate: true              # scale the non-nose drag so that the baseline reaches...
+  target_apogee: 9000.0        # ...the LVO apogee [m]
+  envelope_mass_model: lvo     # hot-day envelope for heating: LVO masses...
+  envelope_ground_temperature: 303.15   # ...on a 30 degC day
+
+nose:
+  profiles: [cone, ogive, parabolic, power050, power075, lvhaack, vonkarman]
+  fineness: [3.0, 3.5, 4.0, 4.5, 5.0]
+  baseline_profile: vonkarman  # reference for apogee / static-margin changes
+  baseline_fineness: 4.0       # = the LVS nose length (720 mm)
+  baseline_label: LVS length
+  design_profile: vonkarman    # selected design
+  design_fineness: 4.5
+  design_tip_radius_ratio: 0.05   # 4.5 mm spherical tip
+  shoulder_length: 0.060
+  # custom_profiles:           # example of an extra profile (needs CFD data or compute_missing)
+  #   power060: {family: power, n: 0.6, label: "Power $n=0.6$"}
+
+aerodynamics:
+  database: ../data/euler_results.csv
+  studies: [main, f45]         # main sweep + direct runs at L/D = 4.5
+  grid: medium
+  max_fineness: 5.0            # the L/D = 6 runs are not used
+  machs: [1.1, 1.2, 1.4, 1.6]
+  transonic_onset: 0.8
+  transonic_full: 1.0
+  transonic_match: 1.1
+  compute_missing: false
+
+payload:                       # 3U CubeSat in the nose bay
+  name: 3U
+  length: 0.3405
+  width: 0.100
+  required_radius: 0.077       # 70.7 half-diagonal + 3 clearance + 2 guide + 1.2 shell [m]
+  axial_clearance: 0.010
+
+structure:
+  shell_areal_density: 0.98    # Firehorn as-built nose: 500 g [kg/m^2]
+  tip_mass: 0.060              # machined Al tip insert [kg]
+
+heating:
+  trajectory_from: baseline    # as in the report (heating on the baseline-nose trajectory)
+  shell_material: CFRP
+  shell_thickness: 0.0012
+  shell_stations: ["0.05 m", "0.5 L", "1.0 L"]
+  tip_material: Al6082
+  tip_length: 0.08
+  printed_tip_material: PETCF
+  printed_tip_thickness: 0.004
+  bond_limit: 120.0            # DP490 shear strength drops at 120 degC [degC]
+  bond_label: DP490 bond limit
+  printed_tip_hdt: [70.0, 80.0]
+
+bluntness:
+  study: blunt
+  profile: vonkarman
+  fineness: 4.0
+  report_ratios: [0.05, 0.1]
+  report_mach: 1.4
+
+robustness:
+  fineness: 4.5
+  reference_profile: vonkarman
+  band: 30.0                   # +-30 m ~ +-0.2 kg of dry mass
+
+trade_matrix:
+  fineness: 4.5
+  weights: {performance: 0.40, integration: 0.20, manufacture: 0.20, heritage: 0.10, stability: 0.10}
+  manufacture: {cone: 3, ogive: 5, parabolic: 5, power050: 3, power075: 2, lvhaack: 5, vonkarman: 5}
+  heritage: {cone: 1, ogive: 4, parabolic: 2, power050: 5, power075: 1, lvhaack: 1, vonkarman: 2}
+
+validation:
+  cone_study: cones
+  grid_study: grid
+  grid_profile: vonkarman
+  grid_fineness: 4.0
+
+cad:
+  profile_csv: true
+  stl: true
+  step: true
+  candidates: true
+
+output:
+  formats: [pdf, png]
+  plots: [all]
+  latex: true                  # also write the LaTeX tables / macros of the report
+  plot_options:                # axis ranges of the report figures
+    trajectory: {xlim: [0, 40], ylim: [0, 2.1], mach_bins_max: 1.75}
+    trade: {payload_ylim: [0, 520]}
+    bluntness: {guide: [1.6, 0.009], guide_label_r: 0.014}
+    thermal: {xlim: [0, 30], ylim: [0, 175]}
+
+# ---------------------------------------------------------------------------------------------
+#  CFD: the Euler studies that produced data/euler_results.csv (python -m nosecone cfd ...).
+#  Each entry is solved from the first Mach number down (Mach continuation). Several entries
+#  share a study name because the original sweep was run in passes with different Mach lists.
+# ---------------------------------------------------------------------------------------------
+cfd:
+  cp_dir: ../data/cfd/cp
+  fields_dir: ../data/cfd/fields
+  log: ../data/euler_sweep_log.csv
+  workers: 6
+  studies:   # the first pass (cone, ogive) and the cones ran with a 9000-iteration limit, the rest with 6000
+    - {name: main, profiles: [cone], fineness: [3, 4, 5, 6], machs: [1.6, 1.4, 1.3, 1.2, 1.1], max_iter: 9000}
+    - {name: main, profiles: [ogive], fineness: [3, 4], machs: [1.6, 1.4, 1.3, 1.2, 1.1], max_iter: 9000}
+    - {name: main, profiles: [ogive], fineness: [5], machs: [1.6, 1.4, 1.2]}
+    - {name: main, profiles: [ogive], fineness: [6], machs: [1.6, 1.4]}
+    - {name: main, profiles: [parabolic], fineness: [3], machs: [1.6, 1.4]}
+    - {name: main, profiles: [parabolic], fineness: [4], machs: [1.6, 1.4, 1.2]}
+    - {name: main, profiles: [parabolic], fineness: [5, 6], machs: [1.6]}
+    - {name: main, profiles: [power050, vonkarman], fineness: [3, 4, 5], machs: [1.6, 1.4, 1.2, 1.1]}
+    - {name: main, profiles: [power075], fineness: [4], machs: [1.6, 1.4, 1.2]}
+    - {name: main, profiles: [lvhaack], fineness: [3, 4, 5], machs: [1.6, 1.4, 1.2]}
+    - {name: f45, profiles: [cone, ogive, parabolic, power050, power075, lvhaack, vonkarman], fineness: [4.5],
+       machs: [1.6, 1.4, 1.2], save_fields: true}
+    - {name: f45, profiles: [vonkarman], fineness: [4.5], tip_radius_ratios: [0.05], machs: [1.6, 1.4, 1.2],
+       save_fields: true}
+    - {name: cones, profiles: [cone], fineness: [2.8356, 1.866, 1.3737], machs: [2.0, 1.6, 1.4, 1.2],
+       max_iter: 9000}                                                                     # 10, 15, 20 deg
+    - {name: grid, profiles: [vonkarman], fineness: [4], grid: coarse, machs: [1.4, 1.2]}
+    - {name: grid, profiles: [vonkarman], fineness: [4], grid: fine, machs: [1.4]}
+    - {name: blunt, profiles: [vonkarman], fineness: [4], tip_radius_ratios: [0.05, 0.1, 0.2], machs: [1.6, 1.4, 1.2]}

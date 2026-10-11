@@ -1,0 +1,44 @@
+\section{Installation and Requirements}
+\label{sec:install}
+
+\subsection{Requirements}
+
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+\item \textbf{Python 3.11 or newer} (developed with 3.14) and \texttt{git} to get the repository.
+\item The Python packages of \texttt{requirements.txt}: NumPy, SciPy, pandas, Matplotlib, PyYAML and, optionally,
+gmsh. The first four are pinned to the versions that produced the Weisshorn report, so that the results are
+reproduced bit for bit; newer versions give the same results to about $10^{-12}$.
+\item \textbf{Optional: a LaTeX installation} (MiKTeX on Windows, TeX Live on Linux/macOS). With it, the plots use
+LaTeX fonts and are identical to the report figures; without it, Matplotlib's built-in renderer is used
+automatically and the plots look slightly different but contain the same information.
+\item \textbf{Optional: gmsh} (installed by \texttt{requirements.txt}, $\approx$\SI{70}{MB}) for the STEP export.
+Without it the STEP file is skipped with a message; the CSV and STL files are always written.
+\end{itemize}
+
+\subsection{Installation}
+
+Get the repository (or download it as a zip from GitHub) and install the packages in a virtual environment, so
+that they do not interfere with other Python projects:
+\begin{lstlisting}[language=bash]
+git clone https://github.com/<owner>/weisshorn-nose-cone.git
+cd weisshorn-nose-cone
+python -m venv .venv
+.venv\Scripts\activate              # Windows (PowerShell or cmd)
+source .venv/bin/activate           # macOS / Linux
+pip install -r requirements.txt
+\end{lstlisting}
+The virtual environment must be activated (the prompt shows \texttt{(.venv)}) in every new terminal before using
+the tool. All commands of this guide are run from the repository folder.
+
+\subsection{Checking the installation}
+
+\begin{lstlisting}[language=bash]
+python -m nosecone --version                     # prints: nosecone 1.0.0
+python -m nosecone validate configs/weisshorn.yaml
+python tests/verify_reference.py                 # about 2 minutes; must end with "All outputs match"
+\end{lstlisting}
+
+\note{\textbf{Common problems.}
+\emph{``No module named nosecone''}: you are not in the repository folder, or the virtual environment is not
+active. \emph{LaTeX errors in the plots}: set \key{output.text\_renderer: mathtext} or install the missing
+LaTeX packages (MiKTeX installs them on the fly if allowed). \emph{``STEP skipped''}: \texttt{pip install gmsh}.}

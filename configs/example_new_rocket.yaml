@@ -1,0 +1,75 @@
+# =============================================================================================
+#  Example: the tool applied to another (hypothetical) rocket. Only the values that differ from
+#  the defaults are given. The CFD database is non-dimensional (lengths scaled by the base
+#  radius), so the Weisshorn database is reused as is for any diameter.
+#      python -m nosecone run configs/example_new_rocket.yaml
+# =============================================================================================
+
+project:
+  name: Example-152
+  output_dir: ../output/example_new_rocket
+
+vehicle:
+  diameter: 0.152
+  length: 4.2
+  reference_nose_length: 0.61
+  mass_wet: 48.0
+  mass_dry: 30.0
+  nozzle_exit_diameter: 0.060
+
+engine:
+  thrust: 3000.0
+  burn_time: 8.0
+  total_impulse: 24000.0
+  specific_impulse: 210.0
+
+fins:
+  count: 3
+  root_chord: 0.25
+  tip_chord: 0.10
+  span: 0.13
+  sweep: 0.15
+  thickness: 0.004
+
+flight:
+  calibrate: false          # no reference apogee yet: use the drag build-up as is
+  drag_factor: 1.0
+
+nose:
+  profiles: [ogive, power050, lvhaack, vonkarman]
+  fineness: [3.0, 3.5, 4.0, 4.5, 5.0]
+  baseline_profile: vonkarman
+  baseline_fineness: 4.0
+  design_profile: vonkarman
+  design_fineness: 4.5
+  design_tip_radius_ratio: 0.05
+  shoulder_length: 0.050
+
+aerodynamics:
+  database: ../data/euler_results.csv
+
+payload:
+  enabled: false            # no payload in the nose
+
+structure:
+  shell_areal_density: 0.98
+  tip_mass: 0.045
+
+heating:
+  trajectory_from: design
+
+robustness:
+  fineness: 4.5
+  reference_profile: vonkarman
+
+trade_matrix:
+  enabled: false
+
+cfd:
+  cp_dir: ../data/cfd/cp
+  fields_dir: ../data/cfd/fields
+  log: ../data/euler_sweep_log.csv
+
+output:
+  plots: [all]
+  text_renderer: mathtext   # works without a LaTeX installation

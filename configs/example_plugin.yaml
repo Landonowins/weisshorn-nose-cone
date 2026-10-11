@@ -1,0 +1,36 @@
+# Worked example 3 (user guide, section 7.1): a NEW profile family added by a plugin file, with
+# the missing CFD cases computed on demand (about 30 minutes, mostly the Euler solver).
+#     python -m nosecone run configs/example_plugin.yaml
+
+base: weisshorn.yaml
+
+project:
+  name: Secant-ogive example
+  output_dir: ../output/example_plugin
+  plugins: [../plugins/secant_ogive.py]      # registers the family 'secant_ogive'
+
+nose:
+  custom_profiles:
+    secant15: {family: secant_ogive, rho_factor: 1.5, label: "Secant ogive"}
+  profiles: [ogive, secant15, vonkarman]
+  fineness: [4.0, 4.5]
+
+aerodynamics:
+  compute_missing: true                      # run the Euler solver for secant15
+  missing_machs: [1.6, 1.4, 1.2, 1.1]
+  user_database: ../output/example_plugin/euler_user.csv   # keep data/euler_results.csv untouched
+
+cfd:
+  cp_dir: ../output/example_plugin/cfd_cp    # wall-pressure files of the new cases
+  workers: 2
+
+robustness:
+  fineness: 4.5
+trade_matrix:
+  enabled: false
+cad:
+  candidates: true
+
+output:
+  plots: [profiles, schematics, cdw, trade, robustness]
+  latex: false
