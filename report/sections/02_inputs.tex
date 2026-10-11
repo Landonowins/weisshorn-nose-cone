@@ -11,7 +11,7 @@ Justification and Definition Files (DJF, DDF) of earlier vehicles.
 
 \begin{table}[H]
 \centering
-\caption{Inputs from the ERT wiki, the Weisshorn requirements database and Firehorn heritage.}
+\caption{Inputs from the ERT wiki, the Weisshorn requirements database and the Firehorn documentation.}
 \label{tab:inputs}
 \small
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{4.9cm}>{\raggedright\arraybackslash}p{7.6cm}@{}}
@@ -29,8 +29,8 @@ Launch rail & $84\pm1^\circ$ elevation & 2027\_C\_SE\_FD\_REQ\_05 \\
 Payload & 3U CubeSat in the nosecone bay, nose separates at apogee & 2027\_C\_SE\_ST\_FUA; Structure wiki page \\
 Nose length (sizing) & scaled from Firehorn: $960\times180/240 = \SI{720}{mm}$ & 2027\_C\_SE\_LVS\_DJF (``scaled down in the same way for mass and length'') \\
 RF windows & $360^\circ$, $\geq 2D$ long & 2027\_C\_SE\_AV\_INTERFACE\_ST\_REQ\_07 \\
-Manufacturing heritage & CFRP prepreg on PET-CF male mould, $[0/45/0]_{SO}$, \SI{1.2}{mm}; removable PET-CF tip; bonded Al male coupler; as-built \SI{500}{g} & 2024\_C\_ST\_NOSECONE\_DJF/DDF; 2025\_C\_ST\_NOSECONE\_PURPOSE\_IR \\
-Thermal heritage & \SI{390}{K} for \SI{5}{s} & 2024\_C\_SE\_ST\_NOSECONE\_REQ\_09 (Firehorn) \\
+Firehorn manufacturing process & CFRP prepreg on PET-CF male mould, $[0/45/0]_{SO}$, \SI{1.2}{mm}; removable PET-CF tip; bonded Al male coupler; as-built \SI{500}{g} & 2024\_C\_ST\_NOSECONE\_DJF/DDF; 2025\_C\_ST\_NOSECONE\_PURPOSE\_IR \\
+Firehorn thermal requirement & \SI{390}{K} for \SI{5}{s} & 2024\_C\_SE\_ST\_NOSECONE\_REQ\_09 (Firehorn) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -57,13 +57,13 @@ part and how much extra cylinder (and vehicle length) is needed behind it.
 \item \textbf{RF windows.} Carbon fibre conducts electricity and blocks radio signals. Antennas for
 telemetry and GNSS therefore need a section of radio-transparent shell (glass fibre), and the nose
 is a candidate location for it.
-\item \textbf{Manufacturing heritage.} The Firehorn nose was laid up in prepreg (carbon fabric
+\item \textbf{Firehorn manufacturing process.} The Firehorn nose was laid up in prepreg (carbon fabric
 already impregnated with epoxy, cured in an oven) on the outside of a 3D-printed male mould.
 The laminate $[0/45/0]_{SO}$ is symmetric with an odd number of plies, i.e.\ five plies at
 $0^\circ$, $45^\circ$, $0^\circ$, $45^\circ$ and $0^\circ$. The $0^\circ$ plies, aligned with the
 axis, carry axial load and bending, and the $45^\circ$ plies carry shear and torsion. The tip was a separate printed part, and an aluminium coupler is bonded
 inside the shoulder to connect the nose to the next bay.
-\item \textbf{Thermal heritage.} The Firehorn requirement asks the nose to withstand an outer
+\item \textbf{Firehorn thermal requirement.} The Firehorn requirement asks the nose to withstand an outer
 surface temperature of \SI{390}{K} for \SI{5}{s}. Section~\ref{sec:heating} checks whether it
 covers the faster, lighter Weisshorn.
 \end{itemize}
@@ -116,7 +116,7 @@ covered ``Marseille'', ``nose cone'', ``nosecone'', ``ogive'', ``SSR'' and ``Far
 documented work is the CFD of the \SI{54}{mm} supersonic semester rocket (SSR weekly meetings
 01--12, spring 2026; report on Overleaf, not shared in the Drive). As CFD advisor he set the
 semester goal ``WS (Cd, Nosecone)'' (2027\_C\_FD\_TM\_3, 01.10.2026), which is this study. The
-heritage used instead is the 2021 supersonic nosecone semester project (materials and tip,
+prior work used instead is the 2021 supersonic nosecone semester project (materials and tip,
 ERT Drive, \emph{Report} folder), the Wildhorn
 optimisation note (2022\_FD\_TN\_C01) and the Firehorn nosecone DJF/DDF.
 \item \textbf{No Weisshorn nosecone requirement} (length, mass, thermal) exists yet. The four

@@ -115,9 +115,8 @@ robustness:
 
 trade_matrix:
   fineness: 4.5
-  weights: {performance: 0.40, integration: 0.20, manufacture: 0.20, heritage: 0.10, stability: 0.10}
+  weights: {performance: 4, integration: 2, manufacture: 2, stability: 1}   # relative; normalised to 0.44/0.22/0.22/0.11
   manufacture: {cone: 3, ogive: 5, parabolic: 5, power050: 3, power075: 2, lvhaack: 5, vonkarman: 5}
-  heritage: {cone: 1, ogive: 4, parabolic: 2, power050: 5, power075: 1, lvhaack: 1, vonkarman: 2}
 
 validation:
   cone_study: cones

@@ -8,14 +8,14 @@ import numpy as np
 import pandas as pd
 
 from . import aerodynamics as aero
-from .design import Study, mach_key
+from .design import Study, mach_key, matrix_weights
 
 # names used in the LaTeX tables of the design report (fall back to the plot label)
 MATRIX_NAMES = {"cone": "Cone", "ogive": "Ogive", "parabolic": "Parab.", "power050": r"Power $\tfrac12$",
                 "power075": r"Power $\tfrac34$", "lvhaack": "LV-Haack", "vonkarman": r"Von K\'arm\'an"}
 CATALOGUE_NAMES = dict(MATRIX_NAMES, parabolic="Parabolic")
 CRITERIA = {"performance": "Performance", "integration": "Integration, {payload} fit", "manufacture": "Manufacture",
-            "heritage": "Heritage", "stability": "Stability"}
+            "stability": "Stability"}
 
 
 # --------------------------------------------------------------------------- plain outputs
@@ -143,9 +143,10 @@ def tab_matrix(st: Study, m: pd.DataFrame) -> str:
     cfg = st.cfg
     order = list(m.columns)
     rows = []
-    for c in cfg.trade_matrix.weights:
+    weights = matrix_weights(cfg.trade_matrix.weights)
+    for c in weights:
         name = CRITERIA[c].format(payload=cfg.payload.name)
-        rows.append(f"{name} ({cfg.trade_matrix.weights[c]:.2f}) & " + " & ".join(f"{x:.1f}" for x in m.loc[c].values) + r" \\")
+        rows.append(f"{name} ({weights[c]:.2f}) & " + " & ".join(f"{x:.1f}" for x in m.loc[c].values) + r" \\")
     tot = m.loc["total"].values
     best = int(np.nanargmax(tot))
     cells = [rf"\textbf{{{x:.2f}}}" if i == best else f"{x:.2f}" for i, x in enumerate(tot)]
@@ -154,7 +155,7 @@ def tab_matrix(st: Study, m: pd.DataFrame) -> str:
     head = [r"\begin{table}[H]", r"\centering",
             rf"\caption{{Trade-off matrix at $L/D = {cfg.trade_matrix.fineness:g}$ (1 = worst, 5 = best). Performance: apogee at "
             r"equal length (Table~\ref{tab:trade}). " + rf"Integration: {cfg.payload.name} length inside the curved part. "
-            r"Manufacture: tangent shoulder, mould and tip. Heritage: flown or built at ERT. "
+            r"Manufacture: tangent shoulder, mould and tip. "
             r"Stability: change in static margin.}",
             r"\label{tab:matrix}", r"\small", r"\begin{adjustbox}{max width=\textwidth}",
             r"\begin{tabular}{@{}l" + "c" * len(order) + r"@{}}", r"\toprule",

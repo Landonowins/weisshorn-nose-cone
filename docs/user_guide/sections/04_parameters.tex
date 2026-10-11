@@ -95,11 +95,13 @@ robustness:
     - {name: "LVO masses, 30 C day", mass_model: lvo, ground_temperature: 303.15}
 \end{lstlisting}
 
-\paragraph{\key{trade\_matrix}.} \key{weights} gives the weight of each criterion (\texttt{performance}: apogee,
-\texttt{integration}: payload length inside the nose, \texttt{manufacture}, \texttt{heritage}, \texttt{stability}:
-static-margin change); they should add up to one. Performance, integration and stability are scored automatically
-from 1 (worst) to 5 (best) between the worst and the best profile; \key{manufacture} and \key{heritage} are your
-judgement, one score per profile name.
+\paragraph{\key{trade\_matrix}.} \key{weights} gives the relative weight of each criterion (\texttt{performance}:
+apogee, \texttt{integration}: payload length inside the nose, \texttt{manufacture}, \texttt{stability}:
+static-margin change). They are normalised to add up to one, so \texttt{\{performance: 4, integration: 2,
+manufacture: 2, stability: 1\}} gives 0.44, 0.22, 0.22 and 0.11; a criterion left out of \key{weights} is left out
+of the matrix. Performance, integration and stability are scored automatically from 1 (worst) to 5 (best) between
+the worst and the best profile; \key{manufacture} is your judgement, one score per profile name. Only properties
+of the hardware are scored: whether a profile has flown before is not a criterion.
 
 \paragraph{\key{cfd.grids} and \key{cfd.studies}.} A grid level is \texttt{[cells along the nose, cells along the
 cylinder, cells normal to the wall, first-cell height / R]}. A study is a list of CFD runs; each entry is solved for
