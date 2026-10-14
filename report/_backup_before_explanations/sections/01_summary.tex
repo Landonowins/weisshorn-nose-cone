@@ -1,0 +1,43 @@
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+
+\noindent\fbox{\parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{%
+\textbf{Proposed Weisshorn nose cone}\\[3pt]
+\begin{tabular}{@{}p{2.6cm}>{\raggedright\arraybackslash}p{12.8cm}@{}}
+Profile & Von K\'arm\'an (Haack $C=0$), tangent to the body \\
+Length & $L = \FINL$ ($L/D = 4.5$) to the theoretical apex; \FINLPHYS{} physical \\
+Diameter & \SI{180}{mm} \\
+Tip & spherical, $r_n = \SI{4.5}{mm}$ ($r_n/R = 0.05$), machined Al 6082-T6 insert \\
+Shell & CFRP $[0/45/0]_{SO}$, \SI{1.2}{mm} (GFRP if the nose is the RF window), $\approx$\FINMASS{} with tip \\
+Fallback & same profile at $L/D=4$ (\SI{720}{mm}) if the \SI{62}{mm} cannot be found in the \SI{5.4}{m} budget \\
+\end{tabular}}}
+
+\vspace{6pt}
+\noindent Why:
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+\item \textbf{Drag.} Seven profiles (cone, tangent ogive, parabola, power $\tfrac12$ and
+$\tfrac34$, LV-Haack, Von K\'arm\'an; Section~\ref{sec:catalogue}) were compared with an
+axisymmetric Euler solver (validated to $<0.5\,\%$ against Taylor--Maccoll, grid-converged to
+0.5\,\%) coupled to a trajectory model calibrated on the LVO. At $L/D = 4.5$, Von K\'arm\'an has
+the lowest wave drag at every computed Mach number. It flies \SIrange{18}{22}{m} higher than the
+power noses, \SIrange{69}{79}{m} higher than ogive, parabola and LV-Haack, and \SI{132}{m}
+higher than the cone. It stays first in all seven robustness scenarios. At $-\SI{143}{m/kg}$, the
+margin over the ogive is worth about \SI{0.55}{kg} of dry mass.
+\item \textbf{Length.} $L/D = 4.5$ adds \TRADELEN{} over the LVS length for \SI{62}{mm} of nose
+bay, with diminishing returns beyond that.
+\item \textbf{Heating.} $T_0$ peaks at \SI{119}{\celsius} (nominal) and \SI{156}{\celsius}
+(hot-day envelope, $M=1.56$). A printed PET-CF tip would exceed its heat-deflection temperature;
+the Al tip stays below \TIPAL. The shell inner face reaches \SHELLENV{} in the envelope, close
+to the DP490 coupler bond limit, so the thermal requirement must be raised from Firehorn's
+\SI{390}{K}/\SI{5}{s}.
+\item \textbf{Integration and stability.} The tangent shoulder suits the bonded coupler; \FINTHREEU{}
+of the 3U fits inside the curved part. The static margin changes by \FINDSM{} cal, which is
+negligible.
+\item \textbf{Deliverables.} Profile coordinates, watertight STL solids of all seven designs and
+of the final nose, the full Euler data set, ten numbered recommendations with owners
+(Section~\ref{sec:recommendations}) and the alternatives to use if the priorities change.
+\end{itemize}
+
+\noindent\textbf{Not found in the ERT documentation} (details in Section~\ref{sec:flags}): Alex
+Marseille's nose cone report, any Weisshorn nosecone requirement, the Weisshorn fin geometry and
+mass breakdown, and any supersonic flight data.

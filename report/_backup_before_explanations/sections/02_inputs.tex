@@ -1,0 +1,79 @@
+\section{Inputs, Requirements and Assumptions}
+\label{sec:inputs}
+
+\subsection{What is fixed}
+
+Table~\ref{tab:inputs} lists every input taken from the ERT documentation. The vehicle is
+\textbf{Weisshorn}, the 2027 competition launch vehicle flying in the EuRoC L9 category.
+
+\begin{table}[H]
+\centering
+\caption{Inputs from the ERT wiki, the Weisshorn requirements database and Firehorn heritage.}
+\label{tab:inputs}
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{4.9cm}>{\raggedright\arraybackslash}p{7.6cm}@{}}
+\toprule
+Quantity & Value & Source \\
+\midrule
+External diameter & \SI{180}{mm} & task; 2027\_C\_SE\_REQ\_03 \\
+Mission & EuRoC 2027, L9, \SI{9}{km} apogee & Weisshorn wiki page; 2027\_C\_SE\_LVO \\
+LV length & $< \SI{5.4}{m}$ (LVO: $\sim\SI{5.4}{m}$) & 2027\_C\_SE\_REQ\_04; 2027\_C\_SE\_LVO \\
+Dry / wet mass & $\sim\SI{45}{kg}$ / $\sim\SI{75}{kg}$ ($<\SI{50}{kg}$ dry) & 2027\_C\_SE\_LVO; 2027\_C\_SE\_REQ\_06 \\
+Engine & EthaLOx, \SI{4.5}{kN}, \SI{9.1}{s}, $I_t = \SI{40960}{N.s}$, $I_{sp}=\SI{200}{s}$ & 2027\_C\_SE\_LVO; 2027\_C\_SE\_LVS\_DJF \\
+Maximum speed & Mach 1.4 & 2027\_C\_SE\_LVO \\
+Stability & 1.5--6 cal (EuRoC); FD target 2--4 cal & 2027\_C\_SE\_REQ\_09; 2027\_C\_SE\_FD\_REQ\_07 \\
+Launch rail & $84\pm1^\circ$ elevation & 2027\_C\_SE\_FD\_REQ\_05 \\
+Payload & 3U CubeSat in the nosecone bay, nose separates at apogee & 2027\_C\_SE\_ST\_FUA; Structure wiki page \\
+Nose length (sizing) & scaled from Firehorn: $960\times180/240 = \SI{720}{mm}$ & 2027\_C\_SE\_LVS\_DJF (``scaled down in the same way for mass and length'') \\
+RF windows & $360^\circ$, $\geq 2D$ long & 2027\_C\_SE\_AV\_INTERFACE\_ST\_REQ\_07 \\
+Manufacturing heritage & CFRP prepreg on PET-CF male mould, $[0/45/0]_{SO}$, \SI{1.2}{mm}; removable PET-CF tip; bonded Al male coupler; as-built \SI{500}{g} & 2024\_C\_ST\_NOSECONE\_DJF/DDF; 2025\_C\_ST\_NOSECONE\_PURPOSE\_IR \\
+Thermal heritage & \SI{390}{K} for \SI{5}{s} & 2024\_C\_SE\_ST\_NOSECONE\_REQ\_09 (Firehorn) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{What is assumed}
+
+Everything below is an assumption of this study. Each one is chosen so that the comparison
+between nose shapes is fair; none of them changes the ranking.
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+\item \textbf{Trajectory.} Point mass, rail \SI{12}{m} at $84^\circ$, ISA, no wind, constant
+\SI{4.5}{kN} for \SI{9.1}{s}. Propellant from $I_t/(I_{sp}g_0) = \SI{20.9}{kg}$, i.e.\ burn-out
+mass \SI{54.1}{kg}. The drag of everything except the nose is scaled by a single factor
+$k$ so that the baseline nose reaches the LVO apogee of \SI{9.0}{km}
+(Section~\ref{sec:flight}). This gives $M_{\max}=1.47$, consistent with the LVO's Mach~1.4.
+\item \textbf{Thermal envelope.} The LVO masses ($75 \rightarrow \SI{45}{kg}$) on a
+\SI{30}{\celsius} day give $M_{\max} \approx 1.56$. Heating is checked on this case.
+\item \textbf{Fins} (not yet defined for Weisshorn): four trapezoidal fins, root \SI{300}{mm},
+tip \SI{120}{mm}, span \SI{160}{mm}, sweep \SI{180}{mm}, \SI{5}{mm} hexagonal section. They only
+enter the common drag and the CP shift; they do not change the ranking of the noses.
+\item \textbf{Payload envelope.} A 3U unit ($100\times100\times\SI{340.5}{mm}$) needs an outer
+radius $r \geq \SI{77}{mm}$: \SI{70.7}{mm} half-diagonal, \SI{3}{mm} clearance, \SI{2}{mm}
+guide, \SI{1.2}{mm} shell.
+\item \textbf{Shell.} \SI{1.2}{mm} CFRP at the Firehorn as-built areal density
+(\SI{0.98}{kg/m^2}), plus a \SI{60}{g} machined aluminium tip.
+\item \textbf{Transonic nose wave drag} ($0.8 < M < 1.1$): smooth rise from zero at $M = 0.8$
+to the computed $M = 1.1$ value at $M = 1.0$ (Section~\ref{sec:transonic}).
+\end{itemize}
+
+\subsection{What could not be found}
+\label{sec:flags}
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+\item \textbf{Alex Marseille's nose cone report} is not on the ERT Drive or the wiki. The searches
+covered ``Marseille'', ``nose cone'', ``nosecone'', ``ogive'', ``SSR'' and ``Farewell''. His
+documented work is the CFD of the \SI{54}{mm} supersonic semester rocket (SSR weekly meetings
+01--12, spring 2026; report on Overleaf, not shared in the Drive). As CFD advisor he set the
+semester goal ``WS (Cd, Nosecone)'' (2027\_C\_FD\_TM\_3, 01.10.2026), which is this study. The
+heritage used instead is the 2021 supersonic nosecone semester project (materials and tip,
+ERT Drive, \emph{Report} folder), the Wildhorn
+optimisation note (2022\_FD\_TN\_C01) and the Firehorn nosecone DJF/DDF.
+\item \textbf{No Weisshorn nosecone requirement} (length, mass, thermal) exists yet. The four
+Weisshorn nosecone pages (DJF, DDF, FEAR, tooling DJF) are empty templates. The nosecone
+requirements of the 2027 database cover only the Aletsch test rocket.
+\item \textbf{Weisshorn fins, CG and mass breakdown} are not defined (FD page is a template).
+The static margin is therefore given as a \emph{change} relative to the baseline nose.
+\item \textbf{No supersonic flight data} exists at ERT. Firehorn~1 reached \SI{223}{m}, so there
+is no measured nose heating or drag to calibrate against.
+\end{itemize}
