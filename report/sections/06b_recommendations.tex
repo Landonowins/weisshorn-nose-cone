@@ -1,30 +1,22 @@
 \section{Recommendations}
 \label{sec:recommendations}
 
-\subsection{Recommended design}
-
-\noindent\fbox{\parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{%
-\textbf{Von K\'arm\'an nose cone, $L = \SI{810}{mm}$ ($L/D = 4.5$), $D = \SI{180}{mm}$, tangent
-\SI{60}{mm} shoulder, \SI{4.5}{mm} spherical Al 6082-T6 tip insert, CFRP $[0/45/0]_{SO}$ shell
-(\SI{1.2}{mm}).}\\[3pt]
-Predicted: $C_{D,\rm w} = \FINCDC$ at $M = 1.4$ (lowest of seven profiles at every computed Mach
-number); \FINDAPO{} of apogee against the LVS-length baseline; \FINMASS{} for shell and tip;
-\FINTHREEU{} of the 3U inside the curved part; tip below \TIPAL{} and shell inner face below
-\SHELLENV{} on a \SI{30}{\celsius} day.}}
-
 \subsection{Numbered recommendations}
 
-\begin{table}[H]
-\centering
-\caption{Recommendations, owners and timing.}
-\label{tab:reco}
-\small
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.8cm}>{\raggedright\arraybackslash}p{10.6cm}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}p{1.6cm}@{}}
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.8cm}>{\raggedright\arraybackslash}p{11.1cm}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}p{1.6cm}@{}}
+\caption{Recommendations, owners (ERT teams, see Nomenclature) and timing.}
+\label{tab:reco} \\
 \toprule
 \# & Recommendation & Owner & When \\
 \midrule
-R1 & Adopt the Von K\'arm\'an profile (Haack $C=0$). Use \texttt{nose\_profile\_final.csv} or the STL
-in \texttt{results/cad/} as the master geometry. & FD $\rightarrow$ ST & PDR \\
+\endfirsthead
+\toprule
+\# & Recommendation & Owner & When \\
+\midrule
+\endhead
+R1 & Adopt the Von K\'arm\'an profile (Haack $C=0$). Use \texttt{nose\_profile\_final.csv} or the
+STEP/STL solids (Section~\ref{sec:definition}) as the master geometry. & FD $\rightarrow$ ST & PDR \\
 R2 & Book a \SI{907}{mm} nose bay (\SI{810}{mm} curved + \SI{97}{mm} cylinder for the 3U, of which
 \SI{60}{mm} is the coupler shoulder) in the \SI{5.4}{m} LV budget. If it does not fit, keep the same
 profile at $L = \SI{720}{mm}$ ($-\SI{60}{m}$, bay \SI{845}{mm}). & SE & PDR \\
@@ -38,8 +30,8 @@ R5 & Raise the thermal requirement to \SI{430}{K} for \SI{10}{s} and qualify the
 DP490 joint at the shoulder sees about \SI{95}{\celsius} in the envelope case. Consider a higher-$T_g$ adhesive if
 the test margin is small. & SE, ST & CDR \\
 R6 & Verify with Fluent (RANS, k-$\omega$ SST) at $M = 0.95$, 1.2 and 1.47 for the selected nose and
-the power-$\tfrac12$ alternative, plus one $5^\circ$ incidence case for $C_{N\alpha}$ and CP. This
-replaces the transonic model of this report. & FD-CFD & before CDR \\
+the power-$\tfrac12$ alternative, plus one $5^\circ$ incidence case for $C_{N\alpha}$ and CP, to
+replace the transonic model of this report. & FD-CFD & before CDR \\
 R7 & Put the final geometry and $C_{D,\rm w}(M)$ into the RocketPy model. Re-check apogee, rail-exit
 speed and the 2--4 cal static margin once the fins are designed. The nose contributes
 $C_{N\alpha} = 2$ at \FINXCP{} from the tip. & FD-Sim & PDR \\
@@ -49,22 +41,15 @@ R9 & Create the missing Weisshorn nosecone requirements: geometry, bay length, m
 ($\leq\SI{500}{g}$ for the nose structure, Table~\ref{tab:mass}), thermal and tip
 (Section~\ref{sec:next}). & SE & PDR \\
 \bottomrule
-\end{tabular}
-\end{table}
-
-Owners are the ERT teams (Nomenclature); PDR and CDR are the preliminary and critical design
-reviews. R6 asks for a viscous check with RANS and the $k$-$\omega$ SST turbulence model, a
-two-equation model widely used for external aerodynamics with adverse pressure gradients and
-shock--boundary-layer interaction. It covers the transonic range, where the Euler model of this
-report does not apply (Section~\ref{sec:transonic}), and gives the normal force at incidence,
-which Barrowman's method only estimates. R7 transfers the results to RocketPy, the team's
-six-degree-of-freedom trajectory simulator, which also models the rotation of the vehicle.
+\end{longtable}
+}
 
 \subsection{When to choose another design}
 
 The recommendation assumes the current Weisshorn priorities: apogee margin, a 3U payload in the
-nose bay, and a length cap. If those priorities change, Table~\ref{tab:alternatives} gives the
-design to use instead.
+nose bay, and a length cap. If they change, Table~\ref{tab:alternatives} gives the design to use.
+Do not use a cone or a tangent ogive on a supersonic Weisshorn, nor a printed thermoplastic tip, and
+judge a longer nose by the nose-bay length it needs, which is what the \SI{5.4}{m} cap constrains.
 
 \begin{table}[H]
 \centering
@@ -83,24 +68,3 @@ a subsonic test vehicle (e.g.\ Aletsch) & Tangent ogive or Von K\'arm\'an & shap
 \bottomrule
 \end{tabular}
 \end{table}
-
-Each row follows from the results above. A shorter vehicle keeps the same profile and gives up
-the length gain of Section~\ref{sec:selection}. If the payload volume
-becomes the driver, the LV-Haack nose, the minimum-drag shape for a given volume, houses the most
-payload for the smallest drag penalty. On short noses the power-$\tfrac12$ shape has the lowest
-wave drag (Section~\ref{sec:trade}). At higher Mach numbers the wave drag of the power-$\tfrac34$
-nose falls fastest (Section~\ref{sec:catalogue}), so the ranking has to be recomputed. Below
-$M = 0.8$ there is no wave drag, and the choice is made on volume and manufacturing alone.
-
-\subsection{What not to do}
-
-\begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{Do not use a cone or a tangent ogive} for a supersonic Weisshorn. They lose
-\SIrange{79}{132}{m} at the same length, and both this study and the literature rate them worst in
-the transonic and low supersonic range.
-\item \textbf{Do not use a printed thermoplastic tip.} Its surface follows the stagnation temperature,
-which reaches \SI{156}{\celsius} on a hot day.
-\item \textbf{Do not size the nose by fineness alone.} A longer nose pays only if the extra length
-also houses payload. Measure it as nose-bay length, which is what the \SI{5.4}{m} cap actually
-constrains.
-\end{itemize}
