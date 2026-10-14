@@ -1,126 +1,87 @@
 \section{Design Options}
 \label{sec:options}
 
-The nose shape matters for Weisshorn because of the way air flows around a body above Mach 1.
-This section first summarises that physics (Section~\ref{sec:physics}), then defines the candidate
-profiles (Section~\ref{sec:profiles}) and the criteria on which they are compared
-(Section~\ref{sec:criteria}).
-
 \subsection{Supersonic flow over a nose and wave drag}
 \label{sec:physics}
 
-\paragraph{Subsonic and supersonic flow.} In subsonic flow, the pressure disturbances created by the
-body travel upstream faster than the body moves. The oncoming air therefore starts to move aside
-well ahead of the nose and the streamlines adjust smoothly. As long as the flow stays attached,
-the overpressure on the front of a streamlined nose is largely recovered on its aft part, so its
-drag is mostly skin friction. Above $M = 1$, disturbances can no longer travel upstream: a small
-disturbance created at a point only influences the region inside a downstream cone of half-angle
+Above $M = 1$, pressure disturbances can no longer travel upstream: a disturbance created at a point
+only influences the region inside a downstream cone of half-angle
 \begin{equation}
 \mu = \arcsin\frac{1}{M},
 \label{eq:mach}
 \end{equation}
 the \emph{Mach angle} ($\mu = 45.6^\circ$ at $M = 1.4$). The air ahead of the nose receives no
-advance signal and is deflected abruptly through a \emph{shock wave}, a thin layer across which
-pressure, density and temperature jump and the velocity drops. Entropy increases across a shock:
-part of the kinetic energy of the flow is dissipated irreversibly. Where the surface curves back
-towards the axial direction, the flow turns through a continuous \emph{expansion} (a
-Prandtl--Meyer expansion), in which the pressure decreases, possibly below the ambient value.
+advance signal and is deflected abruptly through a \emph{shock wave}, across which pressure,
+density and temperature jump. Where the surface turns back towards the axial direction, the flow
+\emph{expands} and the pressure falls, possibly below ambient. The pressure on a supersonic nose is
+therefore above ambient near the tip and decreases along it. Since the nose faces forward, this
+gives a net axial force, the \emph{wave drag}, which exists even in an inviscid fluid. It is
+expressed as $C_{D,\rm w} = D_{\rm w}/(q_\infty A_b)$ with the base area $A_b = \pi R^2$
+(Equation~\eqref{eq:cdw}). Wave drag appears once the local flow becomes sonic somewhere on the
+nose, around $M \approx 0.8$ for slender bodies, peaks near $M = 1$ and decreases slowly in the
+supersonic range. It is the only drag component controlled by the nose shape.
 
-\paragraph{Wave drag.} The pressure on a supersonic nose is therefore above ambient near the tip
-and decreases along the nose. The nose surface faces forward everywhere, so this overpressure
-gives a net axial force, the \emph{wave drag}. It exists even in an inviscid fluid. Physically it
-is the energy carried away by the waves and dissipated in the shock. It is expressed as the
-coefficient $C_{D,\rm w} = D_{\rm w}/(q_\infty A_b)$, where $D_{\rm w}$ is the wave-drag force,
-$q_\infty = \tfrac12\rho_\infty V_\infty^2$ the free-stream dynamic pressure and $A_b = \pi R^2$ the
-base area (Equation~\eqref{eq:cdw}). Wave drag appears once the local flow becomes sonic somewhere
-on the nose, around $M \approx 0.8$ for slender bodies. It rises steeply to a peak near $M = 1$
-and decreases slowly in the supersonic range. Of the drag components of a rocket, it is the only
-one controlled by the nose shape: skin friction depends on the wetted area, and base drag on the
-aft end (Section~\ref{sec:flight}).
+A sharp, slender tip deflects the flow by a small angle and carries a weak oblique shock attached
+to the tip. A blunt tip, or a half-angle too large for the Mach number, makes the shock detach into
+a curved \emph{bow shock} whose central, normal part brings the flow almost to the stagnation
+pressure. This is why supersonic noses are pointed and why any rounding of the tip has to stay
+small (Section~\ref{sec:bluntness}).
 
-\paragraph{Attached and detached shocks.} A sharp, slender tip deflects the flow by a small angle,
-so the shock is weak, oblique and attached to the tip. If the tip is blunt, or its half-angle too
-large for the Mach number, no attached shock exists. The shock then detaches and stands ahead of
-the body as a curved \emph{bow shock}. Its central part is a normal shock, behind which the flow is
-subsonic and the pressure rises almost to the stagnation pressure. This is why supersonic noses
-are pointed, and why any rounding of the tip has to stay small (Section~\ref{sec:bluntness}).
-
-\paragraph{Slender-body theory.} For a slender nose ($L/D \gg 1$) the disturbances are small and the
-compressible potential-flow equation can be linearised. In this theory the wave drag depends
-only on the axial distribution of cross-sectional area $S(x) = \pi y(x)^2$, through its second
-derivative $S''(x)$, i.e.\ through how abruptly area is added along the nose. Two results follow.
-First, within a profile family all radii scale with $R$ and all lengths with $L$, so
-$S'' \propto R^2/L^2$ and
+For a slender nose, linearised (slender-body) theory makes the wave drag depend only on the axial
+distribution of cross-sectional area $S(x) = \pi y(x)^2$, through $S''(x)$. Within a profile
+family $S'' \propto R^2/L^2$, so
 \begin{equation}
 C_{D,\rm w} \propto \left(\frac{R}{L}\right)^2 \propto \frac{1}{(L/D)^2} :
 \label{eq:fineness}
 \end{equation}
-doubling the length of a nose divides its wave drag by four. Second, the area distribution of
-minimum wave drag can be found analytically. For a given length and base area it is the
-Von K\'arm\'an profile, with $C_{D,\rm w} = 1/(L/D)^2$. For a given length and volume it is the
-LV-Haack profile (Section~\ref{sec:profiles}). The theory assumes small disturbances and replaces
-shocks by Mach waves, so it gives trends rather than exact values, and it is least accurate near
-$M = 1$. The Euler computations of Section~\ref{sec:method} provide the values used in this study.
+doubling the length divides the wave drag by four. The area distribution of minimum wave drag is
+also known: for a given length and base area it is the Von K\'arm\'an profile, with
+$C_{D,\rm w} = 1/(L/D)^2$; for a given length and volume it is the LV-Haack profile. The theory
+gives trends rather than exact values and is least accurate near $M = 1$; the Euler computations
+of Section~\ref{sec:method} provide the values used in this study.
 
 \subsection{Candidate profiles}
 \label{sec:profiles}
 
-The nose is defined by three choices: the \textbf{profile family}, the \textbf{fineness}
-$L/D$ (curved length over base diameter) and the \textbf{tip bluntness} $r_n/R$. Seven
-profiles are compared (Table~\ref{tab:profiles}, Figure~\ref{fig:profiles}); Figure~\ref{fig:schematics}
-sketches each of them and how it is constructed. With $\xi = x/L$ (the
-axial coordinate from the apex, normalised by the length) and $\eta = y/R$ (the local radius,
-normalised by the base radius), they are:
-\begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{Conical}, $\eta = \xi$: a straight generator of half-angle $\arctan(R/L)$
-($7.1^\circ$ at $L/D = 4$). It is the simplest shape, but it meets the body tube with a kink equal
-to its half-angle.
-\item \textbf{Tangent ogive}: the generator is a circular arc of radius $\rho = (R^2+L^2)/(2R)$ whose
-centre lies in the base plane, so that the arc is tangent to the body tube at the shoulder. It is
-the traditional subsonic rocket nose and the shape of earlier ERT vehicles.
-\item \textbf{Parabolic series}, $\eta = (2\xi - K'\xi^2)/(2-K')$; the case $K' = 1$ used here is the
-parabola that is tangent to the body at the shoulder.
-\item \textbf{Power series}, $\eta = \xi^n$ with $0 < n < 1$ ($n = 1$ is the cone). The smaller $n$,
-the fuller the front of the nose. For $n<1$ the slope $\mathrm d\eta/\mathrm d\xi = n\xi^{n-1}$ is
-infinite at the apex. For $n = \tfrac12$ the profile is a parabola about the axis, $y^2 = R^2x/L$,
-whose apex has a radius of curvature $R^2/(2L)$ (\SI{5.6}{mm} at $L/D = 4$): this nose is blunt by
-construction. At the shoulder the slope is $n R/L \neq 0$, so the power noses meet the body with
-a kink $\theta_{\rm sh} = \arctan(nR/L)$.
-\item \textbf{Haack series}: the area distributions of minimum wave drag from slender-body theory.
-With the variable $\theta = \arccos(1-2\xi)$, which runs from 0 at the apex to $\pi$ at the base,
-\begin{equation*}
-\eta = \frac{1}{\sqrt\pi}\sqrt{\theta - \tfrac12\sin 2\theta + C\sin^3\theta} .
-\end{equation*}
-The parameter $C$ selects
-the constraint: $C = 0$ gives the minimum wave drag for a given length and base area
-(\textbf{Von K\'arm\'an}), $C = \tfrac13$ the minimum for a given length and volume
-(\textbf{LV-Haack}). Both are tangent to the body at the shoulder. Near the apex the
-Von K\'arm\'an profile grows as $\eta \propto \xi^{3/4}$, with a vertical tangent but a zero tip
-radius.
+The nose is defined by three choices: the \textbf{profile family}, the \textbf{fineness} $L/D$ and
+the \textbf{tip bluntness} $r_n/R$. Seven profiles are compared (Table~\ref{tab:profiles},
+Figure~\ref{fig:schematics}). With $\xi = x/L$ and $\eta = y/R$:
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+\item \textbf{Conical}: straight generator of half-angle $\arctan(R/L)$ ($7.1^\circ$ at $L/D = 4$),
+meeting the body with a kink of the same angle.
+\item \textbf{Tangent ogive}: circular arc of radius $\rho = (R^2+L^2)/(2R)$, tangent to the body at
+the shoulder; the traditional subsonic rocket nose.
+\item \textbf{Parabolic series}: the case $K' = 1$ is the parabola tangent to the body at the shoulder.
+\item \textbf{Power series} $\eta = \xi^n$: the smaller $n$, the fuller the front. For $n = \tfrac12$
+the apex has a radius of curvature $R^2/(2L)$ (\SI{5.6}{mm} at $L/D = 4$), so this nose is blunt by
+construction. Power noses meet the body with a kink $\theta_{\rm sh} = \arctan(nR/L)$.
+\item \textbf{Haack series}: the minimum-wave-drag area distributions of slender-body theory, with
+$C = 0$ (\textbf{Von K\'arm\'an}, given length and base area) and $C = \tfrac13$
+(\textbf{LV-Haack}, given length and volume). Both are tangent at the shoulder; near the apex the
+Von K\'arm\'an profile grows as $\xi^{3/4}$ (vertical tangent, zero tip radius).
 \end{itemize}
 
-\begin{figure}[H]
+\begin{figure}[tbp]
 \centering
 \includegraphics[width=\textwidth]{fig_schematics}
 \caption{Schematics of the candidate profiles, drawn at $L/D = 2$ (half the design fineness) so
-that their differences are visible; Figure~\ref{fig:profiles} compares them at real proportions.
+that their differences are visible; Figure~\ref{fig:gallery} shows them at real proportions.
 (a) Notation. (b)--(h) Construction of each profile: the upper label describes the shoulder
 (tangent to the body, or a kink of angle $\theta_{\rm sh}$), the lower label the generator and the
 tip, and the inset shows the boxed tip region magnified four times.}
 \label{fig:schematics}
 \end{figure}
 
-Figure~\ref{fig:schematics} shows the three features that distinguish the profiles. The first is
-how the nose meets the body tube: tangent for the ogive, parabola and Haack noses, with a kink for
-the cone and the power noses. The second is the shape of the tip: a finite-angle point (cone,
-ogive, parabola), a pointed tip with a vertical tangent (power $\tfrac34$, Haack noses) or a
-rounded, blunt tip (power $\tfrac12$). The third is how the area is distributed along the length,
-from the thin cone to the full LV-Haack nose.
+The profiles differ in three features (Figure~\ref{fig:schematics}): how the nose meets the body
+(tangent, or with a kink), the shape of the tip (finite-angle point, pointed with a vertical
+tangent, or blunt) and how the area is distributed along the length, from the thin cone to the
+full LV-Haack nose. The elliptical nose (strong bow shock above Mach 1) and the secant ogive (no
+advantage over the tangent ogive and LV-Haack, kinked shoulder) were discarded before computing.
 
 \begin{table}[H]
 \centering
-\caption{Candidate profiles. $x_{cp}$: Barrowman nose centre of pressure; $\theta_{\rm sh}$: angle
-to the body at the shoulder (0 = tangent).}
+\caption{Candidate profiles (ogive in dimensional form, $\rho$: arc radius). $x_{cp}$: Barrowman
+nose centre of pressure; $\theta_{\rm sh}$: angle to the body at the shoulder (0 = tangent).}
 \label{tab:profiles}
 \small
 \begin{adjustbox}{max width=\textwidth}
@@ -140,62 +101,21 @@ Von K\'arm\'an ($C=0$) & as LV-Haack with $C=0$ & -- & 0.500 & $0^\circ$ \\
 \end{adjustbox}
 \end{table}
 
-The tangent-ogive entry of Table~\ref{tab:profiles} is written in dimensional form ($y$ in place of
-$\eta$, with $\rho$ the arc radius). The last two columns are used later: $x_{cp}/L$ in the
-stability assessment (Section~\ref{sec:criteria}) and $\theta_{\rm sh}$ in the manufacturing one.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{fig_profiles}
-\caption{(a) The seven candidate profiles at $L/D = 4$ ($L=\SI{720}{mm}$), with the radius a 3U
-section needs. (b) Tip region; the shaded profile is the Von K\'arm\'an nose with a
-\SI{4.5}{mm} spherical tip ($r_n/R=0.05$) selected in Section~\ref{sec:selection}.}
-\label{fig:profiles}
-\end{figure}
-
-At equal length the profiles differ mainly in how quickly they gain radius
-(Figure~\ref{fig:profiles}a). The power-$\tfrac12$ nose is the fullest over the first fifth of the
-length. The ogive, parabola and LV-Haack are the fullest over the middle and aft part, and the cone
-is the thinnest everywhere. Each curve's length above the dotted line $r = \SI{77}{mm}$ is the
-part of the nose that can house the 3U payload. In Figure~\ref{fig:profiles}b the apex of the
-Von K\'arm\'an nose is replaced by a \SI{4.5}{mm} sphere; the change is confined to the first
-\SI{10}{mm} of the nose.
-
-Shapes discarded before computing: the \emph{elliptical} nose (good only subsonically; its blunt
-front gives a strong bow shock above Mach 1) and the \emph{secant ogive} (no advantage over the
-tangent ogive and LV-Haack at the same volume, and a slope discontinuity at the shoulder). The
-elliptical nose is a quarter-ellipse whose front is a rounded, blunt face; above Mach 1 it carries a
-detached bow shock with the near-stagnation pressure described in Section~\ref{sec:physics}. The
-secant ogive is a circular arc of larger radius than the tangent ogive, cut so that it meets the
-body at an angle.
-
 \subsection{Comparison criteria}
 \label{sec:criteria}
 
-What matters for the comparison:
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{Wave drag.} At Weisshorn's Mach numbers (up to 1.5) the nose pressure drag
-depends mostly on $L/D$ and on how much area the profile adds near the tip. Slender-body theory
-gives the Von K\'arm\'an profile the minimum wave drag for given length and base area,
-$C_{D,\rm w} = 1/(L/D)^2$. This makes the Von K\'arm\'an nose the theoretical favourite. Whether
-this linear-theory result survives at Weisshorn's finite thickness and Mach numbers is what the
-Euler computations of Section~\ref{sec:results} check.
-\item \textbf{Volume and payload.} Fuller profiles (ogive, parabolic, LV-Haack) reach
-$r=\SI{77}{mm}$ further forward, so more of the 3U unit sits inside the curved part. The part of
-the 3U that does not fit inside the curved nose needs a cylindrical extension of the nose bay,
-which adds vehicle length within the \SI{5.4}{m} cap.
-\item \textbf{Stability.} The nose carries $C_{N\alpha}=2$ whatever its shape. Its centre of
-pressure sits at $x_{cp}=L-V/A_b$, so a fuller nose moves the vehicle CP forward. At a small angle
-of attack $\alpha$, each part of the vehicle produces a force normal to its axis,
-$N = q_\infty A_b C_{N\alpha}\,\alpha$. Slender-body theory gives the same slope
-$C_{N\alpha} = 2$ per radian for any nose that closes on the base area $A_b$, because the normal
-force generated by a section is proportional to its rate of change of area $\mathrm dS/\mathrm dx$,
-and its integral over the nose only depends on the base area. The shape only sets where the force
-acts, $x_{cp} = L - V/A_b$ from the apex ($2L/3$ for a cone). The vehicle CP is the
-$C_{N\alpha}$-weighted average of the nose and fin contributions, and the static margin is
-$(x_{cp} - x_{cg})/D$; moving the CP forward reduces it.
-\item \textbf{Manufacture.} A tangent shoulder ($\theta_{\rm sh}=0$) avoids a kink at the coupler
-joint. A sharp tip cannot be laid up in prepreg (ply overlaps stack at the apex), so every option
-uses a separate machined tip. A kink would also create a local expansion in the flow, need a
-fillet in the mould, and put the bond line of the coupler at a corner of the shell.
+\item \textbf{Wave drag.} At Weisshorn's Mach numbers it depends mostly on $L/D$ and on how much area
+the profile adds near the tip. Slender-body theory makes Von K\'arm\'an the favourite; the Euler
+computations check whether this holds at Weisshorn's finite thickness and Mach numbers.
+\item \textbf{Volume and payload.} Fuller profiles reach $r=\SI{77}{mm}$ further forward, so more of
+the 3U sits inside the curved part. The rest needs a cylindrical extension of the nose bay, which
+adds vehicle length within the \SI{5.4}{m} cap.
+\item \textbf{Stability.} Slender-body theory gives every nose that closes on $A_b$ the same
+normal-force slope $C_{N\alpha} = 2$ per radian; the shape only sets where the force acts,
+$x_{cp} = L - V/A_b$ from the apex ($2L/3$ for a cone). A fuller nose moves the vehicle CP forward
+and lowers the static margin $(x_{cp} - x_{cg})/D$.
+\item \textbf{Manufacture.} A tangent shoulder ($\theta_{\rm sh}=0$) avoids a kink at the coupler bond
+line, a fillet in the mould and a local expansion in the flow. A sharp tip cannot be laid up in
+prepreg, so every option uses a separate machined tip.
 \end{itemize}

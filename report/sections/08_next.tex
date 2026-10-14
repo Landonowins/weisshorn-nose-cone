@@ -2,19 +2,15 @@
 \label{sec:next}
 
 \begin{enumerate}[leftmargin=*,itemsep=3pt]
-\item \textbf{Fluent verification (CFD team).} Run the selected geometry in the team's Fluent
-workflow (density-based, k-$\omega$ SST, ideal gas, Sutherland, far field 10--20$D$ upstream and
-radially, 30--50$D$ downstream) at $M = 0.95$, 1.2 and 1.47. This replaces the transonic
-assumption of Section~\ref{sec:transonic} and checks the Euler wave drag with viscous effects.
-A density-based solver solves the compressible equations in coupled form and is the usual choice
-for flows with shocks. Sutherland's law gives the viscosity of air as a function of temperature.
-The far-field distances keep the boundaries clear of the bow shock and the wake, so that the
-imposed free-stream conditions do not disturb the solution.
-The Euler wall-pressure files (\texttt{results/cp/}) are the reference to compare against.
+\item \textbf{Fluent verification (CFD team).} Run the selected geometry in Fluent (density-based,
+k-$\omega$ SST, ideal gas, Sutherland viscosity) at $M = 0.95$, 1.2 and 1.47, plus the
+$5^\circ$ incidence case (R6). This replaces the transonic assumption of
+Section~\ref{sec:transonic} and checks the Euler wave drag with viscous effects; the Euler
+wall-pressure files are the reference to compare against. The setup is detailed in
+\texttt{CFD/Fluent\_Workflow\_Nose\_Cone.pdf} of the repository (Appendix~\ref{app:scripts}).
 \item \textbf{RocketPy update (simulation team).} Replace the LVS nose in the RocketPy model by
-the final geometry and its $C_D(M)$ (\texttt{results/euler\_results.csv}), then re-check apogee,
-static margin (2--4 cal, 2027\_C\_SE\_FD\_REQ\_07) and the \SI{30}{m/s} rail exit speed once the
-fins are defined.
+the final geometry and its $C_D(M)$, then re-check apogee, the \SI{30}{m/s} rail exit speed and
+the static margin (2--4 cal, 2027\_C\_SE\_\allowbreak FD\_REQ\_07) once the fins are defined.
 \item \textbf{Requirements to create} (none exists for the Weisshorn nosecone). Proposed:
 \begin{itemize}[itemsep=1pt]
 \item profile: Von K\'arm\'an, $L = \FINL{}$ ($L/D=4.5$, \FINLPHYS{} physical with the tip), coordinates from \texttt{nose\_profile\_final.csv}, radius tolerance $\pm\SI{0.5}{mm}$;
@@ -24,11 +20,9 @@ fins are defined.
 \end{itemize}
 \item \textbf{Material and RF.} If the payload or avionics need GNSS/telemetry through the nose,
 the shell must be GFRP (2027\_C\_SE\_AV\_INTERFACE\_ST\_REQ\_07 asks for a $360^\circ$ RF window
-$\geq 2D$ long). The nose is \SI{810}{mm} long, so it can be that window. GFRP has the same epoxy
-temperature limit but about 40\,\% more mass for the same stiffness; the shape result does not
-change. Glass fibre is an electrical insulator and lets radio waves through, whereas the
-conductive carbon fibres screen them.
+$\geq 2D$ long; the \SI{810}{mm} nose can be that window). GFRP has the same epoxy temperature limit
+but about 40\,\% more mass for the same stiffness; the shape result does not change.
 \item \textbf{Thermal test.} Update 2025\_C\_ST\_NOSECONE\_TEMPERATURE\_TSP to the new level and add a
-shoulder/coupler bond specimen. The DP490 bond is the weakest point in the envelope case
+shoulder/coupler bond specimen: the DP490 bond is the weakest point in the envelope case
 (Section~\ref{sec:heating}).
 \end{enumerate}

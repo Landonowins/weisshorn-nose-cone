@@ -2,7 +2,7 @@
 \addcontentsline{toc}{section}{Nomenclature}
 
 {\small
-\renewcommand{\arraystretch}{1.08}
+\renewcommand{\arraystretch}{1.02}
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.7cm}>{\raggedright\arraybackslash}p{11.0cm}>{\raggedright\arraybackslash}p{1.9cm}@{}}
 \toprule
 Symbol & Meaning & Unit \\
@@ -16,71 +16,57 @@ Symbol & Meaning & Unit \\
 \endfoot
 \multicolumn{3}{@{}l}{\textit{Geometry}} \\
 $D$, $R$ & body (base) diameter \SI{180}{mm}, radius $R = D/2$ & m \\
-$L$ & nose profile length, from the theoretical apex to the shoulder & m \\
-$L/D$ & fineness ratio of the nose & -- \\
-$x$, $y$ & axial coordinate from the apex; local radius of the profile $y(x)$ & m \\
-$\xi$, $\eta$ & normalised coordinates $\xi = x/L$, $\eta = y/R$ & -- \\
-$r_n$ & radius of the spherical tip (nose bluntness $r_n/R$) & m \\
-$A_b$ & base area $\pi R^2$, also the reference area of all nose coefficients & m$^2$ \\
+$L$, $L/D$ & nose profile length (theoretical apex to shoulder); fineness ratio & m, -- \\
+$x$, $y$; $\xi$, $\eta$ & axial coordinate from the apex, local radius $y(x)$; $\xi = x/L$, $\eta = y/R$ & m; -- \\
+$r_n$ & radius of the spherical tip (bluntness $r_n/R$) & m \\
+$A_b$ & base area $\pi R^2$, reference area of all nose coefficients & m$^2$ \\
 $V$ & internal volume of the nose (in Eq.~\eqref{eq:euler}: cell volume per radian) & m$^3$ \\
 $\theta_{\rm sh}$ & angle between the profile and the body tube at the shoulder & $^\circ$ \\
 $n$, $K'$, $C$, $\theta$ & power-series exponent; parabolic-series parameter; Haack-series parameter and angle variable & -- \\
 \multicolumn{3}{@{}l}{\textit{Flow}} \\
-$V_\infty$ & flight speed, i.e.\ the free-stream velocity seen from the vehicle & m/s \\
-$M$, $M_\infty$ & Mach number $V/a$ (local flow speed over local speed of sound); free-stream Mach number $V_\infty/a_\infty$ & -- \\
-$M_{\max}$ & maximum Mach number of the flight & -- \\
-$a$ & speed of sound $\sqrt{\gamma R_g T}$ & m/s \\
-$\gamma$, $R_g$ & ratio of specific heats (1.4 for air); specific gas constant of air (\SI{287}{J/(kg.K)}) & --, J/(kg\,K) \\
+$M$, $M_\infty$, $M_{\max}$ & Mach number $V/a$; free-stream Mach number; maximum of the flight & -- \\
+$V_\infty$, $a$ & flight speed; speed of sound $\sqrt{\gamma R_g T}$ & m/s \\
+$\gamma$, $R_g$ & ratio of specific heats (1.4); gas constant of air (\SI{287}{J/(kg.K)}) & --, J/(kg\,K) \\
 $\mu$ & Mach angle, $\sin\mu = 1/M$ & $^\circ$ \\
-$p$, $p_\infty$ & static pressure; ambient (free-stream) pressure & Pa \\
-$\rho$, $T$ & density (in Table~\ref{tab:profiles} and Figure~\ref{fig:gallery}: radius of the ogive arc); static temperature & kg/m$^3$, K \\
-$u$, $v$ & axial and radial velocity components & m/s \\
-$E$ & total energy per unit volume, $p/(\gamma-1) + \tfrac12\rho(u^2+v^2)$ & J/m$^3$ \\
-$q_\infty$ & free-stream dynamic pressure $\tfrac12\rho_\infty V_\infty^2 = \tfrac12\gamma p_\infty M_\infty^2$ & Pa \\
+$p$, $\rho$, $T$ & static pressure, density (in Table~\ref{tab:profiles}: ogive arc radius), temperature; subscript $\infty$: free stream & Pa, kg/m$^3$, K \\
+$u$, $v$, $E$ & axial and radial velocity; total energy per unit volume & m/s, J/m$^3$ \\
+$q_\infty$ & dynamic pressure $\tfrac12\rho_\infty V_\infty^2$ & Pa \\
 $C_p$ & pressure coefficient $(p-p_\infty)/q_\infty$ & -- \\
 \multicolumn{3}{@{}l}{\textit{Aerodynamic coefficients and flight}} \\
-$C_{D,\rm w}$ & nose wave-drag coefficient (reference area $A_b$) & -- \\
-$C_D$ & drag coefficient of the whole vehicle & -- \\
+$C_{D,\rm w}$, $C_D$ & nose wave-drag coefficient (reference $A_b$); drag coefficient of the vehicle & -- \\
 $C_{D,f}$, $C_{D,\rm fins}$, $C_{D,\rm base}$, $C_{D,e}$ & skin-friction, fin pressure, base and excrescence drag coefficients & -- \\
 $k$ & calibration factor on the drag of everything except the nose & -- \\
-$C_N$, $C_{N\alpha}$ & normal-force coefficient; its slope with angle of attack $\mathrm dC_N/\mathrm d\alpha$ & --, rad$^{-1}$ \\
-$\alpha$ & angle of attack (angle between the vehicle axis and the velocity) & rad \\
+$C_{N\alpha}$ & normal-force slope $\mathrm dC_N/\mathrm d\alpha$ ($\alpha$: angle of attack) & rad$^{-1}$ \\
 $x_{cp}$, $x_{cg}$ & position of the centre of pressure and of the centre of gravity & m \\
-$F_{\rm th}$, $m$, $g_0$ & thrust; vehicle mass; standard gravity \SI{9.81}{m/s^2} & N, kg, m/s$^2$ \\
-$I_t$, $I_{sp}$ & total impulse $\int F_{\rm th}\,\mathrm dt$; specific impulse $I_t/(m_p g_0)$ & N\,s, s \\
-$m_p$ & propellant mass & kg \\
+$F_{\rm th}$, $m$, $g_0$ & thrust; vehicle mass; standard gravity & N, kg, m/s$^2$ \\
+$I_t$, $I_{sp}$ & total impulse; specific impulse & N\,s, s \\
 $z$, $\Delta z$ & altitude; apogee change relative to the baseline nose & m \\
 \multicolumn{3}{@{}l}{\textit{Heat transfer}} \\
-$T_0$ & stagnation (total) temperature & K \\
-$T_r$, $r$ & recovery temperature; recovery factor & K, -- \\
-$T_\infty$, $T_w$ & ambient temperature; wall temperature & K \\
+$T_0$, $T_r$, $T_w$ & stagnation, recovery and wall temperature; $r$: recovery factor & K \\
 $h$, $h_s$ & convective heat-transfer coefficient; its value at the stagnation point & W/(m$^2$\,K) \\
-$c_p$ & specific heat at constant pressure & J/(kg\,K) \\
-Pr, Re$_x$, St & Prandtl number $\mu_v c_p/k_t$; Reynolds number on the running length $x$; Stanton number $h/(\rho u c_p)$ & -- \\
-$\mu_v$, $k_t$ & dynamic viscosity; thermal conductivity & Pa\,s, W/(m\,K) \\
-\midrule
-\multicolumn{3}{@{}l}{\textit{Abbreviations}} \\
-3U & CubeSat payload unit, $100\times100\times\SI{340.5}{mm}$ & \\
-cal & calibre: a length expressed in body diameters & \\
-CFD & computational fluid dynamics & \\
-CFRP, GFRP & carbon- and glass-fibre-reinforced polymer & \\
-CG, CP & centre of gravity, centre of pressure & \\
-CFL & Courant--Friedrichs--Lewy number (time step relative to the time a wave needs to cross a cell) & \\
-DJF, DDF & Design Justification File, Design Definition File (ERT documents) & \\
-DP490 & 3M Scotch-Weld DP490, the two-part epoxy used for the coupler bonds & \\
-EuRoC & European Rocketry Challenge & \\
-FD, ST, SE, AV, PL & ERT Flight Dynamics, Structure, Systems Engineering, Avionics and Payload teams & \\
-GCI & grid convergence index & \\
-HDT & heat-deflection temperature & \\
-HLLC & Harten--Lax--van Leer--Contact approximate Riemann solver & \\
-ISA & International Standard Atmosphere & \\
-LV, LVO, LVS & launch vehicle; Launch Vehicle Overview; Launch Vehicle Sizing & \\
-MUSCL & Monotonic Upstream-centred Scheme for Conservation Laws & \\
-PDR, CDR & Preliminary and Critical Design Review & \\
-PET-CF & carbon-fibre-filled PET, a 3D-printing filament & \\
-RANS & Reynolds-averaged Navier--Stokes equations & \\
-RF & radio frequency & \\
-SSP-RK2 & two-stage, strong-stability-preserving Runge--Kutta time integration & \\
+$c_p$; Pr, Re$_x$, St & specific heat; Prandtl, Reynolds (on the running length $x$) and Stanton numbers & J/(kg\,K); -- \\
 \end{longtable}
 \addtocounter{table}{-1}% the nomenclature list is not a numbered table
 }
+
+\noindent{\small\textbf{Abbreviations.}
+3U: CubeSat payload unit, $100\times100\times\SI{340.5}{mm}$;
+cal: calibre (length in body diameters);
+CFD: computational fluid dynamics;
+CFL: Courant--Friedrichs--Lewy number;
+CFRP, GFRP: carbon-, glass-fibre-reinforced polymer;
+CG, CP: centre of gravity, of pressure;
+DJF, DDF: Design Justification, Definition File;
+DP490: 3M Scotch-Weld epoxy of the coupler bonds;
+EuRoC: European Rocketry Challenge;
+FD, ST, SE, AV, PL: ERT Flight Dynamics, Structure, Systems Engineering, Avionics, Payload teams;
+GCI: grid convergence index;
+HLLC: Harten--Lax--van Leer--Contact Riemann solver;
+ISA: International Standard Atmosphere;
+LV, LVO, LVS: launch vehicle, Launch Vehicle Overview, Launch Vehicle Sizing;
+MUSCL: Monotonic Upstream-centred Scheme for Conservation Laws;
+PDR, CDR: Preliminary, Critical Design Review;
+PET-CF: carbon-fibre-filled PET filament;
+RANS: Reynolds-averaged Navier--Stokes;
+RF: radio frequency;
+SSP-RK2: two-stage strong-stability-preserving Runge--Kutta.\par}

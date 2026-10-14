@@ -5,9 +5,9 @@
 
 Table~\ref{tab:inputs} lists every input taken from the ERT documentation. The vehicle is
 \textbf{Weisshorn}, the 2027 competition launch vehicle flying in the EuRoC L9 category (target
-apogee \SI{9}{km}). The sources are ERT documents: the Launch Vehicle Overview (LVO) and
-Launch Vehicle Sizing (LVS) of systems engineering, the requirement database (REQ), and the Design
-Justification and Definition Files (DJF, DDF) of earlier vehicles.
+apogee \SI{9}{km}). The sources are the Launch Vehicle Overview (LVO) and Launch Vehicle Sizing
+(LVS) of systems engineering, the requirement database (REQ), and the Design Justification and
+Definition Files (DJF, DDF) of earlier vehicles.
 
 \begin{table}[H]
 \centering
@@ -35,74 +35,37 @@ Firehorn thermal requirement & \SI{390}{K} for \SI{5}{s} & 2024\_C\_SE\_ST\_NOSE
 \end{tabular}
 \end{table}
 
-The entries of Table~\ref{tab:inputs} that drive the nose design are the following.
-\begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{Maximum speed.} The Mach number $M = V_\infty/a$ compares the flight speed with the
-speed of sound, the speed at which small pressure disturbances travel through the air (about
-\SI{332}{m/s} at \SI{2}{km} in the ISA). With $M_{\max} \approx 1.4$, Weisshorn crosses the
-\emph{transonic} range (roughly $0.8 < M < 1.2$, where subsonic and supersonic regions coexist
-around the body) and flies a few seconds in the low supersonic range. The nose has to be designed
-for this whole range, not for a single design Mach number.
-\item \textbf{Engine.} The total impulse $I_t$ is the thrust integrated over the burn; the specific
-impulse $I_{sp} = I_t/(m_p g_0)$ is the impulse delivered per unit weight of propellant. Together
-they fix the propellant mass $m_p$, and with it the mass at burn-out that the nose design affects.
-\item \textbf{Stability.} A rocket is statically stable if its centre of pressure (CP, the point
-where the resultant aerodynamic normal force acts) lies behind its centre of gravity (CG): a
-small angle of attack then creates a moment that turns the nose back into the wind. The
-distance between the two, divided by the diameter, is the static margin in calibres (cal). The
-nose moves the CP forward, so its shape affects the margin (Section~\ref{sec:criteria}).
-\item \textbf{Payload.} A 3U CubeSat is a standard payload unit of $100\times100\times\SI{340.5}{mm}$.
-It sits in the nose bay, so the shape of the nose decides how much of it fits inside the curved
-part and how much extra cylinder (and vehicle length) is needed behind it.
-\item \textbf{RF windows.} Carbon fibre conducts electricity and blocks radio signals. Antennas for
-telemetry and GNSS therefore need a section of radio-transparent shell (glass fibre), and the nose
-is a candidate location for it.
-\item \textbf{Firehorn manufacturing process.} The Firehorn nose was laid up in prepreg (carbon fabric
-already impregnated with epoxy, cured in an oven) on the outside of a 3D-printed male mould.
-The laminate $[0/45/0]_{SO}$ is symmetric with an odd number of plies, i.e.\ five plies at
-$0^\circ$, $45^\circ$, $0^\circ$, $45^\circ$ and $0^\circ$. The $0^\circ$ plies, aligned with the
-axis, carry axial load and bending, and the $45^\circ$ plies carry shear and torsion. The tip was a separate printed part, and an aluminium coupler is bonded
-inside the shoulder to connect the nose to the next bay.
-\item \textbf{Firehorn thermal requirement.} The Firehorn requirement asks the nose to withstand an outer
-surface temperature of \SI{390}{K} for \SI{5}{s}. Section~\ref{sec:heating} checks whether it
-covers the faster, lighter Weisshorn.
-\end{itemize}
+With $M_{\max} \approx 1.4$, Weisshorn crosses the \emph{transonic} range (roughly $0.8 < M < 1.2$,
+where subsonic and supersonic regions coexist around the body) and flies a few seconds in the low
+supersonic range, so the nose is designed for this whole range rather than for one Mach number.
+The 3U CubeSat ($100\times100\times\SI{340.5}{mm}$) sits in the nose bay, so the profile decides
+how much of it fits inside the curved part. Carbon fibre blocks radio signals, so if the nose has
+to be the RF window its shell must be glass fibre.
 
 \subsection{What is assumed}
 
-Everything below is an assumption of this study. Each one is chosen so that the comparison
-between nose shapes is fair; none of them changes the ranking.
+Each assumption is chosen so that the comparison between nose shapes is fair; none of them changes
+the ranking.
 
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{Trajectory.} Point mass, rail \SI{12}{m} at $84^\circ$, ISA, no wind, constant
-\SI{4.5}{kN} for \SI{9.1}{s}. Propellant from $I_t/(I_{sp}g_0) = \SI{20.9}{kg}$, i.e.\ burn-out
-mass \SI{54.1}{kg}. The drag of everything except the nose is scaled by a single factor
-$k$ so that the baseline nose reaches the LVO apogee of \SI{9.0}{km}
-(Section~\ref{sec:flight}). This gives $M_{\max}=1.47$, consistent with the LVO's Mach~1.4.
-A point-mass model treats the vehicle as a particle acted on by thrust, drag and gravity and
-ignores its rotation; for a statically stable rocket the axis stays aligned with the velocity,
-and this is the standard model for apogee estimates. The ISA (International Standard Atmosphere)
-gives temperature, pressure and density as functions of altitude. The factor $k$ is needed
-because the drag of the rest of the vehicle is the least certain part of the model at this stage
-(fins not designed, no flight data). Calibrating it once on the team's reference apogee means
-that every nose is compared on a vehicle with the intended performance. Since all noses share the
-same $k$, the ranking depends only on their differences, and Section~\ref{sec:robust} shows that
-it does not change when the rest of the drag is varied.
+\item \textbf{Trajectory.} Point mass (thrust, drag and gravity; the rotation of the stable vehicle
+is ignored), rail \SI{12}{m} at $84^\circ$, ISA, no wind, constant \SI{4.5}{kN} for \SI{9.1}{s}.
+Propellant from $I_t/(I_{sp}g_0) = \SI{20.9}{kg}$, i.e.\ burn-out mass \SI{54.1}{kg}. The drag of
+everything except the nose, the least certain part of the model at this stage, is scaled by a
+single factor $k$ so that the baseline nose reaches the LVO apogee of \SI{9.0}{km}
+(Section~\ref{sec:flight}). This gives $M_{\max}=1.47$, consistent with the LVO's Mach~1.4. All
+noses share the same $k$, and Section~\ref{sec:robust} shows that the ranking does not change when
+the rest of the drag is varied.
 \item \textbf{Thermal envelope.} The LVO masses ($75 \rightarrow \SI{45}{kg}$) on a
-\SI{30}{\celsius} day give $M_{\max} \approx 1.56$. Heating is checked on this case. A lighter
-vehicle reaches a higher speed, and hotter ambient air raises the stagnation temperature for a
-given Mach number (Section~\ref{sec:heating_method}); together they give the hottest credible
-flight.
+\SI{30}{\celsius} day give $M_{\max} \approx 1.56$, the hottest credible flight. Heating is
+checked on this case.
 \item \textbf{Fins} (not yet defined for Weisshorn): four trapezoidal fins, root \SI{300}{mm},
 tip \SI{120}{mm}, span \SI{160}{mm}, sweep \SI{180}{mm}, \SI{5}{mm} hexagonal section. They only
-enter the common drag and the CP shift; they do not change the ranking of the noses. Fins
-provide most of the restoring normal force of the vehicle and therefore set where its CP lies.
-\item \textbf{Payload envelope.} A 3U unit ($100\times100\times\SI{340.5}{mm}$) needs an outer
-radius $r \geq \SI{77}{mm}$: \SI{70.7}{mm} half-diagonal ($100/\sqrt2$, the radius of the circle
-through the corners of its square section), \SI{3}{mm} clearance, \SI{2}{mm}
-guide, \SI{1.2}{mm} shell.
+enter the common drag and the CP shift.
+\item \textbf{Payload envelope.} A 3U unit needs an outer radius $r \geq \SI{77}{mm}$:
+\SI{70.7}{mm} half-diagonal, \SI{3}{mm} clearance, \SI{2}{mm} guide, \SI{1.2}{mm} shell.
 \item \textbf{Shell.} \SI{1.2}{mm} CFRP at the Firehorn as-built areal density
-(\SI{0.98}{kg/m^2}, the mass per unit of wetted surface), plus a \SI{60}{g} machined aluminium tip.
+(\SI{0.98}{kg/m^2}), plus a \SI{60}{g} machined aluminium tip.
 \item \textbf{Transonic nose wave drag} ($0.8 < M < 1.1$): smooth rise from zero at $M = 0.8$
 to the computed $M = 1.1$ value at $M = 1.0$ (Section~\ref{sec:transonic}).
 \end{itemize}
@@ -111,19 +74,14 @@ to the computed $M = 1.1$ value at $M = 1.0$ (Section~\ref{sec:transonic}).
 \label{sec:flags}
 
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{Alex Marseille's nose cone report} is not on the ERT Drive or the wiki. The searches
-covered ``Marseille'', ``nose cone'', ``nosecone'', ``ogive'', ``SSR'' and ``Farewell''. His
-documented work is the CFD of the \SI{54}{mm} supersonic semester rocket (SSR weekly meetings
-01--12, spring 2026; report on Overleaf, not shared in the Drive). As CFD advisor he set the
-semester goal ``WS (Cd, Nosecone)'' (2027\_C\_FD\_TM\_3, 01.10.2026), which is this study. The
-prior work used instead is the 2021 supersonic nosecone semester project (materials and tip,
-ERT Drive, \emph{Report} folder), the Wildhorn
-optimisation note (2022\_FD\_TN\_C01) and the Firehorn nosecone DJF/DDF.
-\item \textbf{No Weisshorn nosecone requirement} (length, mass, thermal) exists yet. The four
-Weisshorn nosecone pages (DJF, DDF, FEAR, tooling DJF) are empty templates. The nosecone
-requirements of the 2027 database cover only the Aletsch test rocket.
-\item \textbf{Weisshorn fins, CG and mass breakdown} are not defined (FD page is a template).
-The static margin is therefore given as a \emph{change} relative to the baseline nose.
-\item \textbf{No supersonic flight data} exists at ERT. Firehorn~1 reached \SI{223}{m}, so there
-is no measured nose heating or drag to calibrate against.
+\item \textbf{Alex Marseille's nose cone report} is not on the ERT Drive or the wiki. His
+documented work is the CFD of the \SI{54}{mm} supersonic semester rocket; as CFD advisor he set
+the semester goal ``WS (Cd, Nosecone)'' (2027\_C\_FD\_TM\_3), which is this study. The prior work
+used instead is the 2021 supersonic nosecone semester project, the Wildhorn optimisation note
+(2022\_FD\_TN\_C01) and the Firehorn nosecone DJF/DDF.
+\item \textbf{No Weisshorn nosecone requirement} (length, mass, thermal) exists yet; the Weisshorn
+nosecone pages are empty templates.
+\item \textbf{Weisshorn fins, CG and mass breakdown} are not defined. The static margin is
+therefore given as a \emph{change} relative to the baseline nose.
+\item \textbf{No supersonic flight data} exists at ERT to calibrate drag or heating against.
 \end{itemize}
