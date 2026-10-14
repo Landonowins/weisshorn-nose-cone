@@ -1,0 +1,288 @@
+\documentclass[11pt]{article}
+
+% PACKAGE IMPORTS
+\usepackage{fancyhdr}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{geometry}
+\usepackage{lastpage}
+\usepackage[scaled]{helvet}
+\usepackage{siunitx}
+\sisetup{detect-all}
+\PassOptionsToPackage{obeyspaces,spaces}{url}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\usepackage{url}
+\usepackage{tikz} % Used for positioning text on title
+\usepackage{eso-pic}
+\usepackage[useregional]{datetime2}
+
+\graphicspath{{pictures/template/}}
+
+% FONT SETTINGS
+\renewcommand\familydefault{\sfdefault}
+
+% COLORS
+\definecolor{ertred}{RGB}{226,12,24}
+
+% MARGINS
+\geometry{
+a4paper,
+inner=20mm,
+outer=20mm,
+top=26mm,
+bottom=30mm,
+footskip=10mm,
+headsep=13mm
+}
+
+% LISTS AND PATHS
+\setlist{itemsep=2pt,topsep=3pt}
+\setlist[enumerate,1]{leftmargin=*}
+\setlist[itemize]{leftmargin=*}
+\urlstyle{tt}
+\newcommand{\file}[1]{\path{#1}}
+
+% FRONT PAGE BACKGROUND IMAGE
+\newcommand\BackgroundPic{
+\put(0,0){
+\parbox[b][\paperheight]{\paperwidth}{
+\vfill
+\centering
+\includegraphics[width=\paperwidth,height=\paperheight]{pictures/template/c_title-page.png} % Background title page image
+\vfill
+}
+}
+}
+
+\begin{document}
+
+\AddToShipoutPicture*{\BackgroundPic}
+\ClearShipoutPicture
+
+% HEADER AND FOOTER
+\let\oldheadrule\headrule
+\renewcommand{\headrule}{\color{ertred}\oldheadrule}
+\renewcommand{\headrulewidth}{1.5pt}
+\renewcommand{\footrule}{\hbox to\headwidth{\color{ertred}\leaders\hrule height \footrulewidth\hfill}}
+\renewcommand{\footrulewidth}{1.5pt}
+\setlength\headheight{48pt}
+
+\pagestyle{fancy}
+\fancyhead[C]{\rule[-2ex]{0pt}{2ex} \bf{\fontsize{12}{5}\selectfont WEISSHORN NOSE CONE -- FLUENT WORKFLOW}}
+\lhead{\includegraphics[height=1.5cm]{ert_logo_small}\vspace{-4mm}}
+\rhead{\includegraphics[height=1.5cm]{c_patch.png}\vspace{-4mm}}
+\cfoot{}
+\fancyfoot[R]{\bf{\thepage/\pageref{LastPage}}}
+\fancyfoot[L]{\rule[-2ex]{0pt}{2ex}\bf{EPFL ROCKET TEAM}}
+
+% TITLE PAGE
+\begin{titlepage}
+\vspace*{-2.40cm} % Push title to the top of the page
+\noindent
+\hspace*{-1.2cm}
+\parbox{\linewidth}{%
+\bfseries\fontsize{34}{38}\selectfont
+FLUENT WORKFLOW -\\
+NOSE CONE CFD\\
+}
+\newline
+\hspace*{-1.2cm}
+\parbox{\linewidth}{%
+\bfseries\fontsize{14}{18}\selectfont
+Fabio Feig - 315169 \\ % Names and scipers
+}
+
+% ADDITIONAL TITLE PAGE DETAILS
+\begin{tikzpicture}[remember picture,overlay]
+\node[anchor=south east,inner sep=39mm] at (current page.south east) {
+\parbox[b][-1.6cm][t]{15cm}{
+\raggedleft
+\fontsize{12}{12} \selectfont \normalfont \textbf{Weisshorn -- Nose Cone CFD Workflow}
+}
+};
+\end{tikzpicture}
+
+\begin{tikzpicture}[remember picture,overlay]
+\node[anchor=south east,inner sep=39mm] at (current page.south east) {
+\parbox[b][-0.8cm][t]{15cm}{
+\raggedleft
+\fontsize{12}{12} \selectfont \normalfont Date: \today % Date
+}
+};
+\end{tikzpicture}
+
+\end{titlepage}
+
+\noindent Weisshorn nose cone: Von K\'arm\'an, $L = \SI{810}{mm}$, $D = \SI{180}{mm}$, tip radius \SI{4.5}{mm}.
+Verification runs of recommendation R6 of 2026\_C\_FD\_REPORT-1\_NOSE\_CONE.\par
+\vspace{2mm}
+
+% ---------------------------------------------------------------------------------
+\section{Solver: Fluent}
+
+Use \textbf{Fluent} (the ``Fluid Flow (Fluent)'' system in Workbench) with these settings: density-based,
+implicit, steady, k-$\omega$ SST, energy on, air as an ideal gas with Sutherland viscosity. That is the
+setup the nose cone report already prescribes (R6 and Section~8), and it is what the team runs on the
+DLL VM (Fluent 2024 R2). Discovery is fine as the geometry editor inside Workbench, but do not use its
+own fluid simulation for shocks.
+
+\paragraph{Two models, not one.}
+\begin{enumerate}
+\item \textbf{2D axisymmetric} for the three zero-incidence runs ($M = 0.95$, 1.2, 1.47). It is cheap,
+it resolves the boundary layer and the shocks properly, and it compares directly with the axisymmetric
+Euler results.
+\item \textbf{3D half-model} with a symmetry plane, used only for the \SI{5}{\degree} incidence run
+($C_{N\alpha}$ and CP). The STEP file goes here.
+\end{enumerate}
+
+\paragraph{Input files.}
+\begin{itemize}
+\item Design solid (STEP): \file{nose_vonkarman_LD4.5_rn4.5mm_FINAL.step}, in \file{output/weisshorn/cad/}
+of this repository. \file{output/} is not tracked by git; \texttt{python -m nosecone export configs/weisshorn.yaml}
+writes it.\\
+Use the STEP, not the STL: the STL opens as a faceted body (about 122\,600 triangles), on which
+subtracting it from a flow enclosure, naming faces and meshing do not work cleanly. The STEP is a
+true solid of revolution (nose, \SI{60}{mm} shoulder, base disc) in mm, with the $x$ axis as the
+rocket axis and the tip at the origin. It is a filled solid with no wall thickness, which is what
+external-flow CFD needs.
+\item Profile points: \file{nose_profile_final.csv} (columns \texttt{x\_mm}, \texttt{r\_mm}), same folder.
+\item Euler reference, in \file{data/}:
+\file{euler_results.csv} and \file{cfd/cp/f45_vonkarman_f4.5_rn0.05_medium_M*.npz}
+($M = 1.2$, 1.4, 1.6).
+\end{itemize}
+
+\paragraph{Free-stream conditions} from the nominal trajectory:
+
+\begin{center}
+\begin{tabular}{@{}cccccccc@{}}
+\toprule
+$M$ & altitude & $V$ & $p$ & $T$ & $\mathrm{Re}_L$ & first cell for $y^+ \approx 1$ \\
+\midrule
+0.95 & \SI{928}{m}  & \SI{321}{m/s} & \SI{90666}{Pa} & \SI{282.1}{K} & $1.7\cdot10^{7}$ & \SI{1.4}{\micro m} \\
+1.20 & \SI{1478}{m} & \SI{402}{m/s} & \SI{84789}{Pa} & \SI{278.5}{K} & $2.0\cdot10^{7}$ & \SI{1.2}{\micro m} \\
+1.47 & \SI{2189}{m} & \SI{488}{m/s} & \SI{77649}{Pa} & \SI{273.9}{K} & $2.3\cdot10^{7}$ & \SI{1.0}{\micro m} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The first-cell heights are flat-plate estimates, so check $y^+$ after the first run. The
+hot-day case reaches $M = 1.56$ (at \SI{2315}{m}) if you want one extra run.
+
+% ---------------------------------------------------------------------------------
+\clearpage
+\section{2D workflow}
+
+\begin{enumerate}
+\item \textbf{Workbench:} add a ``Fluid Flow (Fluent)'' system. \textbf{Before you open the geometry},
+set Geometry cell $\rightarrow$ Properties $\rightarrow$ Analysis Type = \textbf{2D}. If you skip this,
+Fluent will not let you choose axisymmetric.
+
+\item \textbf{Geometry:}
+\begin{itemize}
+\item Build one surface in the $XY$ plane with $y \geq 0$: a far-field rectangle minus the nose
+half-section, with the $x$ axis as the rocket axis. The STEP already uses $x$ as the axis, and
+\file{nose_profile_final.csv} gives the profile points.
+\item Run the cylinder straight through to the outlet. With no base there is no wake, so you get
+clean forebody numbers, the same as the Euler nose-plus-cylinder setup.
+\item Domain size: about $20D$ upstream and radially (\SI{3.6}{m}) and about $10D$ behind the shoulder.
+\item Split the wall at the shoulder and add named selections: \texttt{inlet}, \texttt{farfield},
+\texttt{outlet}, \texttt{axis}, \texttt{wall\_nose}, \texttt{wall\_body}.
+\end{itemize}
+
+\item \textbf{Mesh} (Ansys Meshing):
+\begin{itemize}
+\item Inflation on both walls: \SI{1}{\micro m} first layer, growth 1.2, about 45 layers. That is
+about \SI{18}{mm} in total, which covers the roughly \SI{10}{mm} boundary layer at the shoulder.
+\item Refine the tip to about \SI{0.2}{mm} cells, since the tip radius is only \SI{4.5}{mm}.
+\end{itemize}
+
+\item \textbf{Fluent setup:}
+\begin{itemize}
+\item Launcher: 2D, double precision. General: Density-Based, Steady, Axisymmetric.
+\item \textbf{Operating pressure = \SI{0}{Pa}}, so every pressure you enter is absolute.
+\item Boundary conditions:
+\begin{itemize}
+\item \texttt{inlet} and \texttt{farfield}: pressure-far-field with $M$, $p$ and $T$ from the table,
+flow direction $(1, 0)$.
+\item \texttt{outlet}: pressure-outlet at $p_\infty$.
+\item \texttt{axis}: axis.
+\item Walls: no-slip, adiabatic.
+\end{itemize}
+\item Reference values: area $\pi \cdot 0.18^2/4 = \SI{0.02545}{m^2}$, length \SI{0.18}{m}. Fluent
+integrates axisymmetric forces over the full \SI{360}{\degree}, so this gives the same $C_D$
+definition as the Euler run.
+\item Methods: Roe-FDS flux, least-squares gradients. Run first order for about 300--500 iterations,
+then switch to second order. Start the Courant number at 1 and raise it to 5--10 once the run is stable.
+\item Initialise with FMG or hybrid initialisation, starting from the far-field values.
+\end{itemize}
+
+\item \textbf{Convergence:} monitor the drag coefficient on \texttt{wall\_nose}. Fluent splits it into
+pressure and viscous parts. The run is converged when $C_D$ changes by less than \SI{0.1}{\percent}
+over about 500 iterations. Residuals alone do not tell you that.
+
+\item \textbf{Mesh study:} at $M = 1.47$ only, run coarse, medium and fine meshes (about $\times1.5$
+per direction each step), plus one or two pressure-gradient adaptions at the shock.
+
+\item \textbf{Compare with the Euler results:}
+\begin{itemize}
+\item Fluent's \textbf{pressure} part should match $C_{D,\mathrm{w}}$. $M = 1.2$ is directly in
+\file{euler_results.csv}; $M = 1.47$ falls between the 1.4 and 1.6 values.
+\item Plot $C_p$ along the nose against \file{data/cfd/cp/f45_vonkarman_f4.5_rn0.05_medium_M*.npz}.
+\item $M = 0.95$ replaces the cubic transonic model of the report.
+\end{itemize}
+\end{enumerate}
+
+% ---------------------------------------------------------------------------------
+\section{\texorpdfstring{3D run at \SI{5}{\degree} incidence}{3D run at 5 deg incidence}}
+
+\begin{itemize}
+\item Use a second Fluent system in 3D with a half domain cut on the $XY$ plane, and set that plane as a
+symmetry boundary. Flow direction is $(\cos\SI{5}{\degree}, \sin\SI{5}{\degree}, 0)$.
+\item For the mesh, Fluent Meshing (watertight workflow, poly-hexcore with prism layers) handles this
+better than Ansys Meshing.
+\item Normal force is dominated by pressure, so $y^+ \approx 30$--50 (first cell about
+\SIrange{30}{50}{\micro m}) is acceptable here and keeps the cell count down.
+\item Report the normal force and the moment about the tip.
+\begin{itemize}
+\item A half model gives half the force, so double it (or halve the reference area).
+\item $C_{N\alpha} = C_N / 0.0873$; compare it with \SI{2}{\per\radian}.
+\item $x_{\mathrm{CP}} = M_{\mathrm{tip}} / N$; compare it with \SI{405}{mm}.
+\end{itemize}
+\end{itemize}
+
+% ---------------------------------------------------------------------------------
+\section{Running Fluent from Claude Code on the DLL VM}
+
+Claude Code cannot be installed onto the VM from the laptop, even while you are logged in: the Remote
+Desktop window gives no shell on the VM. Run the install yourself in PowerShell on the VM. It takes about
+10 minutes following 2026\_C\_FD\_REPORT-2\_MCP-FLUENT:
+\begin{itemize}
+\item \textbf{Section 3.4} to install and sign in (\texttt{claude}), make the \texttt{.claude} junction and
+stage the copy on \texttt{Z:\textbackslash}.
+\item \textbf{Sections 3.5--3.6} for the wheel cache and the repo clone. You need the repo URL from the
+guide's author, because the guide only has \texttt{<project-git-url>}.
+\item \textbf{Section 4.2} to install PyFluent and the MCP package.
+\item \textbf{Section 6.2} to register the MCP server, then \textbf{Section 7.1} to connect to a running Fluent.
+\end{itemize}
+
+\paragraph{Things to know.}
+\begin{itemize}
+\item \textbf{\texttt{C:\textbackslash} may be wiped} between sessions, so redo Section 6.2 when that happens.
+\item Write \texttt{.mcp.json} \textbf{without a BOM}.
+\item Start the server with \texttt{server/start-server}, not the Web Server menu.
+\item The copy on the VM is a separate installation. It starts without the context or the project notes
+of the Claude Code sessions on the laptop.
+\item The MCP server only drives the Fluent solver: reading a case, initialising, iterating, TUI and
+Scheme commands, screenshots. Geometry and meshing stay manual. It is useful for the Mach sweep and the
+mesh study, by changing the far-field values through TUI commands and re-running.
+\end{itemize}
+
+\end{document}
