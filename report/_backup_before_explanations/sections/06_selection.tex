@@ -1,0 +1,52 @@
+\section{Selection}
+\label{sec:selection}
+
+\subsection{Profile}
+
+Table~\ref{tab:matrix} scores the profiles at $L/D = 4.5$ on the criteria of
+Section~\ref{sec:options}. Heating is left out because, with a metallic tip, it does not depend
+on the profile (Section~\ref{sec:heating}).
+
+\input{sections/tab_matrix}
+
+\textbf{Von K\'arm\'an is selected.} Three profiles form a leading group on flight performance:
+Von K\'arm\'an, power $\tfrac12$ and power $\tfrac34$. At the design length, Von K\'arm\'an is
+first. It has the lowest wave drag at every computed Mach number, flies \SI{18}{m} higher than
+power $\tfrac34$ and \SI{22}{m} higher than power $\tfrac12$, and stays first in all seven robustness
+scenarios (Figure~\ref{fig:robustness}). Ogive, parabolic and LV-Haack lose \SIrange{69}{79}{m},
+and the cone \SI{132}{m}. Von K\'arm\'an also wins on the other criteria:
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+\item it is tangent to the body at the shoulder, so there is no kink at the coupler bond. The
+power-$\tfrac12$ nose has a $3.2^\circ$ kink and the power-$\tfrac34$ a $4.8^\circ$ kink at
+$L/D=4.5$;
+\item it holds more of the 3U unit (\FINTHREEU{} inside the curved part, against
+\SI{217}{mm} for power $\tfrac12$ and \SI{152}{mm} for power $\tfrac34$);
+\item its advantage holds at $M \geq 1.2$, so it does not hinge on the transonic model.
+\end{itemize}
+The Firehorn power-$\tfrac12$ nose remains an acceptable alternative (\SI{22}{m} lower) if
+reusing its tooling outweighs the shoulder kink (R10, Section~\ref{sec:recommendations}).
+
+\subsection{Length}
+
+Every \SI{90}{mm} of nose ($\Delta L/D = 0.5$) around $L/D = 4$--4.5 is worth \TRADELEN{} of
+apogee, about \SI{0.4}{kg} of mass margin at \SI{-143}{m/kg}. It also costs about \SI{60}{mm} of
+nose-bay length (the extra length is partly recovered because more of the 3U fits inside the
+curved part) and about \SI{30}{g} of shell. With the LV capped at \SI{5.4}{m}
+(2027\_C\_SE\_REQ\_04) and dry-mass growth expected (the LVS flags its own mass as
+underestimated; 2027\_C\_SE\_REQ\_06 caps it at \SI{50}{kg}), the design point is
+\textbf{$L/D = 4.5$, $L = \SI{810}{mm}$}, which gives \TRADELEN{} of margin for \SI{62}{mm} of
+bay length. If systems engineering cannot release those \SI{62}{mm}, the same profile at
+$L/D = 4$ (\SI{720}{mm}, the LVS length) is the fallback; nothing else in the design changes.
+
+\subsection{Tip}
+
+A spherical tip of radius $r_n = \SI{4.5}{mm}$ ($r_n/R = 0.05$), machined in Al 6082-T6 as a
+replaceable insert:
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+\item it removes the sharp apex that cannot be laid up in prepreg and chips on landing;
+\item it costs \BLUNTCOST{} in wave drag (\BLUNTAPOA{} of apogee). A \SI{9}{mm} tip would lower the
+stagnation heating by $\sqrt2$ but cost \BLUNTAPOB{}, and the aluminium tip does not need it;
+\item it stays below \TIPAL{} in the envelope case, whereas a printed PET-CF tip reaches
+\PETENV{};
+\item it adds about \SI{60}{g} at the very front, which helps the static margin.
+\end{itemize}

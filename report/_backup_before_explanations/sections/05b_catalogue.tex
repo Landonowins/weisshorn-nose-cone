@@ -1,0 +1,197 @@
+\section{Design Catalogue}
+\label{sec:catalogue}
+
+This section presents the seven candidate nose cones as designs at the recommended length,
+$L/D = 4.5$ ($L = \SI{810}{mm}$, $D = \SI{180}{mm}$), each with the \SI{60}{mm} bonded shoulder of
+the Firehorn design. Figure~\ref{fig:gallery} shows them to scale with the 3U payload placed as far
+forward as each profile allows, and Figure~\ref{fig:fields} shows the computed flow around each of
+them at $M = 1.4$. Table~\ref{tab:catalogue} collects all the numbers. The wave-drag values in this
+section come from Euler runs made directly at $L/D = 4.5$; they agree with the values interpolated
+from $L/D = 3$, 4, 5 to within 0.3\,\% (Section~\ref{sec:check45}). Watertight STL solids of every
+design are in \texttt{results/cad/} (Appendix~\ref{app:scripts}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig_gallery}
+\caption{The seven designs at $L/D=4.5$, rendered to the same scale (diameter \SI{180}{mm}). Thin
+dotted line: end of the curved part; dashed box: 3U CubeSat ($100\times100\times\SI{340.5}{mm}$)
+pushed forward until its corners reach $r = \SI{77}{mm}$; dotted extension: payload-bay cylinder
+still needed behind the \SI{60}{mm} shoulder. $\Delta z$: apogee change relative to the
+LVS-length baseline (Von K\'arm\'an at $L/D=4$).}
+\label{fig:gallery}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{fig_fields_M14}
+\caption{Pressure coefficient around the seven designs at $M_\infty = 1.4$, $L/D = 4.5$
+(axisymmetric Euler, mirrored about the axis). The bow shock is the edge of the red region; the
+blue fans are the expansions that turn the flow back along the cylinder. The dashed line marks
+the sonic line where a subsonic region exists.}
+\label{fig:fields}
+\end{figure}
+
+\input{sections/tab_catalogue}
+
+\subsection{Conical}
+
+\textbf{Geometry.} A straight generator, $6.3^\circ$ semi-angle at $L/D=4.5$. It has the smallest
+volume (\SI{6.9}{L}) and wetted area (\SI{0.230}{m^2}) of all designs, hence the lightest shell
+(\SI{286}{g}), but it meets the cylinder with a $6.3^\circ$ kink.
+
+\textbf{Flow.} The conical-flow pressure ($C_p \approx 0.06$ at $M=1.4$) acts on the whole surface
+without relaxing. All the turning happens at once in a strong expansion fan at the shoulder
+(Figure~\ref{fig:fields}). That is why it has the highest wave drag at every Mach number, 46\,\%
+above Von K\'arm\'an at $M=1.4$, and why its drag climbs steeply towards Mach 1.
+
+\textbf{Integration and manufacture.} Only \SI{117}{mm} of the 3U fits inside the cone, so the nose
+bay grows to \SI{1043}{mm}. The mould is the simplest of all (a developable surface, which can even
+be laid up from flat patterns), but the shoulder kink needs a fillet at the coupler joint.
+
+\textbf{Verdict: rejected.} It is the worst on drag ($-\SI{132}{m}$ against Von K\'arm\'an), payload
+room and bay length. It also has the most aft centre of pressure ($x_{cp}/L = 2/3$), which is
+helpful for stability but irrelevant here because the margin changes by only $+0.09$ cal.
+
+\subsection{Tangent ogive}
+
+\textbf{Geometry.} A circular arc tangent to the body, the classic subsonic nose used on
+Bella Lui~II and Nordend. It has a $13^\circ$ tip semi-angle, \SI{11.0}{L} of volume and a tangent
+shoulder.
+
+\textbf{Flow.} The fuller forebody turns the flow harder near the tip (stronger compression than
+Von K\'arm\'an), then expands continuously; the wall pressure goes below ambient over the aft
+40\,\%. Wave drag is 21\,\% above Von K\'arm\'an at $M=1.4$.
+
+\textbf{Integration and manufacture.} It is the best of the low-drag families for packaging:
+\SI{309}{mm} of the 3U fits in the curved part, giving a \SI{870}{mm} nose bay. The constant
+curvature makes it the easiest smooth profile to template or machine.
+
+\textbf{Verdict: acceptable alternative for volume-driven designs.} It costs \SI{79}{m} of apogee
+against Von K\'arm\'an, about \SI{0.55}{kg} of dry-mass margin, for \SI{37}{mm} less nose bay.
+
+\subsection{Parabolic ($K' = 1$)}
+
+\textbf{Geometry and flow.} At the same length the parabola is practically the tangent ogive. The
+volume, wetted area, wave drag and pressure field are all the same (wave drag within 0.4\,\%), and its
+shoulder is also tangent.
+
+\textbf{Verdict: same as the ogive}, without the ERT heritage. It is listed for completeness: it is
+the ``parabola'' that Crowell's chart rates best in the high subsonic range (Table~\ref{tab:crowell}),
+which is irrelevant for a vehicle whose drag losses are concentrated at $M = 0.8$--1.5.
+
+\subsection{Power series $n = \tfrac12$ (Firehorn)}
+
+\textbf{Geometry.} $\eta = \xi^{1/2}$ starts with a vertical tangent: the tip is blunt by
+construction. It has the same volume as Von K\'arm\'an (\SI{10.3}{L}), but the volume sits
+further forward, and it meets the cylinder with a $3.2^\circ$ kink.
+
+\textbf{Flow.} The blunt apex detaches the bow shock and creates a small subsonic pocket (the only
+closed sonic line in Figure~\ref{fig:fields}). The overpressure is a short, intense spike at the
+apex; behind it the wall pressure stays slightly above ambient all the way to the shoulder, where
+the kink produces an expansion. The net wave drag is only 3--10\,\% above Von K\'arm\'an at
+$L/D=4.5$. On short noses ($L/D = 3$), and at $M \leq 1.1$ for $L/D = 4$, it is the lowest of all.
+Wildhorn chose this shape in 2022 on the basis of OpenRocket simulations.
+
+\textbf{Integration and manufacture.} \SI{217}{mm} of the 3U fits inside (nose bay
+\SI{943}{mm}). The Firehorn process (prepreg on a PET-CF male mould, removable tip) exists and
+only needs scaling. The blunt apex naturally ends on a tip insert.
+
+\textbf{Verdict: runner-up.} It is \SI{22}{m} below Von K\'arm\'an at $L/D=4.5$ (about
+\SI{0.15}{kg}) and within \SI{31}{m} of it in every robustness scenario (Section~\ref{sec:robust}). It is the
+recommended fallback if reusing Firehorn tooling and know-how outweighs the shoulder kink and the
+\SI{36}{mm} longer nose bay.
+
+\subsection{Power series $n = \tfrac34$}
+
+\textbf{Geometry.} It lies between the cone and the $\tfrac12$-power nose: a sharp-ish tip ($74^\circ$
+apex tangent over a very short distance), a slender body, and the second-smallest volume
+(\SI{8.2}{L}) and wetted area. It has a $4.8^\circ$ shoulder kink.
+
+\textbf{Flow.} Its wave drag falls fastest with Mach number ($0.0513 \rightarrow 0.0432$ between
+$M = 1.2$ and 1.6). Crowell's chart rates it among the best around $M \approx 1.5$--1.9. Its
+low wetted area saves friction, so over the Weisshorn flight it ends \SI{18}{m} below
+Von K\'arm\'an at $L/D = 4.5$.
+
+\textbf{Integration.} It has the worst packaging of the smooth shapes: \SI{152}{mm} of the 3U
+inside, a \SI{1008}{mm} nose bay and a kinked shoulder.
+
+\textbf{Verdict: not selected.} Its drag is competitive, but it would only make sense on a
+faster vehicle ($M_{\max} \approx 2$) with a payload outside the nose.
+
+\subsection{LV-Haack ($C = \tfrac13$)}
+
+\textbf{Geometry.} The Haack nose that minimises wave drag for a given length \emph{and volume}. It
+is the fullest design (\SI{11.6}{L}), with a tangent shoulder.
+
+\textbf{Flow.} It is close to the ogive, with a stronger compression at the apex. Its wave drag is
+13--19\,\% above Von K\'arm\'an over $M = 1.2$--1.6.
+
+\textbf{Integration.} It has the best payload room: \SI{320}{mm} of the 3U inside, a \SI{870}{mm}
+nose bay, and the heaviest shell (\SI{376}{g}). It also has the most forward centre of pressure
+($-0.08$ cal).
+
+\textbf{Verdict: the choice if payload volume were the driver.} It costs \SI{69}{m} against
+Von K\'arm\'an for the same bay length as the ogive, so between the two volume-optimised options
+it is marginally better than the ogive.
+
+\subsection{Von K\'arm\'an ($C = 0$, recommended)}
+
+\textbf{Geometry.} The Haack nose that minimises wave drag for a given length \emph{and base area}.
+Its apex has an infinite slope but a vanishing radius ($y \propto x^{3/4}$ near the tip), so in
+practice it is a slender needle that thickens quickly. It has \SI{10.3}{L} of volume, a tangent
+shoulder and $x_{cp}/L = 0.5$.
+
+\textbf{Flow.} The compression is weak and concentrated in the first few per cent of the length.
+The wall pressure then decreases monotonically and is below ambient over the aft third
+(Figure~\ref{fig:cp}), which partly cancels the forward overpressure. It has the lowest wave drag
+of the seven at every computed Mach number at $L/D = 4.5$ (0.0437, 0.0425 and 0.0414 at
+$M = 1.2$, 1.4 and 1.6). The \SI{4.5}{mm} spherical tip replaces the needle apex by a
+stagnation region a few millimetres across (as on any blunt tip), at a cost of $+0.5$ to $+1.4\,\%$
+in wave drag (direct runs at $L/D = 4.5$).
+
+\textbf{Integration and manufacture.} \SI{254}{mm} of the 3U fits inside the curved part (nose bay
+\SI{907}{mm}). The tangent shoulder gives a clean bond line for the Al coupler. The profile is
+generated from one closed-form equation (CSV/STL provided).
+
+\textbf{Verdict: recommended.} It gives the highest apogee at $L/D = 4.5$ in all seven robustness
+scenarios, has no shoulder kink and gives reasonable payload room.
+
+\subsection{Literature cross-check}
+\label{sec:crowell}
+
+The drag-rating chart compiled by Crowell (reproduced on Wikipedia's ``Nose cone design'' page,
+CC BY-SA 4.0, and used in the Firehorn nosecone DJF) ranks the shapes from 1 (superior) to 4
+(inferior) against Mach number. Table~\ref{tab:crowell} lists the ratings read from the chart at
+five Mach numbers. The chart does not state the fineness ratio of the data behind it.
+
+\begin{table}[H]
+\centering
+\caption{Crowell's qualitative drag ratings (1 superior, 2 good, 3 fair, 4 inferior; --: no data),
+read from the vector chart \texttt{Nose\_cone\_drag\_comparison.svg} (G.\,A. Crowell / C.\,M.\,G.
+Lee). Compared with the ranking computed here at $L/D=3$ and $L/D=4.5$.}
+\label{tab:crowell}
+\small
+\begin{tabular}{@{}lccccc|cc@{}}
+\toprule
+ & \multicolumn{5}{c|}{Crowell rating at $M =$} & \multicolumn{2}{c}{Euler rank at $M=1.4$} \\
+Shape & 0.9 & 1.0 & 1.2 & 1.5 & 1.85 & $L/D=3$ & $L/D=4.5$ \\
+\midrule
+Cone & 4 & 4 & 4 & 4 & 4 & 6 & 7 \\
+Tangent ogive & 4 & 4 & 4 & 4 & 4 & 5 & 6 \\
+Parabola & 1 & 3 & -- & -- & -- & 4 & 5 \\
+Power $\tfrac12$ & 1 & 2 & 2 & 2 & 3 & 1 & 2 \\
+Power $\tfrac34$ & 2 & -- & -- & 3 & 2 & -- & 3 \\
+LV-Haack & 1 & 1 & -- & -- & -- & 3 & 4 \\
+Von K\'arm\'an & 1 & 1 & 1 & 3 & 2 & 2 & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The two sources agree on what matters most: the ogive and the cone are the worst choices at
+transonic and low supersonic speeds, and the Von K\'arm\'an, Haack and power-law noses are the
+good ones. They differ around $M \approx 1.5$, where the chart prefers the $\tfrac12$-power nose
+to Von K\'arm\'an. The Euler results reproduce that preference at $L/D = 3$ (power $\tfrac12$
+ahead) but not at $L/D \geq 4$, where Von K\'arm\'an is lower at every Mach number. The
+ranking depends on fineness, and the chart is a coarse, fineness-free summary. The
+recommendation therefore rests on the computed ranking at the actual design fineness, which is
+also robust to the modelling assumptions (Section~\ref{sec:robust}).
