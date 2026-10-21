@@ -10,8 +10,7 @@ best design; manufacture is a judgement score (a tangent shoulder and a standard
 kink is penalised, the cone gets 3 for its simple mould). Performance carries the largest weight
 (0.44) because apogee margin is what the nose shape mainly affects; integration and manufacture
 (0.22 each) decide whether the design can be housed and built; stability (0.11) matters least,
-since the margin varies by less than 0.1 cal. Heating is left out because, with a metallic tip, it
-does not depend on the profile. Only properties of the hardware are scored: whether a profile has
+since the margin varies by less than 0.1 cal. Only properties of the hardware are scored: whether a profile has
 flown on an earlier ERT vehicle is not a criterion.
 
 \input{sections/tab_matrix}
@@ -44,9 +43,6 @@ at $L/D = 4$ (\SI{720}{mm}, the LVS length) is the fallback; nothing else change
 
 \subsection{Tip}
 
-A spherical tip of radius $r_n = \SI{4.5}{mm}$ ($r_n/R = 0.05$), machined in Al 6082-T6 as a
-replaceable insert. It removes the sharp apex that cannot be laid up and chips on landing, costs
-\BLUNTCOST{} in wave drag (\BLUNTAPOA{} of apogee), stays below \TIPAL{} in the envelope case
-(against \PETENV{} for a printed PET-CF tip), and adds about \SI{60}{g} at the very front, which helps
-the static margin. A \SI{9}{mm} tip would lower the stagnation heating by only $\sqrt2$ for
-\BLUNTAPOB{}, and the aluminium insert does not need it.
+A spherical tip of radius $r_n = \SI{4.5}{mm}$ ($r_n/R = 0.05$). It removes the sharp apex that
+cannot be made and chips on landing, and costs \BLUNTCOST{} in wave drag (\BLUNTAPOA{} of apogee),
+against \BLUNTAPOB{} for a \SI{9}{mm} tip. The tip material is left to ST.

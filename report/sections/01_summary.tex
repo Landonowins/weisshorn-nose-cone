@@ -7,8 +7,7 @@
 Profile & Von K\'arm\'an (Haack $C=0$), tangent to the body \\
 Length & $L = \FINL$ ($L/D = 4.5$) to the theoretical apex; \FINLPHYS{} physical \\
 Diameter & \SI{180}{mm} \\
-Tip & spherical, $r_n = \SI{4.5}{mm}$ ($r_n/R = 0.05$), machined Al 6082-T6 insert \\
-Shell & CFRP $[0/45/0]_{SO}$, \SI{1.2}{mm} (GFRP if the nose is the RF window), $\approx$\FINMASS{} with tip \\
+Tip & spherical, $r_n = \SI{4.5}{mm}$ ($r_n/R = 0.05$) \\
 Fallback & same profile at $L/D=4$ (\SI{720}{mm}) if the \SI{62}{mm} cannot be found in the \SI{5.4}{m} budget \\
 \end{tabular}}}
 
@@ -16,7 +15,9 @@ Fallback & same profile at $L/D=4$ (\SI{720}{mm}) if the \SI{62}{mm} cannot be f
 \noindent The Von K\'arm\'an profile is the member of the Haack family of noses that, according to
 slender-body theory, gives the lowest supersonic pressure drag for a given length and base
 diameter (Section~\ref{sec:profiles}). $L/D$ is the \emph{fineness ratio}, the nose length divided
-by the body diameter. Symbols and abbreviations are listed in the Nomenclature.
+by the body diameter. Symbols and abbreviations are listed in the Nomenclature. The report covers
+the FD scope (profile, length, tip radius, drag, apogee, stability); structural loads, heating,
+materials and the mass budget are left to ST.
 
 \vspace{4pt}
 \noindent Why:
@@ -37,24 +38,18 @@ lost per kilogram of dry mass), the margin over the ogive is worth about \SI{0.5
 Launch Vehicle Sizing) for \SI{62}{mm} of nose
 bay, with diminishing returns beyond that: wave drag falls as $1/(L/D)^2$, while the friction and
 the mass of the nose grow linearly with its length.
-\item \textbf{Heating.} $T_0$, the stagnation temperature (the temperature air reaches when it is
-brought to rest against the tip, and the upper bound for any surface temperature), peaks at \SI{119}{\celsius} (nominal) and \SI{156}{\celsius}
-(hot-day envelope, $M=1.56$). A printed PET-CF tip would exceed its heat-deflection temperature
-(the temperature at which the polymer starts to deform under load);
-the Al tip stays below \TIPAL. The shell inner face reaches \SHELLENV{} in the envelope, close
-to the limit of the DP490 epoxy that bonds the coupler to the shell, so the thermal requirement must be raised from Firehorn's
-\SI{390}{K}/\SI{5}{s}.
-\item \textbf{Integration and stability.} The tangent shoulder (no change of slope where the nose
-meets the body tube) suits the bonded coupler; \FINTHREEU{}
-of the 3U payload fits inside the curved part. The static margin, the distance from the centre of
+\item \textbf{Tip.} A \SI{4.5}{mm} spherical tip replaces the sharp apex, which cannot be made, for
+\BLUNTCOST{} of wave drag (\BLUNTAPOA{} of apogee).
+\item \textbf{Integration and stability.} The shoulder is tangent (no change of slope where the nose
+meets the body tube); \FINTHREEU{} of the 3U payload fits inside the curved part. The static margin, the distance from the centre of
 gravity to the centre of pressure in body diameters (calibres, cal), changes by \FINDSM{} cal,
 which is negligible.
 \item \textbf{Deliverables.} Profile coordinates, watertight STL solids of all seven designs and
-of the final nose, a STEP solid of the final nose, the full Euler data set, nine numbered
+of the final nose, a STEP solid of the final nose, the full Euler data set, six numbered
 recommendations with owners
 (Section~\ref{sec:recommendations}) and the alternatives to use if the priorities change.
 \end{itemize}
 
-\noindent\textbf{Not found in the ERT documentation} (details in Section~\ref{sec:flags}): Alex
-Marseille's nose cone report, any Weisshorn nosecone requirement, the Weisshorn fin geometry and
-mass breakdown, and any supersonic flight data.
+\noindent\textbf{Not found in the ERT documentation} (details in Section~\ref{sec:flags}): any
+Weisshorn nosecone requirement, the Weisshorn fin geometry and mass breakdown, and any supersonic
+flight data.

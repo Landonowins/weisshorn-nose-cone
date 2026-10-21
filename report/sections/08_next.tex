@@ -4,7 +4,7 @@
 \begin{enumerate}[leftmargin=*,itemsep=3pt]
 \item \textbf{Fluent verification (CFD team).} Run the selected geometry in Fluent (density-based,
 k-$\omega$ SST, ideal gas, Sutherland viscosity) at $M = 0.95$, 1.2 and 1.47, plus the
-$5^\circ$ incidence case (R6). This replaces the transonic assumption of
+$5^\circ$ incidence case (R3). This replaces the transonic assumption of
 Section~\ref{sec:transonic} and checks the Euler wave drag with viscous effects; the Euler
 wall-pressure files are the reference to compare against. The setup is detailed in
 \texttt{CFD/Fluent\_Workflow\_Nose\_Cone.pdf} of the repository (Appendix~\ref{app:scripts}).
@@ -15,14 +15,6 @@ the static margin (2--4 cal, 2027\_C\_SE\_\allowbreak FD\_REQ\_07) once the fins
 \begin{itemize}[itemsep=1pt]
 \item profile: Von K\'arm\'an, $L = \FINL{}$ ($L/D=4.5$, \FINLPHYS{} physical with the tip), coordinates from \texttt{nose\_profile\_final.csv}, radius tolerance $\pm\SI{0.5}{mm}$;
 \item nosecone bay length (curved part + the cylinder that completes the 3U housing) \FINBAY{}, to be booked in the \SI{5.4}{m} LV budget (2027\_C\_SE\_REQ\_04);
-\item thermal: withstand \SI{430}{K} on the outer surface for \SI{10}{s} (envelope stagnation temperature, an upper bound for the whole surface), replacing Firehorn's \SI{390}{K}/\SI{5}{s};
-\item tip: metallic (Al 6082-T6), spherical radius \SI{4.5}{mm}, replaceable.
+\item tip: spherical, radius \SI{4.5}{mm}.
 \end{itemize}
-\item \textbf{Material and RF.} If the payload or avionics need GNSS/telemetry through the nose,
-the shell must be GFRP (2027\_C\_SE\_AV\_INTERFACE\_ST\_REQ\_07 asks for a $360^\circ$ RF window
-$\geq 2D$ long; the \SI{810}{mm} nose can be that window). GFRP has the same epoxy temperature limit
-but about 40\,\% more mass for the same stiffness; the shape result does not change.
-\item \textbf{Thermal test.} Update 2025\_C\_ST\_NOSECONE\_TEMPERATURE\_TSP to the new level and add a
-shoulder/coupler bond specimen: the DP490 bond is the weakest point in the envelope case
-(Section~\ref{sec:heating}).
 \end{enumerate}

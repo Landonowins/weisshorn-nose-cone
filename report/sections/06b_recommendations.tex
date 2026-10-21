@@ -20,25 +20,15 @@ STEP/STL solids (Section~\ref{sec:definition}) as the master geometry. & FD $\ri
 R2 & Book a \SI{907}{mm} nose bay (\SI{810}{mm} curved + \SI{97}{mm} cylinder for the 3U, of which
 \SI{60}{mm} is the coupler shoulder) in the \SI{5.4}{m} LV budget. If it does not fit, keep the same
 profile at $L = \SI{720}{mm}$ ($-\SI{60}{m}$, bay \SI{845}{mm}). & SE & PDR \\
-R3 & Use a machined Al 6082-T6 tip insert ($r_n = \SI{4.5}{mm}$, $\sim$\SI{80}{mm} long,
-$\sim$\SI{60}{g}), threaded onto a ring bonded inside the shell. Do not fly a printed PET-CF tip:
-it would exceed its heat-deflection range by \SIrange{25}{70}{\celsius}. & ST & CDR \\
-R4 & Lay up the shell in CFRP prepreg $[0/45/0]_{SO}$, \SI{1.2}{mm}, on a male PET-CF mould printed
-in 2--3 segments, with the joints in the aft half (low curvature). Use GFRP instead if the nose
-has to be the RF window. & ST (AV, PL) & CDR \\
-R5 & Raise the thermal requirement to \SI{430}{K} for \SI{10}{s} and qualify the shoulder bond: the
-DP490 joint at the shoulder sees about \SI{95}{\celsius} in the envelope case. Consider a higher-$T_g$ adhesive if
-the test margin is small. & SE, ST & CDR \\
-R6 & Verify with Fluent (RANS, k-$\omega$ SST) at $M = 0.95$, 1.2 and 1.47 for the selected nose and
+R3 & Verify with Fluent (RANS, k-$\omega$ SST) at $M = 0.95$, 1.2 and 1.47 for the selected nose and
 the power-$\tfrac12$ alternative, plus one $5^\circ$ incidence case for $C_{N\alpha}$ and CP, to
 replace the transonic model of this report. & FD-CFD & before CDR \\
-R7 & Put the final geometry and $C_{D,\rm w}(M)$ into the RocketPy model. Re-check apogee, rail-exit
+R4 & Put the final geometry and $C_{D,\rm w}(M)$ into the RocketPy model. Re-check apogee, rail-exit
 speed and the 2--4 cal static margin once the fins are designed. The nose contributes
 $C_{N\alpha} = 2$ at \FINXCP{} from the tip. & FD-Sim & PDR \\
-R8 & Size the payload structure around a 3U envelope whose front face is \FINTHREEU{} ahead of the
+R5 & Size the payload structure around a 3U envelope whose front face is \FINTHREEU{} ahead of the
 shoulder, inside the $r \leq \SI{77}{mm}$ contour (Figure~\ref{fig:final}). & PL, ST & CDR \\
-R9 & Create the missing Weisshorn nosecone requirements: geometry, bay length, mass
-($\leq\SI{500}{g}$ for the nose structure, Table~\ref{tab:mass}), thermal and tip
+R6 & Create the missing Weisshorn nosecone requirements: profile, bay length and tip radius
 (Section~\ref{sec:next}). & SE & PDR \\
 \bottomrule
 \end{longtable}
@@ -48,8 +38,7 @@ R9 & Create the missing Weisshorn nosecone requirements: geometry, bay length, m
 
 The recommendation assumes the current Weisshorn priorities: apogee margin, a 3U payload in the
 nose bay, and a length cap. If they change, Table~\ref{tab:alternatives} gives the design to use.
-Do not use a cone or a tangent ogive on a supersonic Weisshorn, nor a printed thermoplastic tip, and
-judge a longer nose by the nose-bay length it needs, which is what the \SI{5.4}{m} cap constrains.
+Do not use a cone or a tangent ogive on a supersonic Weisshorn, and judge a longer nose by the nose-bay length it needs, which is what the \SI{5.4}{m} cap constrains.
 
 \begin{table}[H]
 \centering

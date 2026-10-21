@@ -28,9 +28,7 @@ Stability & 1.5--6 cal (EuRoC); FD target 2--4 cal & 2027\_C\_SE\_REQ\_09; 2027\
 Launch rail & $84\pm1^\circ$ elevation & 2027\_C\_SE\_FD\_REQ\_05 \\
 Payload & 3U CubeSat in the nosecone bay, nose separates at apogee & 2027\_C\_SE\_ST\_FUA; Structure wiki page \\
 Nose length (sizing) & scaled from Firehorn: $960\times180/240 = \SI{720}{mm}$ & 2027\_C\_SE\_LVS\_DJF (``scaled down in the same way for mass and length'') \\
-RF windows & $360^\circ$, $\geq 2D$ long & 2027\_C\_SE\_AV\_INTERFACE\_ST\_REQ\_07 \\
-Firehorn manufacturing process & CFRP prepreg on PET-CF male mould, $[0/45/0]_{SO}$, \SI{1.2}{mm}; removable PET-CF tip; bonded Al male coupler; as-built \SI{500}{g} & 2024\_C\_ST\_NOSECONE\_DJF/DDF; 2025\_C\_ST\_NOSECONE\_PURPOSE\_IR \\
-Firehorn thermal requirement & \SI{390}{K} for \SI{5}{s} & 2024\_C\_SE\_ST\_NOSECONE\_REQ\_09 (Firehorn) \\
+Firehorn nose mass & as-built \SI{500}{g} (\SI{960}{mm}, \O\SI{240}{mm}) & 2024\_C\_ST\_NOSECONE\_DJF/DDF; 2025\_C\_ST\_NOSECONE\_PURPOSE\_IR \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -39,8 +37,7 @@ With $M_{\max} \approx 1.4$, Weisshorn crosses the \emph{transonic} range (rough
 where subsonic and supersonic regions coexist around the body) and flies a few seconds in the low
 supersonic range, so the nose is designed for this whole range rather than for one Mach number.
 The 3U CubeSat ($100\times100\times\SI{340.5}{mm}$) sits in the nose bay, so the profile decides
-how much of it fits inside the curved part. Carbon fibre blocks radio signals, so if the nose has
-to be the RF window its shell must be glass fibre.
+how much of it fits inside the curved part.
 
 \subsection{What is assumed}
 
@@ -56,16 +53,16 @@ single factor $k$ so that the baseline nose reaches the LVO apogee of \SI{9.0}{k
 (Section~\ref{sec:flight}). This gives $M_{\max}=1.47$, consistent with the LVO's Mach~1.4. All
 noses share the same $k$, and Section~\ref{sec:robust} shows that the ranking does not change when
 the rest of the drag is varied.
-\item \textbf{Thermal envelope.} The LVO masses ($75 \rightarrow \SI{45}{kg}$) on a
-\SI{30}{\celsius} day give $M_{\max} \approx 1.56$, the hottest credible flight. Heating is
-checked on this case.
+\item \textbf{Hot-day envelope.} The LVO masses ($75 \rightarrow \SI{45}{kg}$) on a
+\SI{30}{\celsius} day give $M_{\max} \approx 1.56$, the fastest credible flight. It is one of the
+robustness cases (Section~\ref{sec:robust}).
 \item \textbf{Fins} (not yet defined for Weisshorn): four trapezoidal fins, root \SI{300}{mm},
 tip \SI{120}{mm}, span \SI{160}{mm}, sweep \SI{180}{mm}, \SI{5}{mm} hexagonal section. They only
 enter the common drag and the CP shift.
 \item \textbf{Payload envelope.} A 3U unit needs an outer radius $r \geq \SI{77}{mm}$:
 \SI{70.7}{mm} half-diagonal, \SI{3}{mm} clearance, \SI{2}{mm} guide, \SI{1.2}{mm} shell.
-\item \textbf{Shell.} \SI{1.2}{mm} CFRP at the Firehorn as-built areal density
-(\SI{0.98}{kg/m^2}), plus a \SI{60}{g} machined aluminium tip.
+\item \textbf{Nose mass.} Wetted area times the Firehorn as-built areal density
+(\SI{0.98}{kg/m^2}), plus \SI{60}{g} for the tip. It only enters the trajectory and the CG.
 \item \textbf{Transonic nose wave drag} ($0.8 < M < 1.1$): smooth rise from zero at $M = 0.8$
 to the computed $M = 1.1$ value at $M = 1.0$ (Section~\ref{sec:transonic}).
 \end{itemize}
@@ -74,14 +71,9 @@ to the computed $M = 1.1$ value at $M = 1.0$ (Section~\ref{sec:transonic}).
 \label{sec:flags}
 
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{Alex Marseille's nose cone report} is not on the ERT Drive or the wiki. His
-documented work is the CFD of the \SI{54}{mm} supersonic semester rocket; as CFD advisor he set
-the semester goal ``WS (Cd, Nosecone)'' (2027\_C\_FD\_TM\_3), which is this study. The prior work
-used instead is the 2021 supersonic nosecone semester project, the Wildhorn optimisation note
-(2022\_FD\_TN\_C01) and the Firehorn nosecone DJF/DDF.
-\item \textbf{No Weisshorn nosecone requirement} (length, mass, thermal) exists yet; the Weisshorn
+\item \textbf{No Weisshorn nosecone requirement} (length, profile) exists yet; the Weisshorn
 nosecone pages are empty templates.
 \item \textbf{Weisshorn fins, CG and mass breakdown} are not defined. The static margin is
 therefore given as a \emph{change} relative to the baseline nose.
-\item \textbf{No supersonic flight data} exists at ERT to calibrate drag or heating against.
+\item \textbf{No supersonic flight data} exists at ERT to calibrate drag against.
 \end{itemize}
