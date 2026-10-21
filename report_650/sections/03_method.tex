@@ -1,0 +1,52 @@
+\section{Method}
+\label{sec:method}
+
+The chain of report~1 is reused: the Euler wave drag of each nose feeds a drag build-up and a
+point-mass ascent trajectory, which gives the apogee. Three things are new: direct Euler runs at the
+short lengths the \SI{650}{mm} limit allows, the fixed-total-length geometry, and the 3U fit. The study is run by
+\texttt{studies/total\_length.py} with \texttt{configs/weisshorn\_650.yaml} in the
+\texttt{weisshorn-nose-cone} repository.
+
+\paragraph{Profiles.} The three best profiles of report~1 are compared. Von K\'arm\'an (Haack
+series $C=0$) has the lowest wave drag for a given length. LV-Haack ($C=\tfrac13$) is the Haack
+nose of lowest drag for a given length and volume: it is fuller near the base, which is where the
+3U sits. The power-$\tfrac12$ nose ($y = R\sqrt{x/L}$) has almost the same drag as
+Von K\'arm\'an at short lengths but is the slimmest at the base. All three get the \SI{4.5}{mm}
+spherical tip of report~1.
+
+\paragraph{Wave drag.} Report~1 computed these profiles at $L/D = 3$, 4, 4.5 and 5 and interpolated
+$C_{D,\rm w}(L/D)^2$, which slender-body theory predicts to be nearly constant, between them. The
+\SI{650}{mm} limit gives $L/D = 2.5$--$3.5$, at and below the edge of that data. The same
+axisymmetric Euler solver (HLLC, MUSCL, $160\times80$ cells; validated against Taylor--Maccoll to
+0.5\,\% and grid-converged to 0.5--1\,\% in report~1) was therefore run directly at $L/D = 2.5$
+and 3.5 for the three profiles at $M = 1.6$, 1.4, 1.2 and 1.1, giving 24 new points (study
+\texttt{f650}). The transonic rise below $M = 1.1$ is modelled as in report~1.
+
+\paragraph{Fixed total length.} For a coupler of length $c$, the curved part is
+$L = \SI{650}{mm} - c$. The vehicle behind the joint is fixed, so the coupler cylinder adds its
+wetted area $\pi D c$ to the skin friction and its shell mass ($\SI{0.98}{kg/m^2}$, the Firehorn
+as-built areal density) to the vehicle; the curved shell mass and the tip follow report~1.
+
+\paragraph{3U fit.} With the profile $y(x)$ measured from the apex, the 3U fits in the last
+$l_{\rm in}$ of the curved part, where $y \geq r_{\rm req} = \SI{77}{mm}$:
+\begin{equation}
+l_{\rm in} = L - x^{*}, \qquad y(x^{*}) = r_{\rm req}.
+\label{eq:lin}
+\end{equation}
+For all three profiles $y/R$ depends only on $x/L$, so $l_{\rm in} = \kappa L$ with a constant
+$\kappa$: 0.31 for Von K\'arm\'an, 0.39 for LV-Haack and 0.27 for power~$\tfrac12$. Placed as far
+forward as possible, the 3U of length $l_{\rm 3U}$ (with its clearance) then occupies the coupler
+and reaches
+\begin{equation}
+p = l_{\rm 3U} - l_{\rm in} - c = l_{\rm 3U} - \kappa\,(\SI{650}{mm}) - (1-\kappa)\,c
+\label{eq:p}
+\end{equation}
+past the joint. Every millimetre of coupler pulls the 3U back by only $1-\kappa$ of a millimetre,
+because it also shortens the curved part. The design point of a profile is, in study~A, the
+shortest coupler ($\geq\TLCMIN$) with $p\leq0$ and, in study~B, the \TLCMIN{} minimum. For the
+interface meeting the same rules are applied with the \SI{650}{mm} replaced by an allowed total length
+from 600 to \SI{850}{mm}; the vehicle behind the joint is kept, so the LV grows with the nose.
+
+\paragraph{Stability.} As in report~1: the static-margin change uses Barrowman's nose centre of
+pressure $x_{cp} = L - V/A_{\rm ref}$ ($V$ the nose volume) and the nose mass, relative to the LVS
+nose.
