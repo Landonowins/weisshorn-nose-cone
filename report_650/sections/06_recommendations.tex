@@ -1,0 +1,58 @@
+\section{Recommendations}
+\label{sec:reco}
+
+R1 is the decision for the interface meeting; R2--R8 are the inputs for the structure design of the
+study that is chosen; R9 and R10 are the checks that can change them. Owners are ERT teams: ST
+structure, SE systems engineering, FD flight dynamics (CFD and simulation), PL payload, RE recovery.
+
+{\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.8cm}>{\raggedright\arraybackslash}p{11.3cm}>{\raggedright\arraybackslash}p{1.8cm}>{\raggedright\arraybackslash}p{1.6cm}@{}}
+\caption{Recommendations, owners and timing.}
+\label{tab:reco} \\
+\toprule
+\# & Recommendation & Owner & When \\
+\midrule
+\endfirsthead
+\toprule
+\# & Recommendation & Owner & When \\
+\midrule
+\endhead
+R1 & Decide at the interface meeting where the 3U goes and how long the nose may be, with
+Table~\ref{tab:length}: taking the 3U out of the nose is worth \TLAB{} at \SI{650}{mm}; going to the
+\TLLVNOSE{} the \SI{5.4}{m} LV allows is worth \TLInSEVENTWENTYG{} (A) or \TLOutSEVENTWENTYG{} (B).
+If the 3U leaves the nose, PL and SE place it and FD checks the stability (about \TLGRVSM~cal per
+\SI{100}{mm} it moves aft). Re-run \texttt{studies/total\_length.py} with the agreed length for the
+final geometry. & SE, PL, ST, FD & interface meeting \\
+\midrule
+R2 & Until then, design to study~A (the requirements as written): LV-Haack, \TLInLVHL{} curved +
+\TLInLVHC{} cylinder (Table~\ref{tab:final}). Use \TLInLVHFILE{}\texttt{.step} or the CSV as the
+master geometry; profile tolerance $\pm\SI{0.5}{mm}$, checked at five stations. If B is chosen, the
+same applies to \TLOutVKFILE. & ST & PDR \\
+R3 & Study A: make the \TLInLVHC{} cylinder the payload bay: bond the coupler ring at its aft end
+with at least \TLCMIN{} of overlap, keep $\geq\SI{155}{mm}$ free through the cylinder and the ring so
+the 3U slides in from the joint, and guide the 3U over its full length from \TLInLVHXGRV{} to the
+joint. Put the payload-switch access of Req\_11 in this cylinder, not in the curved part. & ST, PL & PDR \\
+R4 & Size the joint, the coupler bond and the payload mounts for \TLInLVHFULT{} ultimate compression
+in A (\TLOutVKFULT{} in B; burn-out, hot day) and raise Req\_06 from \SI{300}{N} accordingly. & ST, SE & PDR \\
+R5 & Agree the design incidence at $q_{\max}$ with FD: Req\_12 (\SI{200}{N.m} ultimate) covers
+\TLInLVHALPHA{} in A and \TLOutVKALPHA{} in B (\TLInLVHBEND{} and \TLOutVKBEND{} per degree,
+limit). & ST, FD & PDR \\
+R6 & Set Req\_08 to \SI{430}{K} for \SI{10}{s}. Restate Req\_10 for the air or the payload and
+check it with a model that includes the inside of the bay; the bare shell can reach
+\TLInLVHSHELL. Keep the coupler bond qualified to \SI{100}{\celsius}. & SE, ST & CDR \\
+R7 & Manufacture as in report~1: CFRP $[0/45/0]_{SO}$ prepreg, \SI{1.2}{mm}, on a PET-CF male mould
+(\SI{650}{mm}, two segments joined in the aft half), plies stopped near $r = \SI{17}{mm}$, two local
+plies over the coupler cylinder; Al 6082-T6 tip insert threaded onto a bonded ring, flush within
+\SI{0.2}{mm}, no forward-facing steps. & ST & CDR \\
+R8 & Keep the structure within Req\_04: the FD scope is \TLInLVHFDMASS{} in A (\TLOutVKFDMASS{}
+in B), which leaves \TLInLVHLEFT{} (\TLOutVKLEFT) for the coupler ring and the payload
+structure. & ST, PL & CDR \\
+\midrule
+R9 & Confirm the shortest coupler the separation mechanism allows; if it is longer than \TLCMIN,
+only study~B changes (A already has \TLInLVHC). & ST, RE & PDR \\
+R10 & Run the Fluent verification of the chosen design (STEP files in \texttt{CFD/geometry\_650/})
+at $M = 0.95$, 1.2 and 1.47 with the workflow note, add subsonic points for FD\_REQ\_04
+($M = 0.3$--1.5), and update the vehicle simulation with the new nose and apogee. & FD & before CDR \\
+\bottomrule
+\end{longtable}
+}

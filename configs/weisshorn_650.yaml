@@ -1,0 +1,45 @@
+# =============================================================================================
+#  Weisshorn nose cone at a fixed total length of 650 mm (coupler included):
+#  2027_C_SE_ST_Nosecone/Payload-Bay_Req_03. Configuration of the report 2026_C_FD_REPORT-2.
+#
+#    python -m nosecone cfd configs/weisshorn_650.yaml          # new Euler runs (study f650)
+#    python -m nosecone run configs/weisshorn_650.yaml          # standard outputs of the design
+#    python studies/total_length.py configs/weisshorn_650.yaml  # coupler-length study
+#
+#  Everything not set here comes from weisshorn.yaml.
+# =============================================================================================
+base: weisshorn.yaml
+
+project:
+  name: Weisshorn-650
+  output_dir: ../output/weisshorn_650
+
+nose:                          # design of report 2: GRV inside the nose (studies/total_length.py)
+  profiles: [vonkarman, lvhaack, power050]
+  fineness: [2.5, 3.0, 3.5, 4.0]
+  design_profile: lvhaack
+  design_fineness: 3.116667    # L = 561 mm
+  shoulder_length: 0.089       # coupler cylinder: 561 + 89 = 650 mm
+
+aerodynamics:
+  studies: [main, f45, f650]   # + direct runs at L/D 2.5 and 3.5
+
+payload:                       # guided recovery vehicle (GRV) in the lower part of the nose (Req_13)
+  name: GRV
+  length: 0.300                # 2026_C_SE_PL_GRV_REQ_02: 10 x 10 x 30 cm
+  width: 0.100
+  required_radius: 0.077       # 70.7 half-diagonal + 3 clearance + 2 guide + 1.2 shell [m]
+  axial_clearance: 0.010
+
+cfd:
+  studies:   # direct runs that bracket the short noses allowed by the 650 mm limit (L/D 2.5-3.6)
+    - {name: f650, profiles: [vonkarman, lvhaack, power050], fineness: [2.5, 3.5], machs: [1.6, 1.4, 1.2, 1.1]}
+
+heating:
+  trajectory_from: design
+
+robustness:
+  fineness: 3.116667
+
+trade_matrix:
+  fineness: 3.116667

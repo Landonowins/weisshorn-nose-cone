@@ -1,0 +1,64 @@
+\section{Requirements and Inputs}
+\label{sec:inputs}
+
+Report~1 (2026\_C\_FD\_REPORT-1\_NOSE\_CONE) chose the profile for a nose of free length and
+recommended a Von K\'arm\'an nose of \SI{810}{mm}. The structure (ST) requirements of Weisshorn now
+cap the nose at \SI{650}{mm} in total, and systems engineering (SE) specified that this length is the
+curved part plus the cylindrical part (the coupler), and that the nose is extended with a
+cylindrical part if the 3U payload does not fit in the curved shape. Table~\ref{tab:req} lists the
+requirements that drive the nose; everything else (vehicle, engine, trajectory model, Euler solver)
+is unchanged from report~1.
+
+\begin{table}[H]
+\centering
+\caption{Requirements that drive the nose (sheet 2027\_C\_SE\_REQ unless stated).}
+\label{tab:req}
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.3cm}>{\raggedright\arraybackslash}p{11.2cm}@{}}
+\toprule
+Requirement & Content \\
+\midrule
+ST Nosecone/Payload-Bay Req\_03 & Total length $\leq\SI{650}{mm}$: curved part + cylindrical part (coupler), confirmed by SE \\
+Req\_13, Req\_01 & Payload bay prepared for both cases: a CanSat at the front of the nose with a volume for the guided recovery in its lower part, or a 3U volume; if the 3U does not fit, the nose is extended with a cylinder (SE) \\
+PL\_GRV\_REQ\_02, \_03 & 3U payload (guided recovery vehicle, GRV) $100\times100\times\SI{300}{mm}$, \SIrange{3.0}{3.99}{kg} \\
+ST\_REQ\_09 & Integration diameter through couplers $\geq\SI{155}{mm}$ \\
+RE\_REQ\_08 & Recovery (RE) assembly $\leq\SI{550}{mm}$ in a \SI{600}{mm} tube: \SI{50}{mm} free \\
+SE\_REQ\_01, \_04 & Apogee $\geq\SI{9000}{m}$ AGL; launch vehicle (LV) shorter than \SI{5.4}{m} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{The coupler.} As on Firehorn, the coupler ring is bonded inside a full-diameter
+cylindrical extension of the nose shell, behind the curved part; its aft face is the joint (the
+separation plane) to the RE bay. This cylinder is part of the outer skin, so its length $c$ counts in
+the \SI{650}{mm} and is taken from the curved part: $L = \SI{650}{mm} - c$. Its shortest length is
+set by ST (bond overlap, separation mechanism, fasteners). The study assumes $c\geq\TLCMIN$; a longer
+cylinder is simply a payload bay.
+
+\paragraph{The 3U envelope.} The 3U ($100\times\SI{100}{mm}$ section) needs an outer radius
+$r\geq\SI{77}{mm}$: \SI{70.7}{mm} half-diagonal, \SI{3}{mm} clearance, \SI{2}{mm} guide rail and
+the \SI{1.2}{mm} shell. This is true only near the base of a slender nose. Its length is taken as
+\TLGRVLEN{} (PL\_GRV\_REQ\_02) plus \SI{10}{mm} axial clearance; report~1 used the
+\SI{340.5}{mm} of a 3U CubeSat, whose effect is given in Section~\ref{sec:sens}. The coupler ring
+leaves at least \SI{155}{mm} free, enough for the \SI{151}{mm} the 3U needs, so the 3U can pass
+through it. The CanSat (\O\SI{66}{mm}$\times$\SI{115}{mm}) needs $r\geq\SI{39.2}{mm}$ by the same
+rule.
+
+\paragraph{The two studies.}
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+\item \textbf{Study A, 3U in the nose} (the requirements as written): the cylinder is made as long as
+needed for nothing of the 3U to reach past the joint, within the \SI{650}{mm}.
+\item \textbf{Study B, 3U not in the nose}: the cylinder is the \TLCMIN{} minimum and the 3U goes
+elsewhere in the vehicle. The nose keeps the CanSat.
+\end{itemize}
+For the interface meeting both studies are repeated for allowed total lengths from 600 to
+\SI{850}{mm}. An extension of the cylinder beyond \SI{650}{mm} (the other reading of SE's rule) is a
+point of these curves.
+
+\paragraph{Unchanged from report 1.} LVO vehicle (\SI{75}{kg} wet, \SI{4.5}{kN} for \SI{9.1}{s},
+\SI{180}{mm}), assumed fins, point-mass trajectory from the \SI{12}{m} rail at $84^\circ$, ISA, and
+the drag factor $k$ that makes the LVS vehicle (Von K\'arm\'an, \SI{720}{mm}) reach \SI{9000}{m}.
+The apogee shortfalls below are therefore relative to what the LVO assumed; the real margin depends
+on the LVO's own margin above \SI{9}{km}. The vehicle behind the nose joint (\TLREST) is the same for
+every option: with a \SI{650}{mm} nose the LV is \TLLVSIX{} long, and a longer nose lengthens it by
+the same amount.

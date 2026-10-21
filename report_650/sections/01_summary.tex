@@ -1,0 +1,46 @@
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+
+\noindent\fbox{\parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule}{%
+\textbf{Weisshorn nose cone at \SI{650}{mm} (curved part + coupler cylinder): two studies}\\[3pt]
+\begin{tabular}{@{}>{\raggedright}p{2.9cm}>{\raggedright}p{6.15cm}>{\raggedright\arraybackslash}p{6.15cm}@{}}
+ & \textbf{A: 3U in the nose} (as required) & \textbf{B: 3U not in the nose} \\
+Profile & LV-Haack (Haack $C=\tfrac13$) & Von K\'arm\'an (Haack $C=0$) \\
+Length & \TLInLVHL{} curved + \TLInLVHC{} coupler & \TLOutVKL{} curved + \TLOutVKC{} coupler \\
+Apogee (model) & \TLInLVHAPO{} (\TLInLVHD{} vs.\ \SI{9}{km}) & \TLOutVKAPO{} (\TLOutVKD) \\
+\SI{9}{km} needs & \TLInNINE{} total (LV \TLInNINELV) & \TLOutNINE{} total (LV \TLOutNINELV) \\
+Both & \multicolumn{2}{p{12.3cm}}{\raggedright \SI{180}{mm} diameter; spherical tip $r_n=\SI{4.5}{mm}$;
+CanSat in the nose} \\
+\end{tabular}}}
+
+\vspace{6pt}
+\noindent The structure requirements cap the nose at \SI{650}{mm}, curved part and cylindrical part
+(coupler) together, and put the 3U payload ($100\times100\times\SI{300}{mm}$, the guided recovery
+vehicle) in the nose; SE specified that if the 3U does not fit, the nose is extended with a
+cylindrical part. This report redoes the design of report~1 (\SI{810}{mm} Von K\'arm\'an) under these
+limits for the three best profiles of report~1, with the 3U in the nose (study~A) and without it
+(study~B), and gives the apogee of a longer nose for the interface meeting. It covers the FD scope
+(profile, lengths, drag, apogee, stability); joint loads, heating and the mass budget are left to ST.
+
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+\item \textbf{A: the 3U decides the profile.} The 3U needs a \SI{77}{mm} radius, which a slender nose
+reaches only near its base, so the cylinder has to grow, and every millimetre of it is taken from the
+curved part. LV-Haack is the fullest near the base and needs the shortest cylinder
+(\TLInLVHC): it flies \TLGAPVK{} higher than Von K\'arm\'an (\TLInVKC{} cylinder) and
+\TLGAPPH{} higher than power~$\tfrac12$ (\TLInPHC).
+\item \textbf{B: the shortest cylinder and the lowest drag.} Without the 3U the cylinder is only the
+\TLCMIN{} coupler overlap and Von K\'arm\'an is the lowest-drag profile (power~$\tfrac12$ is within
+\TLEQGAPPH, but meets the cylinder at an angle). With this nose the 3U would reach \TLOutVKP{} past
+the joint, more than the \SI{50}{mm} free in the RE tube, so it has to go elsewhere in the vehicle.
+\item \textbf{For the interface meeting.} Taking the 3U out of the nose is worth \TLAB{} at
+\SI{650}{mm}, as much as \TLABKG{} of dry mass (\TLDZDM). A longer nose is worth \TLInSLOPE{} in A
+and \TLOutSLOPE{} in B near \SI{650}{mm}. With the rest of the LVO unchanged the
+\SI{5.4}{m} LV cap (SE\_REQ\_04) is reached at a \TLLVNOSE{} nose, which gives \TLInSEVENTWENTYG{}
+in A and \TLOutSEVENTWENTYG{} in B, \TLInSHARE{} and \TLOutSHARE{} of the shortfall to \SI{9}{km}.
+Neither study reaches \SI{9}{km} within the cap (Table~\ref{tab:length}), so neither gain is
+negligible.
+\item \textbf{New CFD and CAD.} 24 Euler runs at $L/D = 2.5$ and 3.5 confirm the report-1
+interpolation (within 0.8\,\%) and correct the extrapolation below $L/D = 3$ (6--10\,\% too much
+wave drag). STEP, STL and profile CSV of the six design points (three profiles, two studies) are in
+\texttt{CFD/geometry\_650/} for the Fluent runs.
+\end{itemize}
