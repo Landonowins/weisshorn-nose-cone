@@ -2,7 +2,7 @@
 \label{sec:method}
 
 The chain is: Euler wave drag of each nose $\rightarrow$ vehicle drag build-up $\rightarrow$ ascent
-trajectory $\rightarrow$ apogee, heating, stability. The wave drag is the only shape-dependent
+trajectory $\rightarrow$ apogee and stability. The wave drag is the only shape-dependent
 quantity; the flight model converts it into apogee and also accounts for the length and mass of
 each nose. The implementation is described in Appendix~\ref{app:scripts}.
 
@@ -105,32 +105,6 @@ removed while burning) and the ERT-Sim excrescence law. Only $C_{D,\rm w}$ chang
 the next; a longer nose also adds wetted area to $C_{D,f}$ and shell mass to $m$. The factor $k$ is
 set so that the baseline nose (Von K\'arm\'an, \SI{720}{mm}) reaches the LVO apogee of
 \SI{9.0}{km}; the resulting $M_{\max}=1.47$ is close to the LVO's Mach 1.4 without further tuning.
-
-\subsection{Heating}
-\label{sec:heating_method}
-
-No wall can exceed the stagnation temperature $T_0=T_\infty(1+\tfrac{\gamma-1}{2}M^2)$, the
-temperature air reaches when brought to rest adiabatically, which is the Firehorn design rule. On
-the hot day at $M = 1.56$, $T_0 = 288\times(1+0.2\times1.56^2) = \SI{428}{K}$ (\SI{155}{\celsius}).
-How close a surface gets to it depends on the heat it receives, $q = h\,(T_r - T_w)$, and the heat
-it conducts away. At the tip, the laminar stagnation-point coefficient (Fay--Riddell form without
-dissociation, modified-Newtonian velocity gradient) is
-\begin{equation}
-h_s = 0.763\,\mathrm{Pr}^{-0.6}\sqrt{\rho_s\mu_s \left.\frac{\mathrm du_e}{\mathrm dx}\right|_s}\;c_p,
-\qquad
-\left.\frac{\mathrm du_e}{\mathrm dx}\right|_s = \frac{1}{r_n}\sqrt{\frac{2(p_s-p_\infty)}{\rho_s}} ,
-\label{eq:hs}
-\end{equation}
-with the stagnation-point density, viscosity and pressure $\rho_s$, $\mu_s$, $p_s$ behind the normal
-shock. Hence $h_s \propto r_n^{-1/2}$: a larger tip radius gives a thicker boundary layer and less
-heating. Along the shell, the turbulent flat-plate correlation
-$\mathrm{St}=0.0296\,\mathrm{Re}_x^{*-0.2}\mathrm{Pr}^{-2/3}$ (properties at Eckert's reference
-temperature) drives the wall towards the recovery temperature
-$T_r = T_\infty(1+r\tfrac{\gamma-1}{2}M^2)$, $r=\mathrm{Pr}^{1/3} \approx 0.89$, the temperature of
-an insulated wall. The shell is modelled by 1D transient conduction through its thickness with an
-adiabatic inner face (conservative: no radiation or internal convection), and a metal tip as a
-single lumped mass heated through its wetted surface. Both are evaluated along the nominal and the
-hot-day envelope trajectories.
 
 \subsection{Stability, mass and payload}
 

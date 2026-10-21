@@ -136,55 +136,9 @@ the mass uncertainty at this stage: designs inside it are equivalent in practice
 \subsection{Tip bluntness}
 \label{sec:bluntness}
 
-A sharp tip cannot be laid up and burns or chips first, so the tip is a separate machined part.
-On the Von K\'arm\'an nose at $M=1.4$, a \SI{4.5}{mm} spherical tip ($r_n/R=0.05$) costs
-\BLUNTCOST{} in wave drag (\BLUNTAPOA{} of apogee) and a \SI{9}{mm} tip ($r_n/R=0.1$) costs
-\BLUNTTEN{} (\BLUNTAPOB{}) (Figure~\ref{fig:bluntness}a). The cost grows quickly because the
-stagnation pressure at the centre of the sphere ($C_p \approx 1.5$ at $M = 1.4$, against about 0.04
-averaged over a sharp nose) acts on a growing area. The benefit is a stagnation heat-transfer
-coefficient falling only as $r_n^{-1/2}$ (Figure~\ref{fig:bluntness}b): about
-\SI{2}{kW/(m^2.K)} for \SI{4.5}{mm}, and only $\sqrt2$ lower at twice the radius. A \SI{4.5}{mm} tip
-therefore keeps the drag cost below 1\,\%, and the heating is handled by the tip material
-(Section~\ref{sec:heating}).
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{fig_bluntness}
-\caption{(a) Wave drag of the blunted Von K\'arm\'an nose relative to the sharp one.
-(b) Stagnation-point heat-transfer coefficient at $M_{\max}$ versus tip radius (dotted line: the
-selected \SI{4.5}{mm}).}
-\label{fig:bluntness}
-\end{figure}
-
-\subsection{Heating}
-\label{sec:heating}
-
-The peak stagnation temperature is \SI{119}{\celsius} (nominal) and \SI{156}{\celsius} (envelope),
-reached at burn-out (Figure~\ref{fig:thermal}).
-\begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{Tip.} A 3D-printed PET-CF tip (Firehorn) conducts heat 600 times less well than
-aluminium (\SI{0.3}{} against \SI{180}{W/(m.K)}), so its surface follows $T_0$ and reaches \PETNOM{}
-(nominal) and \PETENV{} (envelope), well above the \SIrange{70}{80}{\celsius} heat-deflection range
-of PET/PETG-CF. A \SI{60}{g} Al 6082-T6 tip spreads the heat through its whole mass and stays below
-\TIPALNOM{} (nominal) and \TIPAL{} (envelope).
-\item \textbf{Shell.} The \SI{1.2}{mm} CFRP shell follows the recovery temperature within a few
-seconds. Its inner face lags behind and peaks at \SHELLNOM{} (nominal) and \SHELLENV{} (envelope)
-about \SI{3}{s} after burn-out. This is below the cure temperature of the prepreg, but the envelope
-case comes close to the DP490 coupler bond (shear strength \SI{2.8}{MPa} at \SI{120}{\celsius}).
-The Firehorn requirement (\SI{390}{K} for \SI{5}{s}) does not cover the envelope;
-Section~\ref{sec:next} proposes \SI{430}{K} for \SI{10}{s}.
-\end{itemize}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{fig_thermal}
-\caption{(a) Inner-face temperature of the CFRP shell at three stations (adiabatic inner face,
-conservative). (b) Tip temperature: printed PET-CF surface against a machined Al 6082 insert.
-Solid: nominal ascent; dashed: hot-day envelope; black: stagnation temperature $T_0$.}
-\label{fig:thermal}
-\end{figure}
-
-Heating is a material question, not a shape question: the stagnation temperature is set by the
-trajectory, the same for every profile. The design protects the temperature-sensitive parts, the
-tip polymer and the adhesive bond, with a metal tip and a thermal requirement that covers the
-hot-day envelope.
+A sharp tip cannot be made and chips first, so the apex is replaced by a sphere. On the
+Von K\'arm\'an nose at $M=1.4$, a \SI{4.5}{mm} spherical tip ($r_n/R=0.05$) costs \BLUNTCOST{} in
+wave drag (\BLUNTAPOA{} of apogee) and a \SI{9}{mm} tip ($r_n/R=0.1$) costs \BLUNTTEN{}
+(\BLUNTAPOB{}). The cost grows quickly because the stagnation pressure at the centre of the sphere
+($C_p \approx 1.5$ at $M = 1.4$, against about 0.04 averaged over a sharp nose) acts on a growing
+area. A \SI{4.5}{mm} tip keeps the drag cost below 1\,\%.
