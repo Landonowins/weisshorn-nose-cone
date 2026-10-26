@@ -3,7 +3,7 @@ Sets up and starts Claude Code with the Fluent MCP server on the EPFL DLL VM.
 
 Run it at the start of every VM session, from a normal PowerShell window:
 
-    powershell -ExecutionPolicy Bypass -File "Z:\My Documents\weisshorn-nose-cone\CFD\mcp\bootstrap-vm.ps1"
+    powershell -ExecutionPolicy Bypass -File "$([Environment]::GetFolderPath('MyDocuments'))\weisshorn-nose-cone\CFD\mcp\bootstrap-vm.ps1"
 
 Each step is skipped when its result is already there. The first run installs everything (about
 10 minutes); later runs take seconds, also after C:\ has been wiped. It follows
@@ -15,16 +15,19 @@ Each step is skipped when its result is already there. The first run installs ev
   cannot point to a network drive, so the guide's mklink /J to Z:\ does not work.
 
 AppLocker blocks executables and native Python modules on Z:\, so claude.exe and the Python
-packages live on C:\. Z:\ keeps the golden copies (Z:\tools), the login (Z:\home\.claude) and this
-repository.
+packages live on C:\. The network home (Z:\, or the Documents folder when there is no Z:\) keeps
+the golden copies (tools\), the login (home\.claude) and this repository.
 #>
 $ErrorActionPreference = "Stop"
 
 $Repo       = (Resolve-Path "$PSScriptRoot\..\..").Path
 $Server     = "$PSScriptRoot\server.py"
-$Wheels     = "Z:\tools\wheels"
-$ClaudeGold = "Z:\tools\claude-code"
-$ClaudeHome = "Z:\home\.claude"
+# Persistent storage: the network home Z:\ of the guide, else the Documents folder (on these PCs it
+# may be redirected to the network home instead of mapped as Z:\).
+$Persist    = if (Test-Path "Z:\") { "Z:\" } else { [Environment]::GetFolderPath("MyDocuments") }
+$Wheels     = Join-Path $Persist "tools\wheels"
+$ClaudeGold = Join-Path $Persist "tools\claude-code"
+$ClaudeHome = Join-Path $Persist "home\.claude"
 $ClaudeExe  = "$env:USERPROFILE\.local\bin\claude.exe"   # where the native installer puts it
 # The versions server.py is written for. mcp 2 renamed FastMCP, and later PyFluent releases drop
 # the oldest Fluent versions, so the guide's open ranges (>=0.30, >=1.2) are pinned here.
@@ -41,8 +44,9 @@ function Test-Native([scriptblock]$Block) {
     finally { $ErrorActionPreference = $old }
 }
 
-if (-not (Test-Path "Z:\")) {
-    throw "Z:\ is not mounted. Check File Explorer > This PC, then run this script again."
+Step "Persistent storage: $Persist"
+if ($Persist -like "C:*") {
+    Write-Host "Warning: no network home found. $Persist is on C:\ and goes with the profile purge." -ForegroundColor Yellow
 }
 New-Item -ItemType Directory -Force $Wheels, $ClaudeGold, $ClaudeHome, "$Repo\CFD\runs" | Out-Null
 
