@@ -1,0 +1,156 @@
+\section{Step 3: Models and boundary conditions}
+\label{sec:physics}
+
+\subsection{Models}
+
+\paragraph{Steps.} Launch Fluent from the Setup cell: \gui{Dimension} 2D, \gui{Double Precision},
+6 processes. Then:
+\begin{enumerate}
+\item \gui{General}: \gui{Type} = \gui{Density-Based} ($M = 1.2$, 1.47) or \gui{Pressure-Based}
+($M = 0.95$, see Section~\ref{sec:solver}); \gui{Time} = \gui{Steady}; \gui{2D Space} =
+\gui{Axisymmetric}.
+\item \gui{Models}\then\gui{Energy}: on. \gui{Models}\then\gui{Viscous}: \gui{k-omega}, \gui{SST},
+default constants, compressibility effects off. With the pressure-based solver, also tick \gui{Viscous
+Heating} in the same panel.
+\item \gui{Materials}\then\gui{air}: \gui{Density} = \gui{ideal-gas}, \gui{Viscosity} =
+\gui{sutherland} (three-coefficient method). Keep Fluent's $c_p = \SI{1006.43}{J/(kg\,K)}$, thermal
+conductivity \SI{0.0242}{W/(m\,K)} and molecular weight 28.966.
+\item \gui{Operating Conditions}: \gui{Operating Pressure} = \SI{0}{Pa}. Fluent works with gauge
+pressure, $p - p_{\rm op}$; with $p_{\rm op} = 0$ every pressure you type or read is absolute, which is the
+simplest choice when the pressure changes by tens of per cent across the domain.
+\end{enumerate}
+
+\paragraph{What Fluent solves.} Steady, time-averaged (RANS) conservation of mass, momentum and energy
+for a compressible gas, closed by the ideal-gas law and Sutherland's law (Fluent's air:
+$R = \SI{287.04}{J/(kg\,K)}$, $\gamma = 1.399$):
+\begin{gather}
+p = \rho R T, \qquad
+\mu(T) = \mu_{\rm ref}\left(\frac{T}{T_{\rm ref}}\right)^{3/2}\frac{T_{\rm ref} + S}{T + S}, \\
+\mu_{\rm ref} = \SI{1.716e-5}{Pa\,s},\quad T_{\rm ref} = \SI{273.11}{K},\quad S = \SI{110.56}{K}. \notag
+\end{gather}
+k-$\omega$ SST adds two equations, for $k$ and $\omega$, which give the eddy viscosity
+$\mu_t \approx \rho k/\omega$. It behaves like k-$\omega$ near the wall (solved down to $y^+ \approx 1$)
+and like k-$\epsilon$ further out, where k-$\omega$ is too sensitive to the free-stream values.
+
+\subsection{Free stream}
+\label{sec:freestream}
+
+Everything follows from $M$, $p_\infty$ and $T_\infty$ (Table~\ref{tab:points}):
+\begin{equation}
+\rho_\infty = \frac{p_\infty}{R T_\infty}, \quad
+V_\infty = M\sqrt{\gamma R T_\infty}, \quad
+q_\infty = \tfrac12\rho_\infty V_\infty^2, \quad
+\mathrm{Re}_x = \frac{\rho_\infty V_\infty x}{\mu_\infty}, \quad
+T_0 = T_\infty\left(1 + \frac{\gamma - 1}{2}M^2\right).
+\end{equation}
+Only $M$, $p_\infty$ and $T_\infty$ are typed into Fluent. \file{CFD/studyA/freestream_bc.py} recomputes
+Table~\ref{tab:freestream}, and Fluent's reference values agree to five or six digits.
+
+\begin{table}[H]
+\centering
+\caption{Free stream of the three runs.}
+\label{tab:freestream}
+\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+ & $M = 0.95$ & $M = 1.2$ & $M = 1.47$ \\
+\midrule
+Static pressure $p_\infty$ (input) & \SI{90666}{Pa} & \SI{84789}{Pa} & \SI{77649}{Pa} \\
+Static temperature $T_\infty$ (input) & \SI{282.1}{K} & \SI{278.5}{K} & \SI{273.9}{K} \\
+Density $\rho_\infty$ & \SI{1.1197}{kg/m^3} & \SI{1.0606}{kg/m^3} & \SI{0.9876}{kg/m^3} \\
+Velocity $V_\infty$ & \SI{319.7}{m/s} & \SI{401.3}{m/s} & \SI{487.5}{m/s} \\
+Viscosity $\mu_\infty$ & \SI{1.760e-5}{Pa\,s} & \SI{1.743e-5}{Pa\,s} & \SI{1.720e-5}{Pa\,s} \\
+Dynamic pressure $q_\infty$ & \SI{57238}{Pa} & \SI{85407}{Pa} & \SI{117371}{Pa} \\
+$\mathrm{Re}_x$ at the shoulder ($x = \SI{0.559}{m}$) & $1.14\cdot10^{7}$ & $1.37\cdot10^{7}$ & $1.56\cdot10^{7}$ \\
+Stagnation temperature $T_0$ & \SI{332.9}{K} & \SI{358.5}{K} & \SI{392.0}{K} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Boundary conditions}
+\label{sec:bc}
+
+\paragraph{Steps} (\gui{Setup}\then\gui{Boundary Conditions}; Table~\ref{tab:bc}):
+\begin{enumerate}
+\item \zone{inlet}: \gui{Type} = \gui{pressure-far-field}. \gui{Gauge Pressure} $= p_\infty$,
+\gui{Mach Number} $= M$, flow direction $(1, 0)$; \gui{Thermal} tab: \gui{Temperature} $= T_\infty$;
+turbulence as below. Then \gui{Copy} these settings to \zone{farfield}.
+\item \zone{outlet}: \gui{pressure-outlet}. \gui{Gauge Pressure} $= p_\infty$, \gui{Backflow Total
+Temperature} $= T_\infty$ (see the note below), backflow direction normal to the boundary,
+\gui{Average Pressure Specification} and \gui{Target Mass Flow Rate} off; turbulence as below.
+\item \zone{axis}: \gui{axis}. \zone{wall\_nose} and \zone{wall\_body}: \gui{wall}, stationary, no slip,
+\gui{Thermal}\then\gui{Heat Flux} = 0, roughness height 0.
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\caption{Boundary conditions.}
+\label{tab:bc}
+\small
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+Zone & Fluent type & Values \\
+\midrule
+\zone{inlet}, \zone{farfield} & pressure far-field & $p_\infty$, $M$, $T_\infty$, direction $(1, 0)$; $I = 1\,\%$, $\mu_t/\mu = 10$ \\
+\zone{outlet} & pressure outlet & $p = p_\infty$; backflow: total temperature $T_\infty$, normal direction, $I = 1\,\%$, $\mu_t/\mu = 10$ \\
+\zone{axis} & axis & none \\
+\zone{wall\_nose}, \zone{wall\_body} & wall & no slip ($\mathbf u = 0$), adiabatic ($q_w = 0$), smooth \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Pressure far-field.} It imposes the free stream, but only the part that physically comes from
+outside. At each face Fluent takes one wave quantity from outside and one from the cell inside ($u_n$ the
+velocity normal to the boundary, positive outwards):
+\begin{gather}
+R_\infty = u_{n,\infty} - \frac{2a_\infty}{\gamma - 1} \ \ \text{(outside)}, \qquad
+R_i = u_{n,i} + \frac{2a_i}{\gamma - 1} \ \ \text{(inside)}, \\
+u_n = \tfrac12(R_i + R_\infty), \qquad a = \tfrac{\gamma - 1}{4}(R_i - R_\infty).
+\end{gather}
+Flow direction and temperature come from outside where air enters and from inside where it leaves, so
+waves from the body leave without reflecting. Where the inflow is supersonic (\zone{inlet} at $M = 1.2$ and
+1.47) the free stream is imposed completely.
+
+\paragraph{Pressure outlet.} Subsonic outflow: $p = p_\infty$ is imposed and the rest is taken from
+inside. Supersonic outflow: everything is taken from inside and the set pressure is ignored. At $M = 1.2$
+and 1.47 the outflow is supersonic except in the boundary layer; at $M = 0.95$ it is subsonic over the
+whole outlet, where a fixed pressure reflects waves (Section~\ref{sec:solver}). Backflow values only act
+where air re-enters.
+
+\paragraph{Axis and walls.} Axis: $v = 0$ and nothing changes across it. Walls: no slip, $\mathbf u = 0$;
+adiabatic, $q_w = -k\,\partial T/\partial n = 0$, so the wall warms to about $T_0$, which sets the
+near-wall density and the friction; smooth.
+
+\paragraph{Turbulence at the inlet, far field and outlet.} \gui{Intensity and Viscosity Ratio}, with
+$I = 1\,\%$ and $\mu_t/\mu = 10$ (calm air). Fluent turns them into
+\begin{equation}
+k = \tfrac32\,(I V_\infty)^2, \qquad \omega = \frac{\rho k}{\mu}\left(\frac{\mu_t}{\mu}\right)^{-1}.
+\end{equation}
+Fluent's defaults for a new boundary, $k = \SI{1}{m^2/s^2}$ and $\omega = \SI{1}{s^{-1}}$, give
+$\mu_t = \rho k/\omega \approx \SI{1}{Pa\,s} \approx 60\,000\,\mu$, which would swamp the boundary layer:
+set the values in the panel.
+
+\paragraph{Backflow temperature.} Set to $T_\infty$; $T_0$ would be the consistent value. It only acts on
+air re-entering through the outlet and is listed as an open item (Section~\ref{sec:conclusions}).
+
+\subsection{Reference values and drag coefficient}
+\label{sec:reference}
+
+\paragraph{Steps.} \gui{Reference Values}\then\gui{Compute from} = \zone{inlet}. This sets the reference
+density, velocity, pressure and temperature to the free stream of the run. Then \gui{Area} =
+\SI{0.02545}{m^2} and \gui{Length} = \SI{0.18}{m} (used for moments only). Redo \gui{Compute from} after
+every change of the inlet values. Then \gui{Report Definitions}\then\gui{New}\then\gui{Force Report}\then
+\gui{Drag}: zone \zone{wall\_nose}, direction $(1, 0)$, name \texttt{cd-nose}, printed, plotted and
+written to a file at every iteration.
+
+\paragraph{Definition.}
+\begin{equation}
+F_x = \underbrace{\int_{\rm wall\_nose} (p - p_{\rm ref})\,\mathbf n\cdot\mathbf e_x\,\mathrm dA}_{\text{pressure part}}
+\; + \; \underbrace{\int_{\rm wall\_nose} \boldsymbol\tau_w\cdot\mathbf e_x\,\mathrm dA}_{\text{viscous part}},
+\qquad \mathrm dA = 2\pi y\,\mathrm ds,
+\end{equation}
+\begin{equation}
+C_D = \frac{F_x}{q_\infty A_{\rm ref}}, \qquad A_{\rm ref} = \frac{\pi D^2}{4} = \SI{0.02545}{m^2}.
+\end{equation}
+Fluent reports both parts. With $p_{\rm ref} = p_\infty$ the pressure part is the wave drag; with
+$p_{\rm ref} = 0$ it would also contain $p_\infty\pi R^2 \approx \SI{2}{kN}$.

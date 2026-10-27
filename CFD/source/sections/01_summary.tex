@@ -1,0 +1,37 @@
+\section{Summary}
+\label{sec:summary}
+
+Fluent workflow for the Weisshorn nose cone, written as the step-by-step record of study~A of
+2027\_C\_FD\_REPORT-2\_NOSE-CONE-650MM: LV-Haack, \SI{561}{mm} curved part + \SI{89}{mm} coupler,
+$D = \SI{180}{mm}$, $r_n = \SI{4.5}{mm}$, zero incidence. Steady 2D axisymmetric RANS (k-$\omega$ SST) in
+Fluent 2024~R2 at $M = 0.95$, 1.2 and 1.47. Sections~\ref{sec:geometry}--\ref{sec:runs}: steps;
+Section~\ref{sec:results}: results; Section~\ref{sec:python}: comparison with Python. Study~B will be
+added after its runs.
+
+\begin{table}[H]
+\centering
+\caption{Study~A: drag coefficient of the nose (\zone{wall\_nose}, tip to shoulder),
+$A_{\rm ref} = \pi D^2/4 = \SI{0.02545}{m^2}$.}
+\label{tab:summary}
+\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+ & $M = 0.95$ & $M = 1.2$ & $M = 1.47$ \\
+\midrule
+Pressure $C_D$ & 0.0042 & 0.0948 & 0.0963 \\
+Viscous $C_D$ & 0.0248 & 0.0224 & 0.0207 \\
+\textbf{Total $C_D$} & \textbf{0.0291} & \textbf{0.1172} & \textbf{0.1170} \\
+Drag force & \SI{42.3}{N} & \SI{254.8}{N} & \SI{349.4}{N} \\
+Solver & pressure-based & density-based & density-based \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+\item \textbf{Supersonic}: $C_D \approx 0.117$, four fifths of it wave drag. Density-based with Roe-FDS,
+about 3000 iterations.
+\item \textbf{Transonic}: pressure drag $\approx 0$, friction 85\,\% of the total. Only the pressure-based
+Coupled solver converged.
+\item \textbf{Against Python}: wave drag $+2.4\,\%$, friction within 5\,\%. The transonic ramp gives 0.077
+where Fluent gives 0.004, so the report-2 drag is conservative below $M = 1$.
+\end{itemize}

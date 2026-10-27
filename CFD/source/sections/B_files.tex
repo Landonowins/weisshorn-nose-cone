@@ -1,0 +1,25 @@
+\section{Files}
+\label{app:files}
+
+\paragraph{In the repository} (\file{weisshorn-nose-cone}, paths from its root):
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{7.4cm}>{\raggedright\arraybackslash}X@{}}
+\toprule
+File & Contents \\
+\midrule
+\file{CFD/geometry_650/nose_lvhaack_L561_c89_rn4.5mm.step}, \file{.csv} & Study-A design solid and profile points \\
+\file{CFD/geometry_650/nose_vonkarman_L630_c20_rn4.5mm.step}, \file{.csv} & Study-B design solid and profile points \\
+\file{CFD/geometry_650/studyA_domain2D_2024R2.dsco} & Study-A 2D flow domain (Discovery 2024~R2) \\
+\file{CFD/studyA/README.md}, \file{studyA_log.html} & Run log of study~A \\
+\file{CFD/studyA/freestream_bc.py} & Free stream, boundary values, first-cell height and $C_D$ from the forces \\
+\file{CFD/studyA/cd_history/*.csv} & $C_D$ on \zone{wall\_nose} per iteration, all four runs \\
+\file{CFD/studyA/plots/*.png} & Fluent pictures: $C_D$, residuals, Mach contours \\
+\file{CFD/studyA/report_figures.py} & Figures of this report and the comparison with report~2 \\
+\file{CFD/mcp/} & Claude Code + Fluent MCP set-up for the DLL remote PCs (Appendix~\ref{app:claude}) \\
+\file{CFD/source/} & Source of this report \\
+\bottomrule
+\end{tabularx}
+\end{table}

@@ -1,0 +1,26 @@
+\section{Conclusions and next runs}
+\label{sec:conclusions}
+
+\begin{itemize}
+\item Converged drag: $C_D = 0.0291$ / 0.1172 / 0.1170 at $M = 0.95$ / 1.2 / 1.47, with $y^+ < 1$ and
+$\Delta < 0.1\,\%$ in every run.
+\item The mesh is within the Ansys limits: skewness 0.92, orthogonal quality 0.237 (Meshing) / 0.077
+(Fluent).
+\item Supersonic runs: density-based solver. Transonic run: pressure-based Coupled with Viscous Heating.
+\item Against Python: wave drag $+2.4\,\%$, friction within 5\,\%; the transonic ramp is conservative below
+$M = 1$.
+\end{itemize}
+
+\paragraph{Next runs, in order of priority.}
+\begin{enumerate}
+\item \textbf{Mesh independence} at $M = 1.47$: coarse and fine mesh ($\times1.5$ per direction each step),
+plus 1--2 pressure-gradient adaptions at the shock.
+\item \textbf{Transonic rise}: $M = 1.05$ (pressure-based) and $M = 1.1$.
+\item \textbf{Solver cross-check}: $M = 1.2$ with the pressure-based solver.
+\item \textbf{Backflow temperature}: one run with $T_0$ instead of $T_\infty$.
+\item \textbf{Free-stream turbulence}: one run at $I = 0.1\,\%$, $\mu_t/\mu = 1$.
+\item \textbf{Study B} (Von K\'arm\'an 630 + \SI{20}{mm}): same steps; pull the coupler end from
+$x = \SI{645.42}{mm}$ to \SI{2447.65}{mm}.
+\item \textbf{Incidence}: 3D half model at \SI{5}{\degree} for $C_{N\alpha}$ and the centre of pressure
+($y^+ \approx 30$--50 is enough there).
+\end{enumerate}

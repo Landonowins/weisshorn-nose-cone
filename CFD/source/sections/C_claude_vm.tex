@@ -1,0 +1,62 @@
+\section{Driving Fluent from Claude Code on the DLL remote PCs}
+\label{app:claude}
+
+The study-A runs were driven by Claude Code through an MCP server connected to the running Fluent
+session. This is optional: every step of this report can be done in the Fluent GUI. The set-up is in
+\file{CFD/mcp/} and follows 2026\_C\_FD\_REPORT-2\_MCP-FLUENT, with two differences: the MCP server is
+\file{CFD/mcp/server.py} of this repository (the guide does not give the URL of its own), and the
+Claude Code home is moved to the network drive with the \texttt{CLAUDE\_CONFIG\_DIR} variable, because
+the guide's junction cannot point to a network drive.
+
+\paragraph{Set-up, every session.}
+\begin{enumerate}
+\item Put the repository in the Documents folder of the network home, which survives the reset of
+\texttt{C:\textbackslash} (clone it from there, or download the branch as a ZIP from GitHub).
+\item In a normal PowerShell window run
+\begin{center}
+\small\texttt{powershell -ExecutionPolicy Bypass -File <repo>\textbackslash CFD\textbackslash mcp\textbackslash bootstrap-vm.ps1}
+\end{center}
+Each step is skipped when its result is already there: the first run takes about 10 minutes, later runs
+seconds. It finds the newest Fluent installation and Python, installs PyFluent 0.43 and \texttt{mcp} 2.x
+from the wheel cache on the network drive, installs or restores Claude Code, writes \file{.mcp.json}
+(without a BOM) and starts Claude Code in the repository.
+\item Start Fluent yourself (Workbench or the Fluent launcher, working directory \file{CFD/runs}). In
+its console type \texttt{define/beta-feature-access} (answer yes), then \texttt{server/start-server}.
+Fluent 2024~R2 refuses \texttt{start-server} until the beta features are on. Fluent writes a
+\file{server_info*.txt} file.
+\item Ask Claude Code to connect to that file (\texttt{connect\_to\_fluent}). The \texttt{launch\_fluent}
+tool can also start a new session, but it always picks the newest installed version (2026~R1 on these
+PCs), not 2024~R2.
+\end{enumerate}
+
+\paragraph{Restarting.}
+\begin{itemize}
+\item \textbf{Claude Code only:} type \texttt{/exit}, then run the setup script again, or start it by hand
+with \texttt{claude --continue} from the repository folder. \texttt{--continue} reopens the last
+conversation; inside Claude Code, \texttt{/resume} picks an older one. The history is kept on the network
+drive, so it survives the restart. Fluent can stay open.
+\item \textbf{MCP connection only:} type \texttt{/mcp}, choose \texttt{fluent} and \gui{Reconnect}.
+Then ask Claude to run \texttt{connect\_to\_fluent} again, with the \file{CFD/runs} folder. PyFluent takes up to a
+minute to load.
+\item \textbf{Fluent restarted:} type \texttt{server/start-server} again in the new Fluent console, then
+reconnect. Each Fluent session writes its own \file{server_info} file, and Claude uses the newest one in
+the folder.
+\end{itemize}
+
+\paragraph{Tools.} The server offers 13 tools. Session: \texttt{launch\_fluent},
+\texttt{connect\_to\_fluent}, \texttt{exit\_fluent}. Files: \texttt{read\_case},
+\texttt{read\_case\_and\_data}, \texttt{write\_data}. Solver: \texttt{initialize}, \texttt{iterate},
+\texttt{execute\_tui}, \texttt{scheme\_eval}. Reports: \texttt{get\_case\_summary},
+\texttt{get\_residuals\_summary}, \texttt{screenshot}. The tool time-out is set to one hour so that
+long \texttt{iterate} calls finish.
+
+\paragraph{Things to know.}
+\begin{itemize}
+\item The server drives the solver only; geometry and meshing stay manual.
+\item Console commands with keyword menus are easy to get wrong. Let Claude Code run iterations and read
+results, but enter boundary values in the panels and check them with \texttt{/file/write-bc}.
+\item One \texttt{iterate} call hung with Fluent waiting at its ``number of iterations'' prompt;
+\texttt{/solve/iterate n} through \texttt{execute\_tui} works.
+\item The copy of Claude Code on the PC is a separate installation: it starts without the context of
+the sessions on a laptop, so give it the case description (this report) at the start.
+\end{itemize}

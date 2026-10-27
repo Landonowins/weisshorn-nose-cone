@@ -1,0 +1,83 @@
+\section{Case definition}
+\label{sec:case}
+
+\subsection{The noses}
+
+\begin{table}[H]
+\centering
+\caption{The two noses of report~2. Lengths in mm; $x$ is measured from the rounded tip.}
+\label{tab:noses}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+ & Study A (this report) & Study B (to be run) \\
+\midrule
+Profile & LV-Haack & Von K\'arm\'an \\
+Nominal curved length $L$, fineness $L/D$ & 561, 3.117 & 630, 3.5 \\
+Coupler length $c$, total length & 89, 650 & 20, 650 \\
+Tip radius $r_n$ & 4.5 & 4.5 \\
+End of the curved part (shoulder), $x$ & 558.65 & 625.42 \\
+End of the coupler, $x$ & 647.65 & 645.42 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent Both noses are solids of revolution in mm, with $x$ along the axis and the tip at $x = 0$. The
+\SI{4.5}{mm} tip rounding shortens the curved part by \SI{2.35}{mm} (A) and \SI{4.58}{mm} (B). STEP files:
+\file{CFD/geometry_650/nose_lvhaack_L561_c89_rn4.5mm.step} (A),
+\file{nose_vonkarman_L630_c20_rn4.5mm.step} (B).
+
+\subsection{Flight conditions}
+
+\begin{table}[H]
+\centering
+\caption{Flight conditions of the three runs (altitude above sea level).}
+\label{tab:points}
+\small
+\begin{tabular}{@{}rrrrl@{}}
+\toprule
+$M$ & altitude & $p_\infty$ & $T_\infty$ & type of flow \\
+\midrule
+0.95 & \SI{928}{m}  & \SI{90666}{Pa} & \SI{282.1}{K} & transonic: just below the speed of sound \\
+1.20 & \SI{1478}{m} & \SI{84789}{Pa} & \SI{278.5}{K} & supersonic, close to $M = 1$ \\
+1.47 & \SI{2189}{m} & \SI{77649}{Pa} & \SI{273.9}{K} & supersonic, top speed of the flight \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent The inputs are $M$, $p_\infty$ and $T_\infty$, from the report-1 trajectory. On the report-2
+trajectory of nose~A the same Mach numbers are reached within \SI{14}{m} of altitude and 0.2\,\% in
+pressure; its top speed is $M = 1.457$ (\SI{2182}{m}), so the $M = 1.47$ run is the top-speed point
+($+1\,\%$).
+
+\paragraph{Why the speed matters.} Pressure waves travel upstream at the speed $a - V$ relative to the
+rocket:
+\begin{itemize}
+\item $M < 1$: $a - V > 0$, the air ahead feels the nose coming. No bow shock; a small supersonic zone
+forms at the shoulder and ends in a weak shock (transonic flow).
+\item $M > 1$: $a - V < 0$, the air ahead is undisturbed until a bow shock just in front of the tip. The
+high pressure behind it, acting on the front of the nose, is the wave drag.
+\end{itemize}
+
+\paragraph{What the runs give.} The drag on \zone{wall\_nose} (tip to shoulder), split by Fluent into
+pressure and viscous parts:
+\begin{equation}
+C_D = \frac{F_x}{q_\infty A_{\rm ref}}, \qquad q_\infty = \tfrac12\rho_\infty V_\infty^2, \qquad
+A_{\rm ref} = \frac{\pi D^2}{4}.
+\end{equation}
+
+\subsection{Symbols}
+
+\begin{small}
+\noindent
+$a$ speed of sound; $A_{\rm ref}$ reference area $\pi D^2/4$; $C_D$ drag coefficient; $C_f$ friction
+coefficient; $C_p$ pressure coefficient; CFL Courant number; $c_p$ specific heat at constant pressure; $D$
+body diameter (\SI{180}{mm}); $F_x$ force along the rocket axis; $h_1$ height of the first cell at the
+wall; $I$ turbulence intensity; $k$ turbulent kinetic energy; $M$ Mach number; $p$ pressure; $T_0$
+stagnation (total) temperature; $q = \tfrac12\rho V^2$ dynamic pressure; $R$ gas constant of
+air; $\mathrm{Re}$ Reynolds number; $r_n$ tip radius; $T$ temperature; $u_\tau$ friction velocity; $V$
+flow speed; $y^+$ wall distance in viscous units; $\gamma$ ratio of specific heats; $\delta$
+boundary-layer thickness; $\mu$ viscosity of the air; $\mu_t$ turbulent (eddy) viscosity; $\rho$
+density; $\tau_w$ wall shear stress; $\omega$ turbulence frequency (specific dissipation rate).
+Subscript $\infty$: the undisturbed air far from the rocket (free stream).
+\end{small}
