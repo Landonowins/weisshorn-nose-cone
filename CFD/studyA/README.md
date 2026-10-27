@@ -33,6 +33,7 @@ pressure parts agree within ±4 % with the Euler study `f650` interpolated to L/
 |---|---|
 | `studyA_log.html` | Full log: geometry, mesh, formulas, solver, runs, checks, problems and fixes |
 | `freestream_bc.py` | Recomputes every free-stream and boundary value and the C_D from the wall forces |
+| `wall_data/` | C_p, C_f, y+, pressure and wall shear on each `wall_nose` face of the final solutions (CSV, Fluent export, not sorted by x) |
 | `cd_history/` | C_D on `wall_nose` per iteration for each run (CSV) |
 | `plots/` | C_D, residual and Mach-contour pictures from Fluent |
 | `../geometry_650/studyA_domain2D_2024R2.dsco` | 2D flow domain (Discovery 2024 R2) |
