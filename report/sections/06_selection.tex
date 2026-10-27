@@ -3,46 +3,37 @@
 
 \subsection{Profile}
 
-Table~\ref{tab:matrix} scores the profiles at $L/D = 4.5$ from 1 (worst) to 5 (best) and sums the
-scores with weights in the ratio 4:2:2:1. Performance (apogee change), integration (3U length inside
-the curved part) and stability (static-margin change) are scored linearly between the worst and the
-best design; manufacture is a judgement score (a tangent shoulder and a standard mould score 5, a
-kink is penalised, the cone gets 3 for its simple mould). Performance carries the largest weight
-(0.44) because apogee margin is what the nose shape mainly affects; integration and manufacture
-(0.22 each) decide whether the design can be housed and built; stability (0.11) matters least,
-since the margin varies by less than 0.1 cal. Only properties of the hardware are scored: whether a profile has
-flown on an earlier ERT vehicle is not a criterion.
+Table~\ref{tab:matrix} scores the profiles at $L/D = 4.5$ from 1 (worst) to 5 (best) with weights 4:2:2:1
+(performance 0.44, integration 0.22, manufacture 0.22, stability 0.11). Performance (apogee), integration
+(3U length inside) and stability (static-margin change) are scored linearly between the worst and the best
+design; manufacture is a judgement score (tangent shoulder and standard mould 5, kink penalised, cone 3).
+Only hardware properties are scored; flight heritage is not a criterion.
 
 \input{sections/tab_matrix}
 
-\textbf{Von K\'arm\'an is selected.} It has the lowest wave drag at every computed Mach number,
-flies \SI{18}{m} higher than power $\tfrac34$ and \SI{22}{m} higher than power $\tfrac12$, and stays
-first in all seven robustness scenarios; ogive, parabolic and LV-Haack lose \SIrange{69}{79}{m}, and
-the cone \SI{132}{m}. Against the two power noses it also wins on integration: a tangent shoulder
-(no kink at the coupler bond, against $3.2^\circ$ and $4.8^\circ$) and more of the 3U inside
-(\FINTHREEU{}, against \SI{217}{mm} and \SI{152}{mm}). Its advantage holds at $M \geq 1.2$, so it
-does not hinge on the transonic model.
+\textbf{Von K\'arm\'an is selected.} Lowest wave drag at every computed Mach number, \SI{18}{m} above
+power $\tfrac34$ and \SI{22}{m} above power $\tfrac12$, first in all seven robustness scenarios; ogive,
+parabolic and LV-Haack lose \SIrange{69}{79}{m}, the cone \SI{132}{m}. Against the power noses it also wins
+on integration: tangent shoulder (against $3.2^\circ$ and $4.8^\circ$ kinks) and more of the 3U inside
+(\FINTHREEU{}, against \SI{217}{mm} and \SI{152}{mm}). Its advantage holds at $M \geq 1.2$, so it does not
+hinge on the transonic model.
 
-The outcome does not depend on the exact weights. With equal weights Von K\'arm\'an still leads
-LV-Haack (3.95 against 3.48); with performance and integration swapped it still scores highest,
-level with LV-Haack (4.10 against 4.09). It loses first place, to LV-Haack, only if payload room
-carries more than about half of the total weight, i.e.\ if the payload grows beyond a single 3U unit
-(Table~\ref{tab:alternatives}).
+The outcome does not depend on the weights: with equal weights Von K\'arm\'an leads LV-Haack (3.95
+against 3.48), with performance and integration swapped it is still first (4.10 against 4.09). LV-Haack
+wins only if payload room carries more than about half the weight, i.e.\ if the payload grows beyond one
+3U (Table~\ref{tab:alternatives}).
 
 \subsection{Length}
 
-Every \SI{90}{mm} of nose ($\Delta L/D = 0.5$) around $L/D = 4$--4.5 is worth \TRADELEN{} of
-apogee, about \SI{0.4}{kg} of mass margin, for about \SI{60}{mm} of nose-bay length (partly
-recovered because more of the 3U fits inside) and \SI{30}{g} of shell. The returns diminish: the
-wave drag falls as $1/(L/D)^2$ while length, wetted area and mass grow linearly, and a further step
-to $L/D = 5$ would add only about \SI{39}{m}. With the LV capped at \SI{5.4}{m}
-(2027\_C\_SE\_REQ\_04) and dry-mass growth expected (2027\_C\_SE\_REQ\_06 caps it at \SI{50}{kg}),
-the design point is \textbf{$L/D = 4.5$, $L = \SI{810}{mm}$}, which gives \TRADELEN{} of margin for
-\SI{62}{mm} of bay length. If systems engineering cannot release those \SI{62}{mm}, the same profile
-at $L/D = 4$ (\SI{720}{mm}, the LVS length) is the fallback; nothing else changes.
+Every \SI{90}{mm} ($\Delta L/D = 0.5$) around $L/D = 4$--4.5 is worth \TRADELEN{} of apogee (about
+\SI{0.4}{kg} of mass margin) for about \SI{60}{mm} of nose bay and \SI{30}{g} of shell, with diminishing
+returns ($L/D = 5$ would add only about \SI{39}{m}). With the LV capped at \SI{5.4}{m}
+(2027\_C\_SE\_REQ\_04) and dry-mass growth expected (2027\_C\_SE\_REQ\_06), the design point is
+\textbf{$L/D = 4.5$, $L = \SI{810}{mm}$}: \TRADELEN{} for \SI{62}{mm} of bay. If those \SI{62}{mm} cannot be
+released, the same profile at $L/D = 4$ (\SI{720}{mm}, the LVS length) is the fallback.
 
 \subsection{Tip}
 
-A spherical tip of radius $r_n = \SI{4.5}{mm}$ ($r_n/R = 0.05$). It removes the sharp apex that
-cannot be made and chips on landing, and costs \BLUNTCOST{} in wave drag (\BLUNTAPOA{} of apogee),
-against \BLUNTAPOB{} for a \SI{9}{mm} tip. The tip material is left to ST.
+A spherical tip of radius $r_n = \SI{4.5}{mm}$ ($r_n/R = 0.05$): it replaces the sharp apex that cannot be
+made and chips on landing, for \BLUNTCOST{} of wave drag (\BLUNTAPOA{} of apogee, against \BLUNTAPOB{} for a
+\SI{9}{mm} tip). The tip material is left to ST.

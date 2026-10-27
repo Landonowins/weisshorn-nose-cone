@@ -1,66 +1,40 @@
 \section{Method}
 \label{sec:method}
 
-The chain is: Euler wave drag of each nose $\rightarrow$ vehicle drag build-up $\rightarrow$ ascent
-trajectory $\rightarrow$ apogee and stability. The wave drag is the only shape-dependent
-quantity; the flight model converts it into apogee and also accounts for the length and mass of
-each nose. The implementation is described in Appendix~\ref{app:scripts}.
+Euler wave drag of each nose $\rightarrow$ vehicle drag build-up $\rightarrow$ ascent trajectory
+$\rightarrow$ apogee and stability (implementation: Appendix~\ref{app:scripts}).
 
 \subsection{Nose wave drag: axisymmetric Euler solver}
 \label{sec:euler}
 
-Above Mach 1 the nose pressure drag is set by the inviscid outer flow (shock and expansion), so the
-axisymmetric Euler equations (the Navier--Stokes equations without viscous terms) are solved for
-each nose followed by a $5R$ cylinder. The boundary layer is thin at these Reynolds numbers (about
-$2\times10^7$ on the nose length at $M_{\max}$); its main effect, skin friction, is added in the
-flight model (Section~\ref{sec:flight}). In finite-volume form, per radian of azimuth,
+Above Mach 1 the nose pressure drag is set by the inviscid outer flow, so the axisymmetric Euler
+equations are solved for each nose followed by a $5R$ cylinder; skin friction is added in the flight
+model. In finite-volume form, per radian of azimuth,
 \begin{equation}
 \frac{\partial (\boldsymbol U V)}{\partial t} + \sum_{\rm faces} \boldsymbol F\cdot\boldsymbol n\, \ell\, r_f
 = \begin{pmatrix} 0 & 0 & p\,A & 0 \end{pmatrix}^{\!\top},
 \qquad V = A\, r_c ,
 \label{eq:euler}
 \end{equation}
-with $\boldsymbol U = (\rho,\rho u,\rho v,E)$ the conserved variables, $\boldsymbol F$ their flux
-through a face of outward normal $\boldsymbol n$, length $\ell$ and mid-radius $r_f$, and $V = A r_c$
-the volume per radian of a ring-shaped cell of area $A$ and centroid radius $r_c$. The source
-$p\,A$ is the net radial pressure force on the two non-parallel azimuthal faces of the cell;
-writing the volume as $A r_c$ preserves a uniform flow exactly.
-
-The scheme is a cell-centred finite-volume method with HLLC approximate Riemann fluxes (shocks
-resolved within two to three cells without oscillations), MUSCL reconstruction of the primitive
-variables with the minmod limiter (second order away from shocks), and SSP-RK2 time integration with
-local time stepping at CFL 0.85, since only the steady state matters. The body-fitted grid
-($160\times80$ cells) starts on the stagnation streamline upstream of the tip and clusters points at
-the tip and at the shoulder. The outer boundary lies outside the bow shock with characteristic
-(non-reflecting) far-field conditions; the wall is a slip wall and the axis a symmetry line. The
-drag coefficient is the integral of the wall overpressure over the nose,
+with $\boldsymbol U = (\rho,\rho u,\rho v,E)$, $\boldsymbol F$ the flux through a face of normal
+$\boldsymbol n$, length $\ell$ and mid-radius $r_f$, and $V$ the volume per radian of a cell of area $A$
+and centroid radius $r_c$. Scheme: HLLC fluxes, MUSCL (minmod) reconstruction, SSP-RK2 with local time
+stepping at CFL 0.85, on a $160\times80$ body-fitted grid with characteristic far field, slip wall and
+symmetry axis. The wave drag is
 \begin{equation}
-C_{D,\rm w} = \frac{1}{q_\infty \pi R^2}\int_{\rm nose} (p-p_\infty)\,(-n_x)\, 2\pi r\,\mathrm ds ,
+C_{D,\rm w} = \frac{1}{q_\infty \pi R^2}\int_{\rm nose} (p-p_\infty)\,(-n_x)\, 2\pi r\,\mathrm ds .
 \label{eq:cdw}
 \end{equation}
-where $n_x$ is the axial component of the outward wall normal (negative on a forward-facing
-surface). A run is converged when $C_{D,\rm w}$ changes by less than $2\times10^{-5}$ (relative)
-over 250 iterations. The Mach numbers are computed from high to low (1.6, 1.4, 1.2, 1.1; also 1.3
-for the cone and ogive), each started from the previous solution. The $M=1.1$ runs, with a large
-subsonic region behind the bow shock, were stopped at 6000 iterations; they only set the end point
-of the transonic model and carry an uncertainty of 1--2\,\%. The trade study interpolates
-$C_{D,\rm w}(L/D)^2$, nearly constant by Equation~\eqref{eq:fineness}, between $L/D = 3$, 4 and 5.
-All seven shapes, and the blunted Von K\'arm\'an nose, were also computed directly at $L/D = 4.5$
-for $M = 1.6$, 1.4 and 1.2. The interpolation agrees with these direct runs within 0.3\,\%, but
-scaling the parabolic and power-$\tfrac34$ noses from $L/D = 4$ alone underestimated their drag by
-2--4\,\%, so the direct values are used at $L/D = 4.5$ throughout.
+A run is converged when $C_{D,\rm w}$ changes by less than $2\times10^{-5}$ over 250 iterations. Mach
+numbers are run from 1.6 down to 1.1, each from the previous solution; the $M=1.1$ runs stopped at 6000
+iterations (1--2\,\% uncertainty). The trade study interpolates $C_{D,\rm w}(L/D)^2$ between $L/D = 3$, 4
+and 5; all shapes were also run directly at $L/D = 4.5$ ($M = 1.6$, 1.4, 1.2), and these direct values
+are used at $L/D = 4.5$.
 
-\textbf{Validation.} For a sharp cone the flow between shock and body is conical, and the Euler
-equations reduce to the Taylor--Maccoll ordinary differential equation, integrated here to high
-accuracy. The surface pressure is uniform, so $C_{D,\rm w} = C_p$. Figure~\ref{fig:validation}a
-compares the two for four cone angles ($7.1^\circ$ to $20^\circ$, $M = 1.1$--2): the largest error
-is 0.46\,\% (the $20^\circ$ cone at $M=1.2$ has a detached shock and no conical solution). The grid
-convergence study (Figure~\ref{fig:validation}b) uses the Von K\'arm\'an nose at $L/D=4$ on three
-grids ($80\times40$, $160\times80$ production, $320\times160$). At $M=1.4$ the observed order is
-$p = 2.0$, the design order of the scheme, and the grid convergence index (GCI, Roache, safety
-factor 1.25) of the production grid is 0.5\,\%; at $M=1.2$ the two-grid estimate ($p=2$, safety
-factor 3) gives 1.1\,\%. The production grid is therefore accurate to about 0.5--1\,\%, well below
-the 3--46\,\% by which the other shapes exceed the Von K\'arm\'an wave drag at $L/D = 4.5$.
+\textbf{Validation.} Against the exact Taylor--Maccoll cone solution the largest error is 0.46\,\%
+(four cone angles, $M = 1.1$--2; Figure~\ref{fig:validation}a). On three grids the observed order at
+$M=1.4$ is $p = 2.0$ and the GCI of the production grid 0.5\,\% (1.1\,\% at $M = 1.2$,
+Figure~\ref{fig:validation}b), well below the 3--46\,\% by which the other shapes exceed Von K\'arm\'an.
 
 \begin{figure}[H]
 \centering
@@ -74,44 +48,32 @@ Richardson-extrapolated value (open: computed grids; filled: production grid).}
 \subsection{Transonic range}
 \label{sec:transonic}
 
-Steady Euler solutions converge too slowly below $M=1.1$, and near $M = 1$ the shocks interact with
-the boundary layer, so viscous (RANS) computations are needed there anyway. The nose wave drag is
-therefore modelled, for all shapes, as a smooth cubic rise from zero at $M=0.8$ (first sonic flow on
-a slender nose) to the computed $M=1.1$ value at $M=1.0$, flat up to $M=1.1$. The Fluent runs of
-Section~\ref{sec:next} replace it; until then its onset and amplitude are varied in the robustness
-study (Section~\ref{sec:robust}).
+Below $M=1.1$ the Euler runs converge too slowly. The nose wave drag is modelled as a smooth cubic rise
+from zero at $M=0.8$ to the $M=1.1$ value at $M=1.0$; its onset and amplitude are varied in the robustness
+study (Section~\ref{sec:robust}), and the Fluent runs of Section~\ref{sec:next} replace it.
 
 \subsection{Flight model}
 \label{sec:flight}
 
-A point-mass trajectory is integrated from the \SI{12}{m} rail ($84^\circ$) to apogee. Along the
-flight path, with $V_\infty$ the speed and $\gamma_f$ the flight-path angle,
+A point-mass trajectory from the \SI{12}{m} rail ($84^\circ$) to apogee:
 \begin{equation}
 m\frac{\mathrm dV_\infty}{\mathrm dt} = F_{\rm th} - \tfrac12\rho V_\infty^2 A_b C_D - m g\sin\gamma_f ,
 \qquad
 V_\infty\frac{\mathrm d\gamma_f}{\mathrm dt} = -g\cos\gamma_f ,
 \label{eq:eom}
 \end{equation}
-with the mass $m$ decreasing linearly during the burn and $\rho$ from the ISA. The drag coefficient
-(reference area $\pi D^2/4$) is built up from components,
+with linear mass decrease and the ISA, and the drag build-up
 \begin{equation}
-C_D = k\left(C_{D,f} + C_{D,\rm fins} + C_{D,\rm base} + C_{D,e}\right) + C_{D,\rm w}(M):
+C_D = k\left(C_{D,f} + C_{D,\rm fins} + C_{D,\rm base} + C_{D,e}\right) + C_{D,\rm w}(M)
 \label{eq:buildup}
 \end{equation}
-turbulent, roughness-limited skin friction on the wetted area of nose and body (Schlichting, with
-a compressibility correction), fin pressure drag (blunt leading edges subsonic, Ackeret thin-airfoil
-theory for the hexagonal section supersonic), the OpenRocket base-drag law (nozzle exit area
-removed while burning) and the ERT-Sim excrescence law. Only $C_{D,\rm w}$ changes from one nose to
-the next; a longer nose also adds wetted area to $C_{D,f}$ and shell mass to $m$. The factor $k$ is
-set so that the baseline nose (Von K\'arm\'an, \SI{720}{mm}) reaches the LVO apogee of
-\SI{9.0}{km}; the resulting $M_{\max}=1.47$ is close to the LVO's Mach 1.4 without further tuning.
+(Schlichting friction with compressibility and roughness, Ackeret fin drag, OpenRocket base drag, ERT-Sim
+excrescences). A longer nose also adds wetted area and shell mass. $k$ is set so that the baseline nose
+(Von K\'arm\'an, \SI{720}{mm}) reaches \SI{9.0}{km}; the resulting $M_{\max}=1.47$ matches the LVO's
+Mach 1.4 without further tuning.
 
 \subsection{Stability, mass and payload}
 
-Barrowman's method, the standard linear method also used by OpenRocket, gives the nose
-$C_{N\alpha}=2$ at $x_{cp}=L-V/A_b$ and the assumed fins $C_{N\alpha,f}=7.4$. The vehicle CP is the
-$C_{N\alpha}$-weighted mean of the components, and the static margin is $(x_{cp} - x_{cg})/D$.
-Positions are measured from the aft end, so that fins and body stay fixed when the nose length
-changes, and the CG shift from the nose-shell mass is included. The shell mass is the wetted area
-times the Firehorn as-built areal density (\SI{0.98}{kg/m^2}: \SI{500}{g} for the \SI{960}{mm},
-\O\SI{240}{mm} nose). The 3U fit is the length of curved nose over which $r\geq\SI{77}{mm}$.
+Barrowman: nose $C_{N\alpha}=2$ at $x_{cp}=L-V/A_b$, fins $C_{N\alpha,f}=7.4$; static margin
+$(x_{cp} - x_{cg})/D$ with positions from the aft end and the CG shift of the shell mass included. Shell
+mass $=$ wetted area $\times$ \SI{0.98}{kg/m^2}; the 3U fit is the curved length with $r\geq\SI{77}{mm}$.

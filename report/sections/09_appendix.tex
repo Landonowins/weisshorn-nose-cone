@@ -1,16 +1,11 @@
 \section{Scripts and data}
 \label{app:scripts}
 
-The study is implemented in the Python package \texttt{nosecone}, in the repository
-\url{github.com/Landonowins/weisshorn-nose-cone} (private; ask the author for access). The
-command
+{\sloppy The study is the Python package \texttt{nosecone} in the repository
+\url{github.com/Landonowins/weisshorn-nose-cone} (private; ask the author for access).\par}
 \begin{verbatim}
 python -m nosecone run configs/weisshorn.yaml
 \end{verbatim}
-reproduces every number, table, figure and CAD file of this report from the stored Euler database:
-\texttt{data/euler\_results.csv} (every converged Euler point) and \texttt{data/cfd/} (wall-pressure
-distributions and flow fields of every run). \texttt{tests/verify\_reference.py} checks the
-reproduction against the original results, \texttt{legacy/scripts/} keeps the original one-off
-scripts, and the user guide (\texttt{docs/user\_guide/}) explains how to apply the tool to another
-vehicle. Dependencies: Python $\geq 3.11$, NumPy, SciPy, pandas, Matplotlib, PyYAML, and gmsh for the
-STEP export.
+reproduces every number, table, figure and CAD file of this report from the Euler database
+(\texttt{data/euler\_results.csv}, \texttt{data/cfd/}); \texttt{tests/verify\_reference.py} checks it, and
+the user guide (2027\_C\_FD\_REPORT-3) explains how to apply the tool to another vehicle.

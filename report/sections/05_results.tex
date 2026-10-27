@@ -3,23 +3,19 @@
 
 \subsection{Nose wave drag}
 
-Figure~\ref{fig:cdw}a gives the wave drag of the seven profiles at $L/D=4$ and
-Figure~\ref{fig:cp} the wall pressure coefficient $C_p = (p-p_\infty)/q_\infty$ behind it. By
-Equation~\eqref{eq:cdw}, regions with $C_p > 0$ add drag and regions with $C_p < 0$ reduce it.
+Figure~\ref{fig:cdw}a gives the wave drag of the seven profiles at $L/D=4$, Figure~\ref{fig:cp} the wall
+pressure behind it ($C_p > 0$ adds drag, $C_p < 0$ reduces it, Equation~\eqref{eq:cdw}).
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{Von K\'arm\'an and power $n=\tfrac12$ are the two low-drag profiles}, within a few
-per cent of each other: Von K\'arm\'an is lower at $M \geq 1.3$, power $\tfrac12$ at $M \leq 1.2$.
-The tangent profiles expand continuously and their wall pressure falls below ambient over the aft
-third, which partly cancels the overpressure near the tip. The power-$\tfrac12$ nose concentrates
-its overpressure in a short spike at its blunt tip and stays just above ambient behind it.
-\item \textbf{Ogive, parabolic and LV-Haack} carry 13--22\,\% more wave drag: their fuller forebody
-compresses the flow harder near the tip (higher $C_p$ between $x/L \approx 0.1$ and 0.4,
-Figure~\ref{fig:cp}b).
-\item \textbf{The cone is the worst} at every Mach number, and its drag rises steeply towards Mach 1:
-its constant surface angle keeps the conical overpressure all the way to the shoulder.
-\item \textbf{Fineness.} $C_{D,\rm w}$ falls as $1/(L/D)^2$ for every profile, the slope of
-slender-body theory (Figure~\ref{fig:cdw}b). For Von K\'arm\'an the Euler level is about 15\,\%
-below the linear-theory value, so linear theory gives the trend but not the level.
+\item \textbf{Von K\'arm\'an and power $n=\tfrac12$ are the two low-drag profiles}, within a few per cent:
+Von K\'arm\'an is lower at $M \geq 1.3$, power $\tfrac12$ at $M \leq 1.2$. The tangent profiles fall below
+ambient pressure over the aft third; the power-$\tfrac12$ nose concentrates its overpressure in a spike at
+its blunt tip.
+\item \textbf{Ogive, parabolic and LV-Haack} carry 13--22\,\% more: their fuller forebody compresses the
+flow harder near the tip (Figure~\ref{fig:cp}b).
+\item \textbf{The cone is the worst} at every Mach number: it keeps the conical overpressure to the
+shoulder.
+\item \textbf{Fineness.} $C_{D,\rm w}$ falls as $1/(L/D)^2$ for every profile (Figure~\ref{fig:cdw}b); for
+Von K\'arm\'an the Euler level is about 15\,\% below linear theory.
 \end{itemize}
 
 \begin{figure}[H]
@@ -41,26 +37,21 @@ its blunt tip; the cone keeps the conical value.}
 \label{fig:cp}
 \end{figure}
 
-Length is as powerful as shape. Going from $L/D = 4$ to 4.5 lowers the Von K\'arm\'an wave drag at
-$M = 1.4$ by 19\,\% (0.0526 to 0.0425), close to the factor $(4/4.5)^2 = 0.79$ of
-Equation~\eqref{eq:fineness}, while at equal length the ogive carries 21\,\% more than the
-Von K\'arm\'an nose. The design question is therefore how to combine the best profile with the
-longest nose the vehicle can accommodate.
+Length is as powerful as shape: from $L/D = 4$ to 4.5 the Von K\'arm\'an wave drag at $M = 1.4$ falls by
+19\,\% (0.0526 to 0.0425, close to $(4/4.5)^2 = 0.79$), while at equal length the ogive carries 21\,\%
+more than Von K\'arm\'an. The question is how to combine the best profile with the longest nose the
+vehicle can take.
 
 \subsection{Flight performance}
 
-Weisshorn burns out at \SI{9.1}{s} near \SI{2.2}{km} at $M_{\max}=1.47$ (nominal) or 1.56
-(envelope), spends \SI{16}{s} above $M = 0.8$ and \SI{10}{s} above Mach 1, and crosses the
-transonic band twice (Figure~\ref{fig:trajectory}a). The drag impulse $\int D\,\mathrm dt$, the
-momentum lost to drag, is spent mostly between $M = 0.8$ and 1.5 (Figure~\ref{fig:trajectory}b),
-where the dynamic pressure is highest and where the nose wave drag acts. The apogee sensitivities
-around the baseline are \textbf{\SI{-100}{m} per $\Delta C_D = 0.01$} and \textbf{\SI{-143}{m/kg}}.
-A wave-drag difference only acts above $M = 0.8$ and is worth somewhat less: the ogive carries 0.009
-more $C_{D,\rm w}$ than Von K\'arm\'an at $M = 1.4$ and $L/D = 4.5$, and loses \SI{79}{m} rather
-than \SI{90}{m}. Skin friction dominates the vehicle drag at all speeds (Weisshorn is a
-fineness-30 airframe), base drag is second, and the nose wave drag is 10--12\,\% of the total
-above $M = 0.8$. This is why the nose shape moves the apogee by tens of metres rather than
-kilometres, and why the length (wetted area) and shape effects are of the same order.
+Weisshorn burns out at \SI{9.1}{s} near \SI{2.2}{km} at $M_{\max}=1.47$ (nominal) or 1.56 (envelope),
+spends \SI{16}{s} above $M = 0.8$ and \SI{10}{s} above Mach 1 (Figure~\ref{fig:trajectory}a). The drag
+impulse is spent mostly between $M = 0.8$ and 1.5 (Figure~\ref{fig:trajectory}b), where the nose wave drag
+acts. Apogee sensitivities: \textbf{\SI{-100}{m} per $\Delta C_D = 0.01$} and \textbf{\SI{-143}{m/kg}}; a
+wave-drag difference acts only above $M = 0.8$ and is worth less (the ogive's $+0.009$ in $C_{D,\rm w}$
+costs \SI{79}{m}, not \SI{90}{m}). Skin friction dominates the vehicle drag, base drag is second, and the
+nose wave drag is 10--12\,\% of the total above $M = 0.8$: the nose shape moves the apogee by tens of
+metres, and length and shape effects are of the same order.
 
 \begin{figure}[H]
 \centering
@@ -74,12 +65,10 @@ nose wave drag.}
 \subsection{Trade study}
 \label{sec:trade}
 
-Figure~\ref{fig:trade} gives, for every profile and fineness, the apogee change relative to the
-baseline, the length over which a 3U section fits, and the change in static margin;
-Table~\ref{tab:trade} lists the candidates at and near the LVS length. Each point of
-Figure~\ref{fig:trade}a is a full trajectory with the wave drag, length, wetted area and shell mass
-of that nose. The curves rise with fineness because the wave drag falls as $1/(L/D)^2$, and
-flatten because the friction and mass of the longer nose grow linearly with $L$.
+Figure~\ref{fig:trade} and Table~\ref{tab:trade} give, for every profile and fineness, the apogee change
+(a full trajectory with the wave drag, length, wetted area and mass of that nose), the 3U length inside
+and the static-margin change. The curves rise with fineness as the wave drag falls as $1/(L/D)^2$, and
+flatten as friction and mass grow with $L$.
 
 \begin{figure}[H]
 \centering
@@ -93,35 +82,31 @@ $r\geq\SI{77}{mm}$ (3U fit). (c) Change in subsonic static margin.}
 \input{sections/tab_trade}
 
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{Von K\'arm\'an, power $\tfrac12$ and power $\tfrac34$ lead at every length} and swap
-places within about \SI{30}{m}: power $\tfrac12$ is ahead at $L/D\leq3.5$, Von K\'arm\'an at
-$L/D = 4$--4.5, power $\tfrac34$ at $L/D=5$. At $L/D=4$, Von K\'arm\'an beats the tangent ogive
-(Bella Lui II / Nordend) by \TRADEOGIVE{} and the Firehorn power-$\tfrac12$ by \TRADEPOWER{}.
-\item \textbf{Length pays, with diminishing returns}: \TRADELEN{} per extra \SI{90}{mm}
-($\Delta L/D = 0.5$) around $L/D = 4$--4.5.
-\item \textbf{Fuller noses house more payload}: at $L/D=4$ the ogive and LV-Haack fit
-\SIrange{275}{284}{mm} of the 3U inside the curved part, against \SI{226}{mm} for Von K\'arm\'an.
-Measured as nose-bay length (curved part plus the cylinder still needed for the 3U),
-Von K\'arm\'an still gives the highest apogee per millimetre of bay.
-\item \textbf{Stability is not a discriminator}: all candidates change the static margin by less
-than 0.1 cal (at most 0.16 cal over the whole design space, against the 2--4 cal target).
+\item \textbf{Von K\'arm\'an, power $\tfrac12$ and power $\tfrac34$ lead at every length} within about
+\SI{30}{m}: power $\tfrac12$ at $L/D\leq3.5$, Von K\'arm\'an at $L/D = 4$--4.5, power $\tfrac34$ at
+$L/D=5$. At $L/D=4$, Von K\'arm\'an beats the tangent ogive by \TRADEOGIVE{} and the power-$\tfrac12$ by
+\TRADEPOWER{}.
+\item \textbf{Length pays, with diminishing returns}: \TRADELEN{} per extra \SI{90}{mm} around
+$L/D = 4$--4.5.
+\item \textbf{Fuller noses house more payload}: at $L/D=4$ ogive and LV-Haack fit \SIrange{275}{284}{mm}
+of the 3U, Von K\'arm\'an \SI{226}{mm}; per millimetre of nose bay, Von K\'arm\'an still gives the highest
+apogee.
+\item \textbf{Stability is not a discriminator}: all candidates change the static margin by less than
+0.1 cal (0.16 cal at most over the design space, against the 2--4 cal target).
 \end{itemize}
 
 \subsection{Robustness of the ranking}
 \label{sec:robust}
 
-The weakest parts of the chain are the transonic model, the drag of the rest of the vehicle and the
-mass model. Figure~\ref{fig:robustness} recomputes the apogee of every shape at $L/D = 4.5$ with
-the onset of the transonic drag rise moved to $M = 0.75$ and 0.85, the transonic wave drag scaled
-by $\pm20\,\%$, the rest of the vehicle drag increased by 20\,\%, and the hot-day envelope with the
-LVO masses, relative to Von K\'arm\'an in the same scenario:
+Figure~\ref{fig:robustness} recomputes every shape at $L/D = 4.5$ with the transonic onset at $M = 0.75$
+and 0.85, the transonic wave drag $\pm20\,\%$, the rest of the vehicle drag $+20\,\%$, and the hot-day
+envelope, relative to Von K\'arm\'an:
 \begin{itemize}[leftmargin=*,itemsep=2pt]
 \item \textbf{Von K\'arm\'an flies highest in every scenario.} The power noses stay within
-\SIrange{11}{31}{m} of it, the ogive, parabolic and LV-Haack noses are \SIrange{57}{98}{m} lower,
-and the cone \SIrange{98}{156}{m} lower; no design crosses zero.
-\item The spread between scenarios is smaller than the gap between the groups, so the selection does
-not hinge on the transonic assumption. The hot-day envelope amplifies the differences; a draggier
-vehicle shrinks them, because the nose is then a smaller share of the total.
+\SIrange{11}{31}{m}, ogive, parabolic and LV-Haack are \SIrange{57}{98}{m} lower, the cone
+\SIrange{98}{156}{m}; no design crosses zero.
+\item The spread between scenarios is smaller than the gap between groups, so the selection does not
+hinge on the transonic assumption. The hot day amplifies the differences; a draggier vehicle shrinks them.
 \end{itemize}
 
 \begin{figure}[H]
@@ -136,9 +121,7 @@ the mass uncertainty at this stage: designs inside it are equivalent in practice
 \subsection{Tip bluntness}
 \label{sec:bluntness}
 
-A sharp tip cannot be made and chips first, so the apex is replaced by a sphere. On the
-Von K\'arm\'an nose at $M=1.4$, a \SI{4.5}{mm} spherical tip ($r_n/R=0.05$) costs \BLUNTCOST{} in
-wave drag (\BLUNTAPOA{} of apogee) and a \SI{9}{mm} tip ($r_n/R=0.1$) costs \BLUNTTEN{}
-(\BLUNTAPOB{}). The cost grows quickly because the stagnation pressure at the centre of the sphere
-($C_p \approx 1.5$ at $M = 1.4$, against about 0.04 averaged over a sharp nose) acts on a growing
-area. A \SI{4.5}{mm} tip keeps the drag cost below 1\,\%.
+On the Von K\'arm\'an nose at $M=1.4$, a \SI{4.5}{mm} spherical tip ($r_n/R=0.05$) costs \BLUNTCOST{} in
+wave drag (\BLUNTAPOA{} of apogee), a \SI{9}{mm} tip \BLUNTTEN{} (\BLUNTAPOB{}): the stagnation pressure
+($C_p \approx 1.5$, against about 0.04 averaged over a sharp nose) acts on a growing area. A \SI{4.5}{mm}
+tip keeps the cost below 1\,\%.

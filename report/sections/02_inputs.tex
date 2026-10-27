@@ -3,11 +3,8 @@
 
 \subsection{What is fixed}
 
-Table~\ref{tab:inputs} lists every input taken from the ERT documentation. The vehicle is
-\textbf{Weisshorn}, the 2027 competition launch vehicle flying in the EuRoC L9 category (target
-apogee \SI{9}{km}). The sources are the Launch Vehicle Overview (LVO) and Launch Vehicle Sizing
-(LVS) of systems engineering, the requirement database (REQ), and the Design Justification and
-Definition Files (DJF, DDF) of earlier vehicles.
+Weisshorn is the 2027 EuRoC L9 vehicle (\SI{9}{km} apogee). Inputs come from the LVO, LVS, requirement
+database and earlier DJF/DDF (Table~\ref{tab:inputs}).
 
 \begin{table}[H]
 \centering
@@ -33,47 +30,30 @@ Firehorn nose mass & as-built \SI{500}{g} (\SI{960}{mm}, \O\SI{240}{mm}) & 2024\
 \end{tabular}
 \end{table}
 
-With $M_{\max} \approx 1.4$, Weisshorn crosses the \emph{transonic} range (roughly $0.8 < M < 1.2$,
-where subsonic and supersonic regions coexist around the body) and flies a few seconds in the low
-supersonic range, so the nose is designed for this whole range rather than for one Mach number.
-The 3U CubeSat ($100\times100\times\SI{340.5}{mm}$) sits in the nose bay, so the profile decides
-how much of it fits inside the curved part.
+\noindent With $M_{\max} \approx 1.4$ the nose is designed for the whole transonic and low-supersonic
+range, and the profile decides how much of the 3U ($100\times100\times\SI{340.5}{mm}$) fits inside.
 
 \subsection{What is assumed}
 
-Each assumption is chosen so that the comparison between nose shapes is fair; none of them changes
-the ranking.
-
+None of these assumptions changes the ranking.
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{Trajectory.} Point mass (thrust, drag and gravity; the rotation of the stable vehicle
-is ignored), rail \SI{12}{m} at $84^\circ$, ISA, no wind, constant \SI{4.5}{kN} for \SI{9.1}{s}.
-Propellant from $I_t/(I_{sp}g_0) = \SI{20.9}{kg}$, i.e.\ burn-out mass \SI{54.1}{kg}. The drag of
-everything except the nose, the least certain part of the model at this stage, is scaled by a
-single factor $k$ so that the baseline nose reaches the LVO apogee of \SI{9.0}{km}
-(Section~\ref{sec:flight}). This gives $M_{\max}=1.47$, consistent with the LVO's Mach~1.4. All
-noses share the same $k$, and Section~\ref{sec:robust} shows that the ranking does not change when
-the rest of the drag is varied.
-\item \textbf{Hot-day envelope.} The LVO masses ($75 \rightarrow \SI{45}{kg}$) on a
-\SI{30}{\celsius} day give $M_{\max} \approx 1.56$, the fastest credible flight. It is one of the
-robustness cases (Section~\ref{sec:robust}).
-\item \textbf{Fins} (not yet defined for Weisshorn): four trapezoidal fins, root \SI{300}{mm},
-tip \SI{120}{mm}, span \SI{160}{mm}, sweep \SI{180}{mm}, \SI{5}{mm} hexagonal section. They only
-enter the common drag and the CP shift.
-\item \textbf{Payload envelope.} A 3U unit needs an outer radius $r \geq \SI{77}{mm}$:
-\SI{70.7}{mm} half-diagonal, \SI{3}{mm} clearance, \SI{2}{mm} guide, \SI{1.2}{mm} shell.
-\item \textbf{Nose mass.} Wetted area times the Firehorn as-built areal density
-(\SI{0.98}{kg/m^2}), plus \SI{60}{g} for the tip. It only enters the trajectory and the CG.
-\item \textbf{Transonic nose wave drag} ($0.8 < M < 1.1$): smooth rise from zero at $M = 0.8$
-to the computed $M = 1.1$ value at $M = 1.0$ (Section~\ref{sec:transonic}).
+\item \textbf{Trajectory.} Point mass, rail \SI{12}{m} at $84^\circ$, ISA, no wind, \SI{4.5}{kN} for
+\SI{9.1}{s}; propellant $I_t/(I_{sp}g_0) = \SI{20.9}{kg}$ (burn-out \SI{54.1}{kg}). The drag of everything
+except the nose is scaled by one factor $k$ so that the baseline nose reaches \SI{9.0}{km}
+(Section~\ref{sec:flight}), giving $M_{\max}=1.47$.
+\item \textbf{Hot-day envelope.} LVO masses ($75 \rightarrow \SI{45}{kg}$) on a \SI{30}{\celsius} day:
+$M_{\max} \approx 1.56$ (a robustness case, Section~\ref{sec:robust}).
+\item \textbf{Fins} (not yet defined): four trapezoidal fins, root \SI{300}{mm}, tip \SI{120}{mm}, span
+\SI{160}{mm}, sweep \SI{180}{mm}, \SI{5}{mm} thick; they only enter the common drag and the CP shift.
+\item \textbf{Payload envelope.} A 3U needs $r \geq \SI{77}{mm}$ (\SI{70.7}{mm} half-diagonal +
+\SI{3}{mm} clearance + \SI{2}{mm} guide + \SI{1.2}{mm} shell).
+\item \textbf{Nose mass.} Wetted area $\times$ \SI{0.98}{kg/m^2} (Firehorn as-built) + \SI{60}{g} tip.
+\item \textbf{Transonic wave drag} ($0.8 < M < 1.1$): smooth rise from zero at $M = 0.8$ to the
+$M = 1.1$ value at $M = 1.0$ (Section~\ref{sec:transonic}).
 \end{itemize}
 
 \subsection{What could not be found}
 \label{sec:flags}
 
-\begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{No Weisshorn nosecone requirement} (length, profile) exists yet; the Weisshorn
-nosecone pages are empty templates.
-\item \textbf{Weisshorn fins, CG and mass breakdown} are not defined. The static margin is
-therefore given as a \emph{change} relative to the baseline nose.
-\item \textbf{No supersonic flight data} exists at ERT to calibrate drag against.
-\end{itemize}
+No Weisshorn nosecone requirement exists yet; the Weisshorn fins, CG and mass breakdown are not defined
+(so the static margin is given as a change); no supersonic flight data exists at ERT to calibrate drag.
