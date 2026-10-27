@@ -5,6 +5,10 @@ __pycache__/
 venv/
 # outputs of the tool (regenerate with python -m nosecone run ...)
 output/
+# Fluent runs on the DLL remote PCs (CFD/mcp/bootstrap-vm.ps1 writes .mcp.json there)
+CFD/runs/
+server_info*.txt
+.mcp.json
 # LaTeX build files
 *.aux
 *.log
