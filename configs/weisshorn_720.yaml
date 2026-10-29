@@ -1,0 +1,26 @@
+# =============================================================================================
+#  Weisshorn nose cone at a total length of 720 mm (coupler included), agreed with ST at the
+#  interface meeting of 29.10.2026 (LV = 5.40 m, SE_REQ_04). Configuration of the report
+#  2027_C_FD_REPORT-5_NOSE-CONE-720MM.
+#
+#    python studies/final_design.py configs/weisshorn_720.yaml  # design, equation, CAD, loads, heating
+#    python -m nosecone run configs/weisshorn_720.yaml          # standard outputs of design A
+#
+#  Everything not set here comes from weisshorn_650.yaml (and weisshorn.yaml).
+# =============================================================================================
+base: weisshorn_650.yaml
+
+project:
+  name: Weisshorn-720
+  output_dir: ../output/weisshorn_720
+
+nose:                          # design A: GRV inside the nose (Req_13); B = Von Karman 700 + 20 (backup)
+  design_profile: lvhaack
+  design_fineness: 3.761111    # L = 677 mm
+  shoulder_length: 0.043       # coupler cylinder: 677 + 43 = 720 mm
+
+robustness:
+  fineness: 3.761111
+
+trade_matrix:
+  fineness: 3.761111
