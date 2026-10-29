@@ -1,68 +1,25 @@
 \section{Verification Record}
 \label{app:verification}
 
-The package was refactored from the scripts that produced the Weisshorn design report
-(\texttt{legacy/scripts/}). Before the refactoring, those scripts were rerun and reproduced every result of the
-report exactly (tables, quoted numbers, STL files, figures pixel for pixel; three CFD cases bit for bit). The new
-package was then checked against them:
-
-\begin{table}[H]
-\centering
-\footnotesize
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{5.2cm}>{\raggedright\arraybackslash}p{10.8cm}@{}}
-\toprule
-Output & Result \\
-\midrule
-Sweep table, calibration factor $k$, sensitivities & byte-identical \\
-LaTeX tables (trade, matrix, catalogue) and macros & byte-identical \\
-CFD database rebuilt from the wall-pressure files & byte-identical \\
-CFD solver: the whole database recomputed (38 geometries, 126 Mach points, 16 flow fields) & bit-identical, with the
-iteration limits of the original runs (see below) \\
-Profile CSV, 7 of the 8 STL files & byte-identical \\
-Robustness table & identical with the 4-decimal $k$ the old script used (see below) \\
-Figures (16) & 15 pixel-identical, one with a single pixel differing by 1/255 (sub-pixel label position) \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\noindent The decision matrix was later revised in the design report, the legacy script and the package together
-(heritage removed as a criterion, weights 4:2:2:1); the revised table is again byte-identical.
-
-\noindent\textbf{Differences, all intentional:}
-\begin{itemize}[leftmargin=*,itemsep=1pt]
-\item \emph{CFD iteration limit.} The first pass of the original sweep (cone and ogive) and the cone validation
-study ran with a 9000-iteration limit per Mach number; the sweep script was then changed to 6000 for the later
-passes. With 6000, eight points (cone and ogive at $M = 1.1$, two validation cones at $M = 1.2$) differ by up to
-0.006 in $C_p$; the current legacy script would not reproduce them either. \texttt{configs/weisshorn.yaml} records
-\texttt{max\_iter: 9000} for those studies, and with it all 126 points are reproduced bit for bit.
-\item \emph{Calibration factor.} The old robustness, figure and table scripts re-read $k$ from
-\texttt{calibration.txt}, rounded to four decimals (0.5601), while the sweep used the full value. The package
-uses the full value everywhere. The robustness apogees change by at most \SI{0.4}{m} (\SI{0.05}{m} relative to
-Von K\'arm\'an); no rounded number of the report changes.
-\item \emph{Check table.} In the report's ``check at the design fineness'' table, the parabolic row said
-``interp.\ 4--5''; the data used are $L/D = 3$ and 4, and the value at 4.5 is held from 4. The label now says
-``scaled from 4''. The numbers are unchanged.
-\item \emph{Ogive STL.} Round-off made the apex radius of the tangent ogive $\approx 10^{-16}$~m instead of 0,
-leaving a pin-hole of $4\times10^{-13}$~mm at the tip (256 open edges). Radii below 1~nm are now set to zero; the
-file is closed. The other STL files are unchanged.
-\end{itemize}
+The package was refactored from the scripts that produced the Weisshorn design report (\texttt{legacy/scripts/})
+and checked against them: the sweep table, $k$, the sensitivities, the LaTeX tables and macros, the CFD database
+and the profile CSV are byte-identical; the whole CFD database recomputes bit for bit (38 geometries, 126 Mach
+points); 15 of 16 figures are pixel-identical. The few differences are intentional (full-precision $k$ instead of 4
+decimals, a closed ogive STL, a corrected table label) and change no rounded number of the report.
 
 \section{Troubleshooting}
 
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{``skipped \dots: no CFD data for profile \dots''}: the database has no wave drag for that profile or
-tip radius. Use a profile of the database, or set \key{aerodynamics.compute\_missing: true}.
-\item \textbf{``calibration failed: the target apogee \dots is not reached''}: the vehicle cannot reach
-\key{flight.target\_apogee} for $k$ in \key{flight.calibration\_bracket}. Check masses, thrust and impulse, widen
-the bracket, or set \key{flight.calibrate: false}.
-\item \textbf{A plot is skipped or ``failed''}: the message in \texttt{run.log} says why (missing data for
-\texttt{cp}, \texttt{fields} or \texttt{validation}; a LaTeX problem: set \key{output.text\_renderer: mathtext}).
-A failed plot never stops the run.
-\item \textbf{The figures look different from the report}: LaTeX is not installed or not found, so the built-in
-renderer is used. Install MiKTeX/TeX Live, or ignore it: the content is the same.
-\item \textbf{Results changed after updating Python packages}: differences of order $10^{-12}$ are expected with
-other library versions; install the pinned versions of \texttt{requirements.txt} for exact reproduction.
-\item \textbf{The CFD solver ``diverged''}: it restarts automatically from the free stream with a lower CFL
-number (\key{cfd.fallback\_cfl}). Persistent problems usually mean a profile with a very blunt or kinked tip; try a
-finer grid level or a smaller \key{cfd.cfl}.
+\item \textbf{``skipped \dots: no CFD data for profile \dots''}: use a profile of the database, or set
+\key{aerodynamics.compute\_missing: true}.
+\item \textbf{``calibration failed: the target apogee \dots is not reached''}: check masses, thrust and impulse, widen
+\key{flight.calibration\_bracket}, or set \key{flight.calibrate: false}.
+\item \textbf{A plot is skipped or ``failed''}: \texttt{run.log} says why (missing data, or LaTeX: set
+\key{output.text\_renderer: mathtext}). A failed plot never stops the run.
+\item \textbf{The figures look different from the report}: LaTeX is not installed, so the built-in renderer is used;
+the content is the same.
+\item \textbf{Results changed after updating Python packages}: differences of order $10^{-12}$ are expected; install
+the pinned versions of \texttt{requirements.txt} for exact reproduction.
+\item \textbf{The CFD solver ``diverged''}: it restarts with a lower CFL (\key{cfd.fallback\_cfl}); if it persists,
+try a finer grid level or a smaller \key{cfd.cfl}.
 \end{itemize}

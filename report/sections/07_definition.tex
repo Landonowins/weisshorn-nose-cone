@@ -34,17 +34,13 @@ Static margin change vs.\ baseline & \FINDSM{} cal \\
 \end{tabular}
 \end{table}
 
-The \SI{4.5}{mm} sphere replaces the theoretical apex and removes \FINTRUNC{} of length, hence the
-\FINLPHYS{} physical curved length. A radius tolerance of $\pm\SI{0.5}{mm}$ moves $C_{D,\rm w}$ by
-much less than 1\,\%; a step at the tip/shell joint matters more, because a forward-facing step acts
-as a small blunt face with a local shock. Keep it below \SI{0.2}{mm} and
-forward-facing steps at zero.
+A radius tolerance of $\pm\SI{0.5}{mm}$ moves $C_{D,\rm w}$ by much less than 1\,\%; a step at the
+tip/shell joint matters more (a forward-facing step acts as a small blunt face): keep it below
+\SI{0.2}{mm}, and forward-facing steps at zero.
 
 \subsection{CAD deliverables}
 
-The tool of Appendix~\ref{app:scripts} writes the profile coordinates
-(\texttt{nose\_profile\_final.csv}, 200 points, $x$ from the tip), watertight binary STL solids (mm,
-$x$ from the tip, closed by a flat base) of the seven candidates at $L/D = 4.5$ and of the final
-design (\texttt{nose\_vonkarman\_LD4.5\_rn4.5mm\_FINAL.stl}, volume within 0.05\,\% of the
-analytical one), and a STEP solid of the final design (same name, \texttt{.step}) for CAD and the
-Ansys runs of R3.
+{\sloppy Profile coordinates (\texttt{nose\_profile\_final.csv}, 200 points, $x$ from the tip),
+watertight STL solids (mm) of the seven candidates at $L/D = 4.5$, and STL and STEP solids of the final
+design, \texttt{nose\_vonkarman\_LD4.5\_rn4.5mm\_FINAL.stl} and \texttt{.step}, for CAD and Fluent
+(Appendix~\ref{app:scripts}).\par}

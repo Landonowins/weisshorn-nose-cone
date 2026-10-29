@@ -2,19 +2,13 @@
 \label{sec:next}
 
 \begin{enumerate}[leftmargin=*,itemsep=3pt]
-\item \textbf{Fluent verification (CFD team).} Run the selected geometry in Fluent (density-based,
-k-$\omega$ SST, ideal gas, Sutherland viscosity) at $M = 0.95$, 1.2 and 1.47, plus the
-$5^\circ$ incidence case (R3). This replaces the transonic assumption of
-Section~\ref{sec:transonic} and checks the Euler wave drag with viscous effects; the Euler
-wall-pressure files are the reference to compare against. The setup is detailed in
-\texttt{CFD/Fluent\_Workflow\_Nose\_Cone.pdf} of the repository (Appendix~\ref{app:scripts}).
-\item \textbf{RocketPy update (simulation team).} Replace the LVS nose in the RocketPy model by
-the final geometry and its $C_D(M)$, then re-check apogee, the \SI{30}{m/s} rail exit speed and
-the static margin (2--4 cal, 2027\_C\_SE\_\allowbreak FD\_REQ\_07) once the fins are defined.
-\item \textbf{Requirements to create} (none exists for the Weisshorn nosecone). Proposed:
-\begin{itemize}[itemsep=1pt]
-\item profile: Von K\'arm\'an, $L = \FINL{}$ ($L/D=4.5$, \FINLPHYS{} physical with the tip), coordinates from \texttt{nose\_profile\_final.csv}, radius tolerance $\pm\SI{0.5}{mm}$;
-\item nosecone bay length (curved part + the cylinder that completes the 3U housing) \FINBAY{}, to be booked in the \SI{5.4}{m} LV budget (2027\_C\_SE\_REQ\_04);
-\item tip: spherical, radius \SI{4.5}{mm}.
-\end{itemize}
+\item \textbf{Fluent verification (R3).} RANS (k-$\omega$ SST) at $M = 0.95$, 1.2 and 1.47 plus the
+$5^\circ$ incidence case, to replace the transonic model of Section~\ref{sec:transonic}; workflow in
+2027\_C\_FD\_REPORT-4\_NOSE-CONE-FLUENT-WORKFLOW (\texttt{CFD/} of the repository).
+\item \textbf{RocketPy update.} Final geometry and $C_D(M)$ in the RocketPy model; re-check apogee, the
+\SI{30}{m/s} rail exit speed and the 2--4 cal static margin (2027\_C\_SE\_\allowbreak FD\_REQ\_07) once
+the fins are defined.
+\item \textbf{Requirements to create}: profile Von K\'arm\'an, $L = \FINL{}$ (\FINLPHYS{} physical),
+coordinates from \texttt{nose\_profile\_final.csv}, radius tolerance $\pm\SI{0.5}{mm}$; nosecone bay
+\FINBAY{} in the \SI{5.4}{m} budget (2027\_C\_SE\_REQ\_04); spherical tip \SI{4.5}{mm}.
 \end{enumerate}

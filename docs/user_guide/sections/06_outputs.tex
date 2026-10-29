@@ -6,18 +6,17 @@
 \begin{lstlisting}[language={}]
 output/<study>/
 |-- summary.md          the whole sweep in one table, robustness, heating, design
-|-- run.log             what the run did (same as the console)
+|-- run.log             what the run did
 |-- config_used.yaml    every value used, defaults included
-|-- tables/             CSV/JSON/TXT results (below)
+|-- tables/             CSV/JSON/TXT results
 |-- figures/            one PDF + PNG per plot
-|-- cad/                profile CSV, STL and STEP files
+|-- cad/                profile CSV, STL and STEP files (mm, x from the tip)
 |-- latex/              LaTeX tables and macros (if output.latex)
 \end{lstlisting}
 
 \subsection{Tables}
 
-\paragraph{\texttt{trade\_table.csv}: the sweep.} One row per nose (profile $\times$ fineness $\times$ tip radius),
-the same content as the table of \texttt{summary.md} with full precision:
+\texttt{trade\_table.csv} (and the table of \texttt{summary.md}) has one row per nose:
 
 \begin{table}[H]
 \centering
@@ -26,113 +25,79 @@ the same content as the table of \texttt{summary.md} with full precision:
 \toprule
 Column & Meaning \\
 \midrule
-\texttt{shape}, \texttt{fineness} & profile name and $L/D$ (\texttt{tip\_radius\_ratio} is added if tip radii are swept) \\
-\texttt{L\_mm}, \texttt{V\_L}, \texttt{S\_m2} & nose length [mm], internal volume [L], wetted area [m\textsuperscript{2}] \\
-\texttt{mass\_g} & shell (wetted area $\times$ areal density) + tip insert [g] \\
-\texttt{base\_angle} & angle between the profile and the body at the shoulder [\textdegree]; 0 = tangent, otherwise a kink \\
-\texttt{xcp\_over\_L} & Barrowman centre of pressure of the nose, from the apex, as a fraction of $L$ \\
-\texttt{l3U\_mm}, \texttt{bay\_mm} & length of the curved nose wide enough for the payload; nose-bay length (curved part + the cylinder the payload still needs, at least the shoulder) [mm] \\
-\texttt{cd\_w\_11} \dots & nose wave-drag coefficient at $M = 1.1$, 1.2, 1.4, 1.6 (reference area $\pi D^2/4$) \\
-\texttt{apogee}, \texttt{mach\_max} & apogee [m] and maximum Mach number of the nominal flight with this nose \\
-\texttt{dSM\_cal} & change of static margin relative to the baseline nose [calibres]; negative = less stable \\
-\texttt{d\_apogee}, \texttt{d\_bay\_mm} & apogee and nose-bay length relative to the baseline nose [m], [mm] \\
+\texttt{shape}, \texttt{fineness} & profile and $L/D$ \\
+\texttt{L\_mm}, \texttt{V\_L}, \texttt{S\_m2}, \texttt{mass\_g} & length [mm], volume [L], wetted area [m\textsuperscript{2}], shell + tip mass [g] \\
+\texttt{cd\_w\_11} \dots & wave drag at $M = 1.1$, 1.2, 1.4, 1.6 ($A_{\rm ref} = \pi D^2/4$) \\
+\texttt{apogee}, \texttt{d\_apogee} & apogee [m] and its change against the baseline nose \\
+\texttt{l3U\_mm}, \texttt{bay\_mm} & curved length wide enough for the payload; nose-bay length [mm] \\
+\texttt{dSM\_cal} & static-margin change against the baseline [calibres]; negative = less stable \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{Other tables.}
-\begin{itemize}[leftmargin=*,itemsep=1pt]
-\item \texttt{robustness.csv}: apogee of every profile in every scenario and \texttt{dz\_vs\_vk}, its difference
-from the reference profile in the same scenario [m].
-\item \texttt{catalogue.csv}: every profile at the design fineness (volume, area, angles, CP, wave drag computed
-directly at that fineness when available, apogee changes, mass, payload room, static margin).
-\item \texttt{trade\_matrix.csv}: scores (1--5) of each criterion and the weighted total.
-\item \texttt{bluntness.csv}: wave-drag increase [\%] and apogee change [m] of each reported tip radius.
-\item \texttt{heating.json}: peak temperatures [\textdegree C] (nominal, envelope) of the stagnation point, metal
-tip, printed tip and shell inner face, and the maximum Mach numbers.
-\item \texttt{design.csv}: geometry of the selected design: profile length $L$, physical length after blunting,
-truncation, tangency point of the tip sphere, volume, area, CP, shoulder angle.
-\item \texttt{calibration.txt}: the factor $k$; \texttt{sensitivity.txt}: apogee change per kg and per unit $C_D$.
-\end{itemize}
-
-\paragraph{CAD files (\texttt{cad/}).} Units are millimetres, $x$ from the (blunted) tip.
-\texttt{nose\_profile\_final.csv}: the profile ($x$, $r$), points clustered at the tip, for CAD sketches or
-templates. \texttt{nose\_<profile>\_LD<L/D>.stl}: every profile of the sweep at the design fineness;
-\texttt{\dots\_FINAL.stl} and \texttt{\dots\_FINAL.step}: the selected design. All solids include the shoulder
-and a flat base; the STL files are checked to be closed (no open edges) and the STEP solid is checked by reading
-it back. STEP is the file to import in SpaceClaim/Fluent or CAD.
-
-\paragraph{LaTeX (\texttt{latex/}).} \texttt{tab\_trade.tex}, \texttt{tab\_matrix.tex}, \texttt{tab\_catalogue.tex},
-\texttt{tab\_check45.tex} and \texttt{macros.tex} (every number quoted in the design report, e.g.\
-\verb|\FINAPO|). \verb|\input{}| them in a report so that the text always matches the results.
+\noindent Other tables in \texttt{tables/}: \texttt{robustness.csv}, \texttt{catalogue.csv} (every profile at the
+design fineness), \texttt{trade\_matrix.csv}, \texttt{bluntness.csv}, \texttt{heating.json}, \texttt{design.csv},
+\texttt{calibration.txt} ($k$) and \texttt{sensitivity.txt}. \texttt{cad/} holds the profile CSV, the STL of every
+profile and the STL and STEP of the design (the STEP is the file for SpaceClaim/Fluent). \texttt{latex/} holds the
+report's tables and macros, to \verb|\input{}| so that the text always matches the results.
 
 \subsection{Plots}
 \label{sec:plots}
 
-The figures below are those of the Weisshorn study. Every plot uses the same colour, line style and marker per
-profile, so that profiles can be followed from one figure to the next, also in black and white.
+Each profile keeps the same colour, line style and marker in every plot.
 
-\newcommand{\plot}[3]{\paragraph{\texttt{\detokenize{#1}}.} #3
-\begin{figure}[H]\centering\includegraphics[width=#2\textwidth]{fig_#1}\end{figure}}
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{13.6cm}@{}}
+\toprule
+Plot & What it shows \\
+\midrule
+\texttt{profiles} & profiles to scale at the baseline fineness, with the payload radius; tip zoom \\
+\texttt{schematics} & how each profile is constructed (shoulder, generator, tip) \\
+\texttt{cdw} & wave drag against Mach (CFD points, model line) and against fineness (Figure~\ref{fig:cdw}) \\
+\texttt{cp} & wall pressure coefficient along the nose: why a profile has low drag \\
+\texttt{validation} & CFD solver checks: Taylor--Maccoll cones, grid convergence \\
+\texttt{trajectory} & Mach against time; share of the momentum lost to drag per Mach interval (Figure~\ref{fig:trajectory}) \\
+\texttt{breakdown} & drag of the whole vehicle split by component \\
+\texttt{trade} & apogee change, payload length, static-margin change against fineness (Figure~\ref{fig:trade}) \\
+\texttt{robustness} & apogee of each profile against the reference in every scenario \\
+\texttt{bluntness} & wave-drag increase and tip heating against tip radius \\
+\texttt{thermal} & shell and tip temperatures, nominal and hot day \\
+\texttt{final} & the selected design to scale, with its dimensions (Figure~\ref{fig:final}) \\
+\texttt{gallery}, \texttt{renders} & every profile at the design fineness with the payload; 3D views \\
+\texttt{fields}, \texttt{grid} & CFD pressure fields around each profile; the CFD grid \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\plot{profiles}{0.95}{(a) Profiles at the baseline fineness, drawn to scale; the dotted line is the radius the
-payload needs, so the part of each curve above it can house the payload. (b) Zoom on the tip with the selected
-spherical blunting shaded. Use it to see how quickly each profile gains radius.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{fig_trade}
+\caption{\texttt{trade}: (a) apogee change against the baseline (cross), (b) payload length inside the nose,
+(c) static-margin change. Look for the highest profile in (a) with an acceptable (b).}
+\label{fig:trade}
+\end{figure}
 
-\plot{schematics}{0.85}{How each profile is constructed (drawn at $L/D = 2$ so that the differences show):
-upper label, the shoulder (tangent or kink); lower label, the generator and the tip; inset, the tip magnified.
-Panel (a) defines the notation.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{fig_cdw}
+\caption{\texttt{cdw}: (a) wave drag against Mach at the baseline fineness (markers: CFD; lines: model; grey band:
+assumed transonic rise); (b) against fineness at $M = 1.4$. Lower is better.}
+\label{fig:cdw}
+\end{figure}
 
-\plot{cdw}{0.95}{(a) Nose wave drag versus Mach number at the baseline fineness: markers are CFD results, lines
-the model used in the trajectory; in the grey band the model is an assumption. (b) Wave drag versus fineness at
-$M = 1.4$ on logarithmic axes; parallel straight lines mean $C_{D,\rm w} \propto (L/D)^{-2}$, as slender-body theory
-predicts (dotted line). Lower is better.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{fig_trajectory}
+\caption{\texttt{trajectory}: (a) Mach against time, nominal and hot day; (b) momentum lost to drag per Mach
+interval, with the nose wave-drag part dark. The nose shape matters only where the dark bars are.}
+\label{fig:trajectory}
+\end{figure}
 
-\plot{cp}{0.95}{Wall pressure coefficient along the nose at two Mach numbers ($x/L = 1$: shoulder). Positive
-$C_p$ pushes the nose back (drag), negative $C_p$ on the aft part pulls it forward. Explains \emph{why} a profile
-has low drag.}
-
-\plot{validation}{0.95}{Checks of the CFD solver. (a) Cone surface pressure from the solver (circles) against the
-exact Taylor--Maccoll solution (lines): the circles must sit on the lines. (b) Wave drag on three grids divided by
-the extrapolated value: the legend gives the observed order $p$ (should be close to 2) and the grid convergence
-index (GCI, the estimated grid error of the production grid).}
-
-\plot{trajectory}{0.95}{(a) Mach number versus time on the nominal and hot-day flights, with the maximum Mach
-number; grey: transonic range. (b) Share of the momentum lost to drag in each Mach interval (light) and the part
-due to the nose wave drag (dark). The nose shape only matters in the Mach range where the dark bars are.}
-
-\plot{breakdown}{0.95}{Drag coefficient of the whole vehicle split into its components (coasting, at the altitude
-given in the plot options). The nose wave drag is the top band; its share at $M = 1.4$ is annotated. This is why
-nose shape changes the apogee by tens of metres, not kilometres.}
-
-\plot{trade}{0.95}{The sweep on one figure: (a) apogee change relative to the baseline (cross), (b) length of the
-nose able to house the payload (dotted: full payload length), (c) static-margin change, all versus fineness, one
-line per profile. Look for the profile that is highest in (a) for an acceptable (b).}
-
-\plot{robustness}{0.85}{Apogee of each profile relative to the reference profile under each modelling scenario
-(one marker per scenario). If a profile stays on the same side of zero in every scenario, the ranking does not
-depend on the uncertain assumptions. Grey band: differences too small to matter (\key{robustness.band}).}
-
-\plot{bluntness}{0.95}{(a) Wave drag of the blunted nose relative to the sharp one versus tip radius, at three
-Mach numbers (from the CFD bluntness study). (b) Stagnation-point heat-transfer coefficient at maximum Mach versus
-tip radius ($\propto r_n^{-1/2}$). A larger tip lowers the heating but raises the drag; the dotted line is the
-selected radius.}
-
-\plot{thermal}{0.95}{(a) Inner-face temperature of the shell at the configured stations (solid: nominal flight,
-dashed: hot day; black: stagnation temperature, the upper bound) with the adhesive limit. (b) Tip temperature for
-a printed polymer tip and for the metal insert, with the polymer's heat-deflection range. Curves must stay below the
-limits.}
-
-\plot{final}{0.95}{The selected design to scale: profile, tip insert, shoulder and payload envelope, with the main
-dimensions.}
-
-\plot{gallery}{0.85}{Every profile at the design fineness, to scale, with the payload placed as far forward as
-the profile allows (dashed box; dotted: extra cylinder needed) and its key numbers.}
-
-\plot{fields_M14}{0.85}{Pressure coefficient around each profile from the saved CFD flow fields (red: compression
-behind the shock, blue: expansion). Dashed: sonic line where a subsonic region exists.}
-
-\plot{grid}{0.8}{The CFD grid (coarse level for clarity) and its boundaries; for explanations, not for decisions.}
-
-\plot{renders}{0.8}{Shaded 3D views of every profile and of the selected design (tip insert in grey), for
-presentations.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{fig_final}
+\caption{\texttt{final}: the selected design to scale, with tip insert, shoulder and payload envelope.}
+\label{fig:final}
+\end{figure}

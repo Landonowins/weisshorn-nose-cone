@@ -4,62 +4,34 @@
 \subsection{Supersonic flow over a nose and wave drag}
 \label{sec:physics}
 
-Above $M = 1$, pressure disturbances can no longer travel upstream: a disturbance created at a point
-only influences the region inside a downstream cone of half-angle
+Above $M = 1$ a disturbance only reaches the downstream cone of half-angle
 \begin{equation}
-\mu = \arcsin\frac{1}{M},
+\mu = \arcsin\frac{1}{M}
 \label{eq:mach}
 \end{equation}
-the \emph{Mach angle} ($\mu = 45.6^\circ$ at $M = 1.4$). The air ahead of the nose receives no
-advance signal and is deflected abruptly through a \emph{shock wave}, across which pressure,
-density and temperature jump. Where the surface turns back towards the axial direction, the flow
-\emph{expands} and the pressure falls, possibly below ambient. The pressure on a supersonic nose is
-therefore above ambient near the tip and decreases along it. Since the nose faces forward, this
-gives a net axial force, the \emph{wave drag}, which exists even in an inviscid fluid. It is
-expressed as $C_{D,\rm w} = D_{\rm w}/(q_\infty A_b)$ with the base area $A_b = \pi R^2$
-(Equation~\eqref{eq:cdw}). Wave drag appears once the local flow becomes sonic somewhere on the
-nose, around $M \approx 0.8$ for slender bodies, peaks near $M = 1$ and decreases slowly in the
-supersonic range. It is the only drag component controlled by the nose shape.
-
-A sharp, slender tip deflects the flow by a small angle and carries a weak oblique shock attached
-to the tip. A blunt tip, or a half-angle too large for the Mach number, makes the shock detach into
-a curved \emph{bow shock} whose central, normal part brings the flow almost to the stagnation
-pressure. This is why supersonic noses are pointed and why any rounding of the tip has to stay
-small (Section~\ref{sec:bluntness}).
-
-For a slender nose, linearised (slender-body) theory makes the wave drag depend only on the axial
-distribution of cross-sectional area $S(x) = \pi y(x)^2$, through $S''(x)$. Within a profile
-family $S'' \propto R^2/L^2$, so
+($45.6^\circ$ at $M = 1.4$), so the flow meets the nose through a shock, then expands along it. The
+overpressure on the forward-facing surface gives the \emph{wave drag}, $C_{D,\rm w} = D_{\rm w}/(q_\infty
+A_b)$ with $A_b = \pi R^2$ (Equation~\eqref{eq:cdw}); it appears around $M \approx 0.8$, peaks near
+$M = 1$ and is the only drag component set by the nose shape. A blunt tip detaches the shock into a bow
+shock with near-stagnation pressure on the tip, so the tip radius must stay small
+(Section~\ref{sec:bluntness}). Slender-body theory gives, within a profile family,
 \begin{equation}
-C_{D,\rm w} \propto \left(\frac{R}{L}\right)^2 \propto \frac{1}{(L/D)^2} :
+C_{D,\rm w} \propto \left(\frac{R}{L}\right)^2 \propto \frac{1}{(L/D)^2} ,
 \label{eq:fineness}
 \end{equation}
-doubling the length divides the wave drag by four. The area distribution of minimum wave drag is
-also known: for a given length and base area it is the Von K\'arm\'an profile, with
-$C_{D,\rm w} = 1/(L/D)^2$; for a given length and volume it is the LV-Haack profile. The theory
-gives trends rather than exact values and is least accurate near $M = 1$; the Euler computations
-of Section~\ref{sec:method} provide the values used in this study.
+and the minimum-drag shapes: Von K\'arm\'an for a given length and base area, LV-Haack for a given length
+and volume. The theory gives trends; the Euler runs of Section~\ref{sec:method} give the values.
 
 \subsection{Candidate profiles}
 \label{sec:profiles}
 
-The nose is defined by three choices: the \textbf{profile family}, the \textbf{fineness} $L/D$ and
-the \textbf{tip bluntness} $r_n/R$. Seven profiles are compared (Table~\ref{tab:profiles},
-Figure~\ref{fig:schematics}). With $\xi = x/L$ and $\eta = y/R$:
-\begin{itemize}[leftmargin=*,itemsep=1pt]
-\item \textbf{Conical}: straight generator of half-angle $\arctan(R/L)$ ($7.1^\circ$ at $L/D = 4$),
-meeting the body with a kink of the same angle.
-\item \textbf{Tangent ogive}: circular arc of radius $\rho = (R^2+L^2)/(2R)$, tangent to the body at
-the shoulder; the traditional subsonic rocket nose.
-\item \textbf{Parabolic series}: the case $K' = 1$ is the parabola tangent to the body at the shoulder.
-\item \textbf{Power series} $\eta = \xi^n$: the smaller $n$, the fuller the front. For $n = \tfrac12$
-the apex has a radius of curvature $R^2/(2L)$ (\SI{5.6}{mm} at $L/D = 4$), so this nose is blunt by
-construction. Power noses meet the body with a kink $\theta_{\rm sh} = \arctan(nR/L)$.
-\item \textbf{Haack series}: the minimum-wave-drag area distributions of slender-body theory, with
-$C = 0$ (\textbf{Von K\'arm\'an}, given length and base area) and $C = \tfrac13$
-(\textbf{LV-Haack}, given length and volume). Both are tangent at the shoulder; near the apex the
-Von K\'arm\'an profile grows as $\xi^{3/4}$ (vertical tangent, zero tip radius).
-\end{itemize}
+The nose is defined by the \textbf{profile}, the \textbf{fineness} $L/D$ and the \textbf{tip bluntness}
+$r_n/R$. Seven profiles are compared (Table~\ref{tab:profiles}, Figure~\ref{fig:schematics}); with
+$\xi = x/L$ and $\eta = y/R$: the \textbf{cone}; the \textbf{tangent ogive} (arc of radius
+$\rho = (R^2+L^2)/(2R)$); the \textbf{parabola} $K' = 1$; the \textbf{power series} $\eta = \xi^n$
+($n = \tfrac12$ is blunt by construction, apex radius $R^2/(2L)$; power noses meet the body with a kink
+$\arctan(nR/L)$); and the \textbf{Haack series} $C = 0$ (Von K\'arm\'an) and $C = \tfrac13$ (LV-Haack),
+both tangent at the shoulder. The elliptical nose and the secant ogive were discarded before computing.
 
 \begin{figure}[tbp]
 \centering
@@ -71,12 +43,6 @@ that their differences are visible; Figure~\ref{fig:gallery} shows them at real 
 tip, and the inset shows the boxed tip region magnified four times.}
 \label{fig:schematics}
 \end{figure}
-
-The profiles differ in three features (Figure~\ref{fig:schematics}): how the nose meets the body
-(tangent, or with a kink), the shape of the tip (finite-angle point, pointed with a vertical
-tangent, or blunt) and how the area is distributed along the length, from the thin cone to the
-full LV-Haack nose. The elliptical nose (strong bow shock above Mach 1) and the secant ogive (no
-advantage over the tangent ogive and LV-Haack, kinked shoulder) were discarded before computing.
 
 \begin{table}[H]
 \centering
@@ -105,17 +71,11 @@ Von K\'arm\'an ($C=0$) & as LV-Haack with $C=0$ & -- & 0.500 & $0^\circ$ \\
 \label{sec:criteria}
 
 \begin{itemize}[leftmargin=*,itemsep=2pt]
-\item \textbf{Wave drag.} At Weisshorn's Mach numbers it depends mostly on $L/D$ and on how much area
-the profile adds near the tip. Slender-body theory makes Von K\'arm\'an the favourite; the Euler
-computations check whether this holds at Weisshorn's finite thickness and Mach numbers.
-\item \textbf{Volume and payload.} Fuller profiles reach $r=\SI{77}{mm}$ further forward, so more of
-the 3U sits inside the curved part. The rest needs a cylindrical extension of the nose bay, which
-adds vehicle length within the \SI{5.4}{m} cap.
-\item \textbf{Stability.} Slender-body theory gives every nose that closes on $A_b$ the same
-normal-force slope $C_{N\alpha} = 2$ per radian; the shape only sets where the force acts,
-$x_{cp} = L - V/A_b$ from the apex ($2L/3$ for a cone). A fuller nose moves the vehicle CP forward
-and lowers the static margin $(x_{cp} - x_{cg})/D$.
-\item \textbf{Manufacture.} A tangent shoulder ($\theta_{\rm sh}=0$) avoids a kink at the coupler bond
-line, a fillet in the mould and a local expansion in the flow. A sharp tip cannot be laid up in
-prepreg, so every option uses a separate machined tip.
+\item \textbf{Wave drag}: set mostly by $L/D$ and the area added near the tip.
+\item \textbf{Payload}: fuller profiles reach $r = \SI{77}{mm}$ further forward; the rest of the 3U needs a
+cylindrical extension, which counts against the \SI{5.4}{m} cap.
+\item \textbf{Stability}: every nose has $C_{N\alpha} = 2$ at $x_{cp} = L - V/A_b$; a fuller nose moves the
+CP forward and lowers the static margin $(x_{cp} - x_{cg})/D$.
+\item \textbf{Manufacture}: a tangent shoulder avoids a kink at the coupler bond; every option uses a
+separate machined tip.
 \end{itemize}

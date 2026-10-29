@@ -1,17 +1,15 @@
 \section{Extending the Tool}
 \label{sec:extending}
 
-The code follows a few rules that make extensions safe: every input is a configuration parameter, every fixed
-number is in \texttt{constants.py} with a comment, quantities are in SI units, and every function has a docstring and
-type hints. After any change, run \texttt{python tests/verify\_reference.py} (Section~\ref{sec:testing}).
+Rules that keep extensions safe: every input is a configuration parameter, every fixed number is in
+\texttt{constants.py}, quantities are SI, every function has a docstring. After any change, run
+\texttt{python tests/verify\_reference.py} (Section~\ref{sec:testing}).
 
 \subsection{Adding a profile family}
 \label{sec:newfamily}
 
-A new member of an existing family (another power exponent, another Haack constant) needs no code: declare it in
-\key{nose.custom\_profiles} (Section~\ref{sec:structured}). A new \emph{family} needs one Python function. It can
-live in a separate plugin file, so that the package itself is not modified. Example: the secant ogive, a circular
-arc larger than the tangent ogive that meets the body at an angle (file \texttt{plugins/secant\_ogive.py}):
+A new member of an existing family needs no code (\key{nose.custom\_profiles}, Section~\ref{sec:structured}). A new
+\emph{family} is one function, which can live in a plugin file (\texttt{plugins/secant\_ogive.py}):
 \begin{lstlisting}[language=Python]
 import numpy as np
 from nosecone.geometry import register_family
@@ -19,101 +17,50 @@ from nosecone.geometry import register_family
 @register_family("secant_ogive", params={"rho_factor": 1.5}, dimensional=True,
                  doc="Secant ogive: arc of radius rho_factor x the tangent-ogive radius")
 def secant_ogive(x, L, R, rho_factor):
-    """Local radius y(x) [m] of a secant ogive of length L and base radius R."""
     rho = rho_factor * (R**2 + L**2) / (2 * R)
     alpha = np.arccos(np.sqrt(L**2 + R**2) / (2 * rho)) - np.arctan(R / L)
     x = np.clip(x, 0.0, L)
     return np.sqrt(np.maximum(rho**2 - (rho*np.cos(alpha) - x)**2, 0.0)) - rho*np.sin(alpha)
 \end{lstlisting}
-\begin{itemize}[leftmargin=*,itemsep=1pt]
-\item \texttt{register\_family(name, params, doc, dimensional)} registers the function. With
-\texttt{dimensional=True} it receives $x$, $L$, $R$ in metres and returns the radius $y$; with the default
-\texttt{dimensional=False} it receives $\xi = x/L$ and returns $\eta = y/R$ (simpler for most families):
-\lstinline[language=Python]|def my_family(xi, a): return xi**a * (2 - xi**a)|.
-\item \texttt{params} lists the shape parameters with their default values; they become the keys of the custom
-profile in the configuration.
-\item The function must accept NumPy arrays, return $y(0) = 0$ and $y(L) = R$, and be monotonic. Check it with
-\texttt{python -m nosecone profiles} and the \texttt{profiles} and \texttt{schematics} plots.
-\end{itemize}
-Then use it from a configuration (\texttt{configs/example\_plugin.yaml}):
-\begin{lstlisting}[language=yaml]
-project:
-  plugins: [../plugins/secant_ogive.py]
-nose:
-  custom_profiles:
-    secant15: {family: secant_ogive, rho_factor: 1.5, label: "Secant ogive"}
-  profiles: [ogive, secant15, vonkarman]
-aerodynamics:
-  compute_missing: true                       # the new family has no CFD data yet
-  user_database: ../output/example_plugin/euler_user.csv
-\end{lstlisting}
-Everything else follows automatically: geometry, CAD export, mass, payload fit, stability, heating and plots. The
-only data a new family needs is its wave drag, which \key{compute\_missing} computes with the Euler solver (two
-geometries, about 30 minutes for this example on a laptop). To make the family part of the package instead, put the function in
-\texttt{nosecone/geometry.py} next to the others; to give it a fixed name, colour and table label, add it to
-\texttt{BUILTIN} (\texttt{geometry.py}) and to \texttt{COLORS}, \texttt{STYLES}, \texttt{MARKERS}
-(\texttt{plotting/style.py}).
+The function takes NumPy arrays and returns $y(0) = 0$, $y(L) = R$, monotonic (with the default
+\texttt{dimensional=False} it takes $x/L$ and returns $y/R$). Load it with \key{project.plugins}, declare it in
+\key{nose.custom\_profiles} and set \key{aerodynamics.compute\_missing: true} for its wave drag
+(\texttt{configs/example\_plugin.yaml}); everything else follows automatically.
 
 \subsection{Adding a plot}
 
-A plot is a function that receives a \texttt{PlotContext} (configuration \texttt{ctx.cfg}, study \texttt{ctx.study},
-sweep table \texttt{ctx.trade}, robustness table, trajectories \texttt{ctx.traj}) and saves a figure:
+A plot is a function of a \texttt{PlotContext} (\texttt{ctx.cfg}, \texttt{ctx.study}, \texttt{ctx.trade},
+\texttt{ctx.traj}) registered in \texttt{PLOTS}:
 \begin{lstlisting}[language=Python]
 # nosecone/plotting/figures.py
 def fig_mass(ctx: PlotContext) -> None:
-    """Nose mass versus fineness for every profile."""
     fig, ax = plt.subplots(figsize=(fs.WIDTH, 0.35 * fs.WIDTH))
     for n in ctx.order():
-        c, ls, mk = ctx.sty(n)                         # colour, line style, marker of the profile
+        c, ls, mk = ctx.sty(n)
         d = ctx.trade[ctx.trade["shape"] == n].sort_values("fineness")
         ax.plot(d.fineness, d.mass_g, color=c, ls=ls, marker=mk, label=ctx.label(n))
-    ax.set(xlabel=r"fineness $L/D$", ylabel="mass [g]")
-    ax.legend(fontsize=7)
-    ctx.save(fig, "fig_mass")                          # all formats of output.formats
+    ctx.save(fig, "fig_mass")
 
-PLOTS["mass"] = fig_mass                               # makes "mass" usable in output.plots
+PLOTS["mass"] = fig_mass          # "mass" is now valid in output.plots
 \end{lstlisting}
-Cosmetic numbers (positions, colours, fixed ranges) go in \texttt{PLOT\_DEFAULTS["mass"]} and are read with
-\texttt{ctx.opt("mass", key)}, so that users can override them with \key{output.plot\_options}.
 
-\subsection{Adding a configuration parameter}
-
-Parameters are fields of the dataclasses in \texttt{nosecone/config.py}. Adding one is a single line; it is then
-validated, documented by \texttt{describe-config} (and in the tables of this guide when they are regenerated) and
-available everywhere as \texttt{cfg.<section>.<name>}:
-\begin{lstlisting}[language=Python]
-@dataclass
-class StructureConfig:
-    ...
-    coupler_mass: float = param(0.120, "kg", "Bonded coupler mass, added to the nose mass", NONNEG)
-\end{lstlisting}
-\texttt{param(default, unit, description, valid range, choices, advanced)} stores the documentation;
-\texttt{POS}, \texttt{NONNEG}, \texttt{FRACTION} or \texttt{Range(lo, hi)} define the valid range. Use the value in
-the code (here, in \texttt{stability.nose\_mass}), never a literal number. Regenerate the guide tables with
-\texttt{python -m nosecone describe-config -{}-latex > docs/user\_guide/sections/parameters\_tables.tex}.
-
-\subsection{Changing a physical model}
+\subsection{Adding a parameter or changing a model}
 
 \begin{itemize}[leftmargin=*,itemsep=1pt]
-\item \textbf{A coefficient} of a correlation (friction, base drag, heating): \texttt{constants.py}, where every
-coefficient is named and commented.
-\item \textbf{The drag build-up}: \texttt{flight.DragModel.components()} returns one coefficient per component
-(\texttt{friction}, \texttt{fins}, \texttt{base}, \texttt{excr}, \texttt{nose\_wave}); add a component to the
-dictionary and it is included in the total, scaled by $k$, and shown in the \texttt{breakdown} plot.
-\item \textbf{The transonic wave drag}: \texttt{aerodynamics.WaveDrag.\_\_call\_\_}. With RANS data, add the points to
-the database (a study with Mach numbers below 1.1) and lower \key{aerodynamics.transonic\_match}.
-\item \textbf{The atmosphere}: \texttt{flight.Atmosphere}; add a model name to the \key{atmosphere.model} choices.
-\item \textbf{Heating}: \texttt{heating.py} (correlations, wall conduction, lumped tip).
-\item \textbf{A robustness scenario type}: scenarios accept \texttt{transonic\_onset}, \texttt{transonic\_factor},
-\texttt{drag\_factor\_scale}, \texttt{mass\_model}, \texttt{ground\_temperature}; a new key is read in
-\texttt{design.\allowbreak Study.\allowbreak robustness()} and allowed in \texttt{config.\allowbreak validate()}.
+\item \textbf{A parameter}: one line in the dataclass of its section (\texttt{nosecone/config.py}), e.g.\
+\lstinline[language=Python]|coupler_mass: float = param(0.120, "kg", "Bonded coupler mass", NONNEG)|; it is then
+validated, listed by \texttt{describe-config} and available as \texttt{cfg.structure.coupler\_mass}.
+\item \textbf{A coefficient} (friction, base drag, heating): \texttt{constants.py}.
+\item \textbf{The drag build-up}: \texttt{flight.DragModel.components()}; a new component is added to the total,
+scaled by $k$ and shown in \texttt{breakdown}.
+\item \textbf{The transonic wave drag}: \texttt{aerodynamics.WaveDrag.\_\_call\_\_}; with RANS data, add the points
+to the database and lower \key{aerodynamics.transonic\_match}.
 \end{itemize}
 
 \subsection{Checking a change}
 \label{sec:testing}
 
 \texttt{python tests/verify\_reference.py} reruns the Weisshorn study and compares every number, table and CAD file
-with the reference outputs of the design report (\texttt{-{}-figures} adds the figures, \texttt{-{}-cfd} three CFD
-cases). A change that is not meant to alter the results must pass unchanged. If a change is \emph{meant} to alter
-them (a better model), the script shows exactly what moved; update the files in \texttt{tests/reference/} only once
-the new results have been reviewed, and say so in the commit message.
+with the reference outputs (\texttt{-{}-figures}, \texttt{-{}-cfd} add the figures and three CFD cases). A change not
+meant to alter the results must pass unchanged; if it is meant to, update \texttt{tests/reference/} only after the new
+results have been reviewed.

@@ -1,0 +1,92 @@
+\section{Step 4: Solver settings for each speed}
+\label{sec:solver}
+
+Study~A uses the density-based solver for the two supersonic runs and the pressure-based solver at
+$M = 0.95$, where the density-based solver did not converge.
+
+\subsection{Density-based solver: supersonic runs}
+
+\paragraph{How it works.} $\rho$, $\rho\mathbf u$ and $\rho E$ of every cell are updated together,
+marching in pseudo-time until nothing changes; $k$ and $\omega$ are solved after them in each iteration.
+
+\paragraph{Roe-FDS flux.} It splits the jump between two cells into pressure waves and flow, and takes each
+from its upstream side: shocks come out sharp (2--3 cells) and without wiggles.
+
+\paragraph{Courant number.}
+\begin{equation}
+\Delta t = \mathrm{CFL}\,\frac{\Delta x}{|u| + a}.
+\end{equation}
+CFL 1 while the shock forms, then 5; lower it to 3 if the residuals grow.
+
+\paragraph{Order.} First-order upwind, $\phi_f = \phi_c$, is robust but smears the shock; second-order
+upwind, $\phi_f = \phi_c + \nabla\phi\cdot\mathbf r$, uses least-squares cell-based gradients. Only
+second-order results are used.
+
+\paragraph{Steps.} \gui{General}: \gui{Density-Based}. \gui{Methods}: \gui{Formulation} = Implicit,
+\gui{Flux Type} = Roe-FDS, \gui{Gradient} = Least Squares Cell Based, \gui{Flow}, \gui{Turbulent Kinetic
+Energy} and \gui{Specific Dissipation Rate} = First Order Upwind (Second Order Upwind after the switch).
+\gui{Controls}: \gui{Courant Number} = 1, then 5.
+
+\paragraph{Why.} Shocks dominate and information only travels downstream, which is what the density-based
+solver is built for. It converged in 3000--3200 iterations (Section~\ref{sec:runs}).
+
+\subsection{Pressure-based solver: transonic run}
+
+\paragraph{How it works.} The unknowns are velocity and pressure; the pressure equation comes from the mass
+equation, and $\rho = p/(RT)$. \gui{Coupled} solves momentum and pressure together; the \gui{Pseudo Time
+Method} damps the changes between iterations, with an automatic step.
+
+\paragraph{Why at $M = 0.95$.} The flow is subsonic everywhere, waves travel upstream too, and the weak
+shock at the shoulder moves with the pressure behind it. The density-based $C_D$ never settled:
+\begin{itemize}
+\item second order, CFL 3: 0.009--0.053;
+\item non-reflecting outlet: 0.030--0.040;
+\item CFL 1: 0.016--0.031.
+\end{itemize}
+The pressure-based solver converged in 1200 iterations, with residuals still falling ($10^{-6}$ to
+$10^{-12}$).
+
+\paragraph{Viscous Heating on.} Friction heats the boundary layer through the energy term
+\begin{equation}
+\Phi = \boldsymbol\tau : \nabla\mathbf u.
+\end{equation}
+The density-based solver always includes it; in the pressure-based solver it has to be ticked. Without it
+the adiabatic wall stays near $T_\infty$ instead of $\approx T_0$, and the friction is wrong.
+
+\paragraph{Residual criteria off.} Pressure-based residuals are scaled by their first iterations: they fell
+below $10^{-3}$ at iteration 7 and Fluent stopped the run. Set all criteria to $10^{-12}$.
+
+\paragraph{Steps.} \gui{General}: \gui{Pressure-Based}. \gui{Models}\then\gui{Viscous}\then
+\gui{Options}: \gui{Viscous Heating}. \gui{Methods}: \gui{Scheme} = Coupled, \gui{Pseudo Time Method}
+on (automatic time step), \gui{Gradient} = Least Squares Cell Based, \gui{Pressure} = Second Order,
+\gui{Density}, \gui{Momentum}, \gui{Energy}, $k$ and $\omega$ = First Order Upwind (Second Order Upwind
+after the switch). \gui{Monitors}\then\gui{Residuals}: all criteria $10^{-12}$.
+
+\subsection{Summary and convergence criterion}
+
+\begin{table}[H]
+\centering
+\caption{Solver settings for each speed.}
+\label{tab:solvers}
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\toprule
+ & Supersonic, $M = 1.2$ and 1.47 & Transonic, $M = 0.95$ \\
+\midrule
+Solver & density-based, implicit & pressure-based, Coupled, pseudo time \\
+Main unknowns & density, momentum, energy, together & velocity and pressure, together; density from $p = \rho RT$ \\
+Faces & Roe-FDS flux & upwind for density, momentum, energy, $k$, $\omega$; second-order pressure \\
+Order & first order, then second order upwind & first order for 200 iterations, then second order \\
+Gradients & least squares cell based & least squares cell based \\
+Time step & CFL 1, then 5 (3 at the end of $M = 1.2$) & automatic pseudo time step \\
+Viscous heating & always included & ticked by hand \\
+Why & shock-dominated flow, information travels downstream & subsonic domain with a weak shock; the density-based solver swung \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Convergence.}
+\begin{equation}
+\Delta = \frac{\max C_D - \min C_D}{\text{mean } C_D}\ \text{over the last 500 iterations} < 0.1\,\%.
+\end{equation}
+Residuals do not show whether the drag has settled.
