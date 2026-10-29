@@ -1,6 +1,6 @@
 # =============================================================================================
 #  Weisshorn (ERT 2027, EuRoC L9) nose-cone study: the configuration of the design report
-#  2026_C_FD_REPORT-1_NOSE_CONE. Running it reproduces every number, table and figure of that
+#  2027_C_FD_REPORT-1_NOSE-CONE. Running it reproduces every number, table and figure of that
 #  report:   python -m nosecone run configs/weisshorn.yaml
 #
 #  Copy this file to start a study for another rocket: change the vehicle, engine, fins and

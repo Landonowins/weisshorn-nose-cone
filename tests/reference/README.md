@@ -1,7 +1,7 @@
 # Reference outputs
 
 Outputs of the original scripts (`legacy/scripts/`) that produced the Weisshorn design report
-`2026_C_FD_REPORT-1_NOSE_CONE`. `tests/verify_reference.py` compares the package against them.
+`2027_C_FD_REPORT-1_NOSE-CONE`. `tests/verify_reference.py` compares the package against them.
 
 | File | Produced by (legacy) | Compared with |
 |---|---|---|

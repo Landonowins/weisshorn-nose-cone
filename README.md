@@ -6,7 +6,7 @@ trajectory, payload fit, static-margin change, tip and shell heating, a robustne
 weighted decision matrix, CAD files (profile CSV, STL, STEP) and publication-quality figures.
 
 It was written for **Weisshorn** (ERT 2027, EuRoC L9, D = 180 mm) and reproduces the design report
-`2026_C_FD_REPORT-1_NOSE_CONE` exactly; every input lives in one YAML file, so it can be reused for
+`2027_C_FD_REPORT-1_NOSE-CONE` exactly; every input lives in one YAML file, so it can be reused for
 another rocket without touching the code. The full documentation is the user guide:
 [`docs/user_guide/user_guide.pdf`](docs/user_guide/user_guide.pdf).
 

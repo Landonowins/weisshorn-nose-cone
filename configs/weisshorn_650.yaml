@@ -1,6 +1,6 @@
 # =============================================================================================
 #  Weisshorn nose cone at a fixed total length of 650 mm (coupler included):
-#  2027_C_SE_ST_Nosecone/Payload-Bay_Req_03. Configuration of the report 2026_C_FD_REPORT-2.
+#  2027_C_SE_ST_Nosecone/Payload-Bay_Req_03. Configuration of the report 2027_C_FD_REPORT-2_NOSE-CONE-650MM.
 #
 #    python -m nosecone cfd configs/weisshorn_650.yaml          # new Euler runs (study f650)
 #    python -m nosecone run configs/weisshorn_650.yaml          # standard outputs of the design
@@ -26,7 +26,7 @@ aerodynamics:
 
 payload:                       # guided recovery vehicle (GRV) in the lower part of the nose (Req_13)
   name: GRV
-  length: 0.300                # 2026_C_SE_PL_GRV_REQ_02: 10 x 10 x 30 cm
+  length: 0.300                # PL_GRV_REQ_02: 10 x 10 x 30 cm
   width: 0.100
   required_radius: 0.077       # 70.7 half-diagonal + 3 clearance + 2 guide + 1.2 shell [m]
   axial_clearance: 0.010

@@ -1,4 +1,4 @@
-"""Check that the tool reproduces the Weisshorn design report (2026_C_FD_REPORT-1_NOSE_CONE).
+"""Check that the tool reproduces the Weisshorn design report (2027_C_FD_REPORT-1_NOSE-CONE).
 
     python tests/verify_reference.py              # numbers, tables, CAD (about 2 minutes)
     python tests/verify_reference.py --figures    # + pixel comparison of every figure (needs LaTeX)
