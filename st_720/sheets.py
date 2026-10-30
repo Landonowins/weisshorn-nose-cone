@@ -212,9 +212,7 @@ t2  = {sw['t2']}
   then a line down to the axis and a centreline along the axis from the tip.
 \item \textbf{{Solid:}} Revolved Boss, 360$^\circ$ about the centreline (outer mould line; shell and joint by ST).
 \end{{enumerate}}
-Without equation-driven curves: Insert $\rightarrow$ Curve $\rightarrow$ Curve Through XYZ Points with
-the point file \texttt{{\_solidworks\_xyz.txt}} (tip to shoulder, $X$ along the axis, $Y = r$, $Z = 0$), then steps 3--4.\\
-Files: \texttt{{{stem.replace('_', chr(92) + '_')}}} + \texttt{{.step}} (solid) and \texttt{{\_solidworks\_xyz.txt}} (points).
+CAD: \texttt{{{stem.replace('_', chr(92) + '_')}.step}} (solid).
 """
 
 
