@@ -180,12 +180,14 @@ class Model:
         return float((dx_cg - (cp1 - cp0)) / D)
 
     # ---------------------------------------------------------------- loads at the joint
-    def joint_loads(self, shape: str, L: float, c: float, tr: dict, envelope: bool, m_pay: float) -> dict:
+    def joint_loads(self, shape: str, L: float, c: float, tr: dict, envelope: bool, m_pay: float,
+                    history: bool = False) -> dict:
         """Axial force on the nose joint (compression > 0) and aerodynamic bending per degree.
 
         Nose free body along the axis: F = m_n (T - D)/m + D_n, with m_n the nose with its payload
         structure (Req_04 limit) and the payload it carries, D the vehicle drag and D_n the nose drag
         (wave drag plus the nose share of the skin friction, the latter unscaled by k: conservative).
+        With history, the time histories of M, q, F and D_n are returned as well.
         """
         cfg, R = self.cfg, self.R
         e, v, fl = cfg.engine, cfg.vehicle, cfg.flight
@@ -211,11 +213,14 @@ class Model:
         V_n, _ = volume_and_area(self.pr(shape), L, R)
         arm = (L + c) - (L - V_n / (np.pi * R**2))            # nose CP to the joint plane
         i, j = int(np.argmax(q)), int(np.argmax(F))
-        return dict(F_max=float(F[j]), t_F_max=float(t[j]), F_drag=float(D_n[j]), F_min=float(F.min()),
-                    F_liftoff=float(F[0]), q_max=float(q[i]), M_q_max=float(M[i]),
-                    D_nose_max=float(D_n.max()), arm=float(arm), m_nose=m_n,
-                    req07=float(G_REQ07 * NC.G0 * m_n * FOS),
-                    bend_per_deg=float(2.0 * np.radians(1.0) * q[i] * veh.Aref * arm))
+        out = dict(F_max=float(F[j]), t_F_max=float(t[j]), F_drag=float(D_n[j]), F_min=float(F.min()),
+                   F_liftoff=float(F[0]), q_max=float(q[i]), M_q_max=float(M[i]),
+                   D_nose_max=float(D_n.max()), arm=float(arm), m_nose=m_n,
+                   req07=float(G_REQ07 * NC.G0 * m_n * FOS),
+                   bend_per_deg=float(2.0 * np.radians(1.0) * q[i] * veh.Aref * arm))
+        if history:
+            out["history"] = pd.DataFrame(dict(t=t, M=M, q=q, F=F, D_n=D_n))
+        return out
 
     # ---------------------------------------------------------------- heating
     def heating(self, shape: str, L: float, nom: dict, env: dict) -> dict:

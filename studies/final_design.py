@@ -4,7 +4,8 @@ ST accepted a 720 mm nose at the interface meeting of 29.10.2026 (LV = 5.40 m, S
 design point of each study at that length (A: 3U in the nose, the baseline; B: 3U not in the nose,
 the backup) the script gives:
 
-* the design point of each profile (curved length, coupler, apogee, static-margin change);
+* the design point of each profile (curved length, coupler, apogee, static-margin change), with the
+  curved length stretched so that the blunted nose is exactly 720 mm long;
 * the profile as an equation (Haack series, tangent spherical tip, coupler cylinder) with a radius
   table, checked against the CAD points;
 * the CAD (profile CSV, STL, STEP), also copied to CFD/geometry_720;
@@ -29,6 +30,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from scipy.optimize import brentq
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -48,12 +50,28 @@ M_FLUENT = [0.95, 1.2]     # ascent Mach numbers of the Fluent heating runs (+ m
 
 
 # ------------------------------------------------------------------------------ design points
+def blunting(mdl: tl.Model, shape: str, L: float) -> float:
+    """Length removed by the spherical tip, delta = x_c - r_n [m]."""
+    return blunt_tangent_point(mdl.pr(shape), L, mdl.R, mdl.rn)[1] - mdl.rn
+
+
+def stretch(mdl: tl.Model, shape: str, c: float) -> float:
+    """Curved length L to the sharp apex for which the blunted nose is TOTAL long: L - delta(L) + c = TOTAL."""
+    f = lambda L: L - blunting(mdl, shape, L) + c - TOTAL  # noqa: E731
+    if f(TOTAL - c) >= 0:                             # no length lost (power 1/2: the sphere fits at the apex)
+        return TOTAL - c
+    return brentq(f, TOTAL - c, TOTAL - c + 0.02, xtol=1e-9)
+
+
 def design_points(mdl: tl.Model) -> pd.DataFrame:
     rows = []
     for rule, lim in tl.RULES.items():
         for shape in tl.PROFILES:
             c = mdl.coupler_for(shape, lim, total=TOTAL)
-            L = TOTAL - c
+            for _ in range(3):                        # the coupler of the 3U fit at the stretched length
+                L = stretch(mdl, shape, c)
+                c = mdl.coupler_for(shape, lim, total=L + c)
+            L = stretch(mdl, shape, c)
             f = mdl.fit(shape, L, c)
             rows.append(dict(rule=rule, study=STUDY_NAMES[rule], shape=shape, c_mm=1e3 * c, L_mm=1e3 * L,
                              fineness=L / (2 * mdl.R), apogee=mdl.apogee(shape, L, c),
@@ -133,17 +151,22 @@ def check_equation(eq: dict, csv: Path) -> float:
 
 # ------------------------------------------------------------------------------ loads
 def loads(mdl: tl.Model, shape: str, L: float, c: float, rule: str) -> dict:
-    """Joint loads of report 2 (nominal and hot-day envelope), plus shear and bending at incidence."""
+    """Joint loads of report 2 (nominal and hot-day envelope), plus shear and bending at incidence.
+
+    Limit loads; the ultimate loads are FOS times larger. Req_12 (200 N m) is an ultimate bending moment.
+    """
     m_pay = tl.CANSAT_MASS + (tl.GRV_MASS if rule == "inside" else 0.0)
     out = {}
     for case, env in (("nominal", False), ("envelope", True)):
         tr = mdl.trajectory(shape, L, c, envelope=env, detail=True)
-        ld = mdl.joint_loads(shape, L, c, tr, env, m_pay)
+        ld = mdl.joint_loads(shape, L, c, tr, env, m_pay, history=True)
+        out[f"history_{case}"] = ld.pop("history")
         ld["shear_per_deg"] = ld["bend_per_deg"] / ld["arm"]
-        ld["alpha_req12"] = tl.REQ12_NM / ld["bend_per_deg"]
+        ld["alpha_req12"] = tl.REQ12_NM / tl.FOS / ld["bend_per_deg"]
         ld["M_max"] = float(tr["M"].max())
         out[case] = ld
     out["m_payload"] = m_pay
+    out["fos"] = tl.FOS
     return out
 
 
@@ -229,7 +252,9 @@ def main() -> None:
         shutil.copy2(out / f"equation_{study}.md", dst / f"equation_{study}_{stem}.md")
         eq["max_dev_vs_cad_mm"] = check_equation(eq, out / "cad" / f"{stem}.csv")
         summary["equations"][study] = eq
-        summary["loads"][study] = loads(mdl, s, L, c, r.rule)
+        ld = loads(mdl, s, L, c, r.rule)
+        pd.concat({case: ld.pop(f"history_{case}") for case in ("nominal", "envelope")}, names=["case"])             .reset_index(level=0).to_csv(out / f"joint_force_{study}.csv", index=False)
+        summary["loads"][study] = ld
         nom = mdl.trajectory(s, L, c, detail=True)
         env = mdl.trajectory(s, L, c, envelope=True, detail=True)
         summary["heating"][study] = mdl.heating(s, L, nom, env)

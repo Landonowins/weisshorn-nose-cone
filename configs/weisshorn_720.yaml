@@ -14,13 +14,13 @@ project:
   name: Weisshorn-720
   output_dir: ../output/weisshorn_720
 
-nose:                          # design A: GRV inside the nose (Req_13); B = Von Karman 700 + 20 (backup)
+nose:                          # design A: GRV inside the nose (Req_13); B = Von Karman 705.5 + 20 (backup)
   design_profile: lvhaack
-  design_fineness: 3.761111    # L = 677 mm
-  shoulder_length: 0.043       # coupler cylinder: 677 + 43 = 720 mm
+  design_fineness: 3.790806    # L = 682.3 mm to the sharp apex, 679.0 mm once blunted
+  shoulder_length: 0.041       # coupler cylinder: 679.0 + 41 = 720 mm
 
 robustness:
-  fineness: 3.761111
+  fineness: 3.790806
 
 trade_matrix:
-  fineness: 3.761111
+  fineness: 3.790806
