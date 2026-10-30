@@ -214,8 +214,7 @@ t2  = {sw['t2']}
 \end{{enumerate}}
 Without equation-driven curves: Insert $\rightarrow$ Curve $\rightarrow$ Curve Through XYZ Points with
 the point file \texttt{{\_solidworks\_xyz.txt}} (tip to shoulder, $X$ along the axis, $Y = r$, $Z = 0$), then steps 3--4.\\
-Files: \texttt{{{stem.replace('_', chr(92) + '_')}}} + \texttt{{.step}} (solid), \texttt{{.stl}}, \texttt{{.csv}}
-(profile points), \texttt{{\_solidworks\_xyz.txt}}.
+Files: \texttt{{{stem.replace('_', chr(92) + '_')}}} + \texttt{{.step}} (solid) and \texttt{{\_solidworks\_xyz.txt}} (points).
 """
 
 
@@ -233,6 +232,7 @@ def geometry_sheet(summary: dict, out: Path, date: str) -> tuple[Path, dict]:
         write_xyz(csv, CAD_DIR / f"{stem}_solidworks_xyz.txt")
         fig_profile(study, eq, csv, HERE / "figures" / f"profile_{study}.pdf")
         tab = pd.read_csv(out / f"radius_table_{study}.csv")
+        tab = tab[~tab.x_mm.round(3).duplicated()].reset_index(drop=True)
         secs.append(geometry_section(study, eq, stem, sw, tab))
     tex = (PREAMBLE + r"\begin{document}" + "\n"
            + header("Weisshorn nose cone at 720 mm: geometry for SolidWorks", GEO_NAME, date)
