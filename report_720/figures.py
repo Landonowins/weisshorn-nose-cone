@@ -397,6 +397,9 @@ def numbers(des: dict, ff: dict, fsm: pd.DataFrame) -> dict:
             k = {"M0.95": "M095", "M1.20": "M120", "adiab": "M147"}[row.run]
             put(f"{s}-Fp-{k}", row.Fp_nose, "{:.1f}"), put(f"{s}-Fv-{k}", row.Fv_nose, "{:.1f}")
             put(f"{s}-Fc-{k}", row.Fv_coupler, "{:.1f}"), put(f"{s}-F-{k}", row.F_total, "{:.1f}")
+        put(f"{s}-L", 1e3 * d.L, "{:.1f}"), put(f"{s}-delta", 1e3 * d.eq["delta"], "{:.1f}")
+        put(f"{s}-fineness", d.L / (2 * d.mdl.R), "{:.2f}")
+        put(f"{s}-apogee-hot", d.tr["hot"]["apogee"])
         hx = d.hx
         put(f"{s}-qw0", 1e-3 * hx.q_w_300K_W_m2.iloc[0], "{:.1f}"), put(f"{s}-h0", hx.h_W_m2K.iloc[0])
         put(f"{s}-Taw0", hx.T_aw_K.iloc[0], "{:.1f}")
@@ -436,6 +439,13 @@ def numbers(des: dict, ff: dict, fsm: pd.DataFrame) -> dict:
     for k in ("M095", "M120", "M147"):
         put(f"BvsA-{k}", 100 * (float(v[f"B-cd-{k}"]) / float(v[f"A-cd-{k}"]) - 1), "{:+.0f}")
         put(f"BlessA-{k}", 100 * (1 - float(v[f"B-cd-{k}"]) / float(v[f"A-cd-{k}"])), "{:.0f}")
+    for pt, row in fsm.iterrows():                      # free stream of the Fluent runs
+        k = {"M0.95": "M095", "M1.20": "M120", "burnout": "M147"}[pt]
+        put(f"pt-{k}-t", row.t_s, "{:.2f}"), put(f"pt-{k}-z", row.z_m), put(f"pt-{k}-M", row.mach, "{:.3f}")
+        put(f"pt-{k}-p", row.p_Pa), put(f"pt-{k}-T", row.T_K, "{:.2f}"), put(f"pt-{k}-q", 1e-3 * row.q, "{:.1f}")
+        put(f"pt-{k}-Re", row.rho * row.V / float(ht.sutherland(row.T_K)) * 1e-6, "{:.1f}")
+    allp = pd.read_csv(CFD / "fluent_points_python.csv").set_index(["design", "point"])
+    put("B-own-burnout-M", allp.loc[("B", "burnout"), "mach"], "{:.3f}")
     put("pad-p", 1e-3 * des["A"].tr["nominal"]["p"][0], "{:.1f}")
     put("pad-T", des["A"].tr["nominal"]["T"][0], "{:.2f}"), put("pad-Thot", des["A"].tr["hot"]["T"][0], "{:.2f}")
     return v
