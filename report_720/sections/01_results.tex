@@ -1,0 +1,109 @@
+\section{Results for the structure team}
+\label{sec:results}
+
+This report gives ST the aerodynamic and thermal inputs to size the two 720\,mm noses. ST computes
+the joint and shell loads from them. Both noses are 720\,mm long with $D = \SI{180}{mm}$ and a
+\SI{4.5}{mm} tip radius; their geometry is in \file{2027_C_FD_NOSE-CONE-720MM_GEOMETRY}.
+\begin{itemize}
+\item \textbf{A} (baseline, 3U inside the nose): LV-Haack, \val{A-xS}\,mm + \val{A-c}\,mm coupler.
+\item \textbf{B} (backup, 3U elsewhere): Von K\'arm\'an, \val{B-xS}\,mm + \val{B-c}\,mm coupler.
+\end{itemize}
+The numbers come from eight Fluent runs (2D axisymmetric RANS, zero incidence) at $M = 0.95$, 1.20 and
+1.47 (burnout), and from the Python flight model, calibrated on these runs, for the time histories and
+the hot day (\SI{30}{\celsius}, LVO masses). The nose is \textbf{sealed}: the air inside stays at the
+pad pressure $p_{pad} = \SI{\val{pad-p}}{kPa}$, raised by its heating,
+\begin{equation}
+p_{in} = p_{pad}\,\frac{T_{in}}{T_{pad}}, \qquad \Delta p = p_w - p_{in},
+\label{eq:dp}
+\end{equation}
+between $T_{in} = T_{pad}$ and $T_{in}$ = mean temperature of the inner face of the shell (upper
+bound). $\Delta p > 0$ pushes the shell inwards. Axial forces are positive when they push the nose
+aft onto the joint (compression).
+
+\begin{table}[H]
+\centering
+\caption{Load cases. Pressures: tip with $p_{in}$ at $T_{pad}$ (largest inward load), shell minimum with
+heated air (largest outward load). Net pressure force on the joint: $\sum (p_w - p_{in})\,2\pi r\,\mathrm{d}r$
+over the outer surface, for $T_{in} = T_{pad}$ / heated air. $D_n$: aerodynamic axial force of the nose
+(model, \SI{20}{\micro m} roughness). $N/\alpha$: normal force per degree of incidence.}
+\label{tab:lc}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & A nominal & A hot day & B nominal & B hot day\\
+\midrule
+\multicolumn{5}{@{}l}{\textbf{LC1, burnout} ($M_{max}$, $q_{max}$)}\\
+Time $t$ [s], Mach $M$ & \val{A-nominal-LC1-t}, \val{A-nominal-LC1-M} & \val{A-hot-LC1-t}, \val{A-hot-LC1-M} & \val{B-nominal-LC1-t}, \val{B-nominal-LC1-M} & \val{B-hot-LC1-t}, \val{B-hot-LC1-M}\\
+Dynamic pressure $q$ [kPa] & \val{A-nominal-LC1-q} & \val{A-hot-LC1-q} & \val{B-nominal-LC1-q} & \val{B-hot-LC1-q}\\
+$\Delta p$ at the tip [kPa] & \val{A-nominal-LC1-dpstag} & \val{A-hot-LC1-dpstag} & \val{B-nominal-LC1-dpstag} & \val{B-hot-LC1-dpstag}\\
+Lowest $\Delta p$ on the shell [kPa] & \val{A-nominal-LC1-dpmin} & \val{A-hot-LC1-dpmin} & \val{B-nominal-LC1-dpmin} & \val{B-hot-LC1-dpmin}\\
+Net pressure force on the joint [N] & \val{A-nominal-LC1-Fplo} / \val{A-nominal-LC1-Fphi} & \val{A-hot-LC1-Fplo} / \val{A-hot-LC1-Fphi} & \val{B-nominal-LC1-Fplo} / \val{B-nominal-LC1-Fphi} & \val{B-hot-LC1-Fplo} / \val{B-hot-LC1-Fphi}\\
+Aerodynamic axial force $D_n$ [N] & \val{A-nominal-LC1-Dn} & \val{A-hot-LC1-Dn} & \val{B-nominal-LC1-Dn} & \val{B-hot-LC1-Dn}\\
+Normal force $N/\alpha$ [N/$^\circ$] & \val{A-nominal-LC1-Nperdeg} & \val{A-hot-LC1-Nperdeg} & \val{B-nominal-LC1-Nperdeg} & \val{B-hot-LC1-Nperdeg}\\
+\midrule
+\multicolumn{5}{@{}l}{\textbf{LC2, transonic} ($M = 0.95$ on the ascent)}\\
+Time $t$ [s], $q$ [kPa] & \val{A-nominal-LC2-t}, \val{A-nominal-LC2-q} & \val{A-hot-LC2-t}, \val{A-hot-LC2-q} & \val{B-nominal-LC2-t}, \val{B-nominal-LC2-q} & \val{B-hot-LC2-t}, \val{B-hot-LC2-q}\\
+$\Delta p$ at the tip [kPa] & \val{A-nominal-LC2-dpstag} & \val{A-hot-LC2-dpstag} & \val{B-nominal-LC2-dpstag} & \val{B-hot-LC2-dpstag}\\
+Lowest $\Delta p$ on the shell [kPa] & \val{A-nominal-LC2-dpmin} & \val{A-hot-LC2-dpmin} & \val{B-nominal-LC2-dpmin} & \val{B-hot-LC2-dpmin}\\
+Net pressure force on the joint [N] & \val{A-nominal-LC2-Fplo} / \val{A-nominal-LC2-Fphi} & \val{A-hot-LC2-Fplo} / \val{A-hot-LC2-Fphi} & \val{B-nominal-LC2-Fplo} / \val{B-nominal-LC2-Fphi} & \val{B-hot-LC2-Fplo} / \val{B-hot-LC2-Fphi}\\
+Aerodynamic axial force $D_n$ [N] & \val{A-nominal-LC2-Dn} & \val{A-hot-LC2-Dn} & \val{B-nominal-LC2-Dn} & \val{B-hot-LC2-Dn}\\
+Normal force $N/\alpha$ [N/$^\circ$] & \val{A-nominal-LC2-Nperdeg} & \val{A-hot-LC2-Nperdeg} & \val{B-nominal-LC2-Nperdeg} & \val{B-hot-LC2-Nperdeg}\\
+\midrule
+\multicolumn{5}{@{}l}{\textbf{LC3, apogee} ($q \approx 0$)}\\
+Time $t$ [s], $p_\infty$ [kPa] & \val{A-nominal-LC3-t}, \val{A-nominal-LC3-pinf} & \val{A-hot-LC3-t}, \val{A-hot-LC3-pinf} & \val{B-nominal-LC3-t}, \val{B-nominal-LC3-pinf} & \val{B-hot-LC3-t}, \val{B-hot-LC3-pinf}\\
+$\Delta p$ on the whole shell [kPa] & \val{A-nominal-LC3-dpmin} & \val{A-hot-LC3-dpmin} & \val{B-nominal-LC3-dpmin} & \val{B-hot-LC3-dpmin}\\
+Net pressure force on the joint [N] & \val{A-nominal-LC3-Fphi} & \val{A-hot-LC3-Fphi} & \val{B-nominal-LC3-Fphi} & \val{B-hot-LC3-Fphi}\\
+\midrule
+Nose centre of pressure $x_{CP}$ from the tip [mm] & \multicolumn{2}{c}{\val{A-xcp}} & \multicolumn{2}{c}{\val{B-xcp}}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Heating. Fluent values: burnout, nominal, wall at \SI{300}{K}. Maximum temperatures over the
+flight: Python model calibrated on Fluent (Section~\ref{sec:heating}), CFRP shell \SI{1.2}{mm}, Al\,6082
+tip insert \SI{80}{mm}.}
+\label{tab:heat}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+ & A nominal & A hot day & B nominal & B hot day & Limit\\
+\midrule
+Heat flux at the tip $q_w$ [kW/m$^2$] (Fluent) & \val{A-qw0} & -- & \val{B-qw0} & -- & \\
+$h$ at the tip / shoulder [W/(m$^2$K)] (Fluent) & \val{A-h0} / \val{A-hS} & -- & \val{B-h0} / \val{B-hS} & -- & \\
+Stagnation temperature $T_0$ [\si{\celsius}] & \val{A-nominal-T0} & \val{A-hot-T0} & \val{B-nominal-T0} & \val{B-hot-T0} & \\
+Al tip insert [\si{\celsius}] & \val{A-nominal-Ttip} & \val{A-hot-Ttip} & \val{B-nominal-Ttip} & \val{B-hot-Ttip} & \\
+Shell outer face, \SI{50}{mm} [\si{\celsius}] & \val{A-nominal-Tout50} & \val{A-hot-Tout50} & \val{B-nominal-Tout50} & \val{B-hot-Tout50} & 120 (DP490)\\
+Shell inner face, \SI{50}{mm} [\si{\celsius}] & \val{A-nominal-Tin50} & \val{A-hot-Tin50} & \val{B-nominal-Tin50} & \val{B-hot-Tin50} & 67 (Req\_10)\\
+Inside air, upper bound [\si{\celsius}] & \val{A-nominal-Tair} & \val{A-hot-Tair} & \val{B-nominal-Tair} & \val{B-hot-Tair} & 67 (Req\_10)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{What this means for the structure.}
+\begin{enumerate}
+\item \textbf{The sealed nose is the largest load.} At apogee the outside pressure has dropped to
+\SI{\val{A-nominal-LC3-pinf}}{kPa} while the inside stays at the pad pressure: $\Delta p \approx
+\SI{\val{A-nominal-LC3-dpmin}}{kPa}$ on the whole shell, which pulls the nose forward off the joint with
+about \SI{1.8}{kN}, close to the \SI{2000}{N} of Req\_07. At burnout the inside overpressure already
+outweighs the drag: the net pressure force is \val{A-nominal-LC1-Fplo} to \val{A-nominal-LC1-Fphi}\,N
+(tension). Vent holes would bring $p_{in}$ to $p_\infty$ and remove this load.
+\item \textbf{Inward pressure} is highest at the tip at burnout, \val{A-nominal-LC1-dpstag}\,kPa
+(\val{A-hot-LC1-dpstag}\,kPa hot day), on the spherical cap only. Beyond $x = \SI{2}{mm}$ it is at most
+\val{A-nominal-LC1-dpmax2}\,kPa for A and \val{B-nominal-LC1-dpmax2}\,kPa for B (\val{A-hot-LC1-dpmax2} and
+\val{B-hot-LC1-dpmax2}\,kPa hot day), and below \SI{10}{kPa} after \SI{50}{mm} (Figure~\ref{fig:dpx}).
+\item \textbf{Aerodynamic axial force} peaks at burnout: \val{A-nominal-LC1-Dn}\,N for A and
+\val{B-nominal-LC1-Dn}\,N for B (\val{A-hot-LC1-Dn} and \val{B-hot-LC1-Dn}\,N hot day). Fluent with a
+smooth wall gives \val{A-F-M147} and \val{B-F-M147}\,N.
+\item \textbf{Normal force} under incidence $\alpha$: $N = 2\,q\,A_{ref}\,\alpha$, acting at $x_{CP}$,
+distributed as $\mathrm{d}N/\mathrm{d}x = 2\,q\,\alpha\,\mathrm{d}S/\mathrm{d}x$ (Section~\ref{sec:forces}).
+ST chooses the design incidence (Req\_12).
+\item \textbf{Temperatures.} The DP490 limit (\SI{120}{\celsius}) is not reached. The inner face of the
+shell and the inside air exceed Req\_10 (\SI{67}{\celsius}) already on a nominal day, for both designs.
+\item \textbf{A against B.} The heating is the same within \SI{1}{\percent}. B has \val{BlessA-M147}\,\% less
+drag at burnout, about half the inward pressure on the front of the shell (item~2), and a
+\SI{\val{B-c}}{mm} coupler instead of \val{A-c}\,mm. The sealed-nose loads are the same for both.
+\end{enumerate}
+
+The data behind every figure are delivered as CSV tables (Appendix~\ref{app:data}).
