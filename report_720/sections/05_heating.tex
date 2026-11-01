@@ -1,0 +1,142 @@
+\section{Heating}
+\label{sec:heating}
+
+\subsection{Fluent at burnout}
+
+Two runs per design at burnout give the heating along the wall:
+\begin{itemize}
+\item \textbf{adiabatic wall} ($q_w = 0$): the wall takes the adiabatic wall temperature $T_{aw}(x)$, the
+temperature the air drives the wall towards;
+\item \textbf{wall at \SI{300}{K}}: the heat flux $q_w(x)$ into a cold wall.
+\end{itemize}
+Together they give the heat-transfer coefficient and the recovery factor,
+\begin{equation}
+h(x) = \frac{q_w(x)}{T_{aw}(x) - \SI{300}{K}}, \qquad r(x) = \frac{T_{aw}(x) - T_\infty}{T_0 - T_\infty}.
+\end{equation}
+
+\begin{itemize}
+\item \textbf{Tip}: $T_{aw} = \SI{\val{A-Taw0}}{K}$, the stagnation temperature $T_0 =
+\SI{\val{T0-burnout}}{K}$. $q_w = \val{A-qw0}$ (A) and \val{B-qw0}\,kW/m$^2$ (B); $h = \val{A-h0}$ and
+\val{B-h0}\,W/(m$^2$K).
+\item \textbf{Shell}: $T_{aw}$ = \val{A-Taw-far-lo}--\val{A-Taw-far-hi}\,K beyond \SI{50}{mm}, a recovery
+factor of \val{A-recovery} (A) and \val{B-recovery} (B). $h$ falls from about \SI{1000}{W/(m^2K)} at
+\SI{50}{mm} to \val{A-hS} (A) and \val{B-hS}\,W/(m$^2$K) (B) at the shoulder.
+\item The two designs differ only over the first \SI{10}{cm} (Figure~\ref{fig:fluentheat}); the heating
+does not separate them.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.8\linewidth}
+\centering
+\includegraphics[width=\linewidth]{fluent_twall_AB_adiab}
+\caption{Adiabatic wall temperature $T_{aw}$.}
+\end{subfigure}
+
+\medskip
+\begin{subfigure}[t]{0.8\linewidth}
+\centering
+\includegraphics[width=\linewidth]{fluent_qw_AB_T300}
+\caption{Heat flux into a wall at \SI{300}{K}.}
+\end{subfigure}
+\caption{Heating along \zone{wall\_nose} at burnout, A (red) and B (blue), Fluent XY plots.}
+\label{fig:fluentheat}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\linewidth]{fluent_temp_tip_A_adiab}
+\caption{Air temperature around the tip of A at burnout, adiabatic wall (Fluent). The air is heated to
+$T_0$ in the subsonic region behind the bow shock and in the boundary layer.}
+\label{fig:tiptemp}
+\end{figure}
+
+\subsection{Calibration of the flight model}
+
+Along the flight the heating comes from the Python model of report~1, which Fluent can now check:
+\begin{gather}
+h_s = 0.763\,\mathrm{Pr}^{-0.6}\sqrt{\rho_s\,\mu(T_0)\,\frac{\mathrm{d}u_e}{\mathrm{d}x}}\;c_p, \quad
+\frac{\mathrm{d}u_e}{\mathrm{d}x} = \frac{1}{r_n}\sqrt{\frac{2(p_0 - p_\infty)}{\rho_s}}
+\quad\text{(tip, Fay--Riddell)},\\
+h_t = \mathrm{St}\,\rho^* V c_p, \quad \mathrm{St} = 0.0296\,\mathrm{Re}_x^{*\,-0.2}\,\mathrm{Pr}^{-2/3},
+\quad T_r = T_\infty\left(1 + r\,\tfrac{\gamma - 1}{2}M^2\right),\ r = \mathrm{Pr}^{1/3}
+\quad\text{(shell, Eckert)},
+\end{gather}
+with $\rho^*$, $\mathrm{Re}_x^*$ at Eckert's reference temperature
+$T^* = T_\infty(1 + 0.032M^2 + 0.58(T_w/T_\infty - 1))$. At burnout, with the wall at \SI{300}{K}:
+
+\begin{table}[H]
+\centering
+\caption{Fluent against the uncalibrated model at burnout, and the factors used in the flight model.}
+\label{tab:calib}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Fluent / model & A & B & Factor\\
+\midrule
+Heat flux at the tip & \val{A-ratio-s} & \val{B-ratio-s} & $k_s = \val{ks}$\\
+$h$ along the shell, \SI{50}{mm} to shoulder (median, 10--90\,\%) & \val{A-ratio-t} (\val{A-ratio-t-lo}--\val{A-ratio-t-hi}) & \val{B-ratio-t} (\val{B-ratio-t-lo}--\val{B-ratio-t-hi}) & $k_t = \val{kt}$\\
+Heat into the first \SI{\val{tip-length}}{mm} (tip insert) [W] & \val{A-Qtip-fluent} / \val{A-Qtip-model} & \val{B-Qtip-fluent} / \val{B-Qtip-model} & $k_{tip} = \val{ktip}$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The tip and shell correlations are within \SI{6}{\percent} of Fluent. The lumped tip insert takes its
+lateral heating at $x_{tip}/2$, which misses the high $h$ just behind the spherical cap; with $k_s$ and
+$k_t$ applied it still gets \SI{13}{}--\SI{15}{\percent} too little heat, hence $k_{tip}$. Fluent's
+recovery factor (\val{A-recovery}) is a little above the model's $\mathrm{Pr}^{1/3} = \val{recovery-model}$,
+so the model's driving temperature on the shell ($T_r = \SI{\val{Tr-model}}{K}$) is 1--\SI{4}{K} below
+Fluent's $T_{aw}$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\linewidth]{fig_h_calibration}
+\caption{Heat-transfer coefficient at burnout on a \SI{300}{K} wall: Fluent (smoothed between 3 and
+\SI{15}{mm}), the shell correlation before and after $k_t$, and the tip value before and after $k_s$
+(squares, placed at \SI{0.5}{mm}).}
+\label{fig:hcal}
+\end{figure}
+
+\subsection{Temperatures along the flight}
+
+With the calibrated $h$, the model integrates two wall models along the nominal and hot-day
+trajectories:
+\begin{itemize}
+\item \textbf{shell}: one-dimensional conduction through the CFRP, heated on the outside, adiabatic
+inside,
+\begin{equation}
+\rho c\,\frac{\partial T}{\partial t} = k\,\frac{\partial^2 T}{\partial y^2}, \qquad
+-k\frac{\partial T}{\partial y}\Big|_{out} = h\,(T_r - T_w), \qquad \frac{\partial T}{\partial y}\Big|_{in} = 0;
+\end{equation}
+\item \textbf{Al tip insert}: one temperature (aluminium conducts fast),
+\begin{equation}
+m\,c\,\frac{\mathrm{d}T}{\mathrm{d}t} = k_{tip}\left[0.55\,h_s A_{cap}(T_0 - T) + h_t(x_{tip}/2)\,A_{lat}(T_r - T)\right].
+\end{equation}
+\end{itemize}
+Material data are those of report~1, to be confirmed by ST: CFRP \SI{\val{shell-t}}{mm},
+$k = \SI{\val{cfrp-k}}{W/(m\,K)}$, $\rho = \SI{\val{cfrp-rho}}{kg/m^3}$, $c = \SI{\val{cfrp-c}}{J/(kg\,K)}$
+(through the thickness); Al\,6082 insert of \SI{\val{tip-mass}}{g} over the first \SI{\val{tip-length}}{mm},
+$c = \SI{\val{al-c}}{J/(kg\,K)}$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{fig_temperatures}
+\caption{Temperatures along the flight, (a) A and (b) B: Al tip insert, CFRP shell at \SI{50}{mm}
+(outer and inner face) and the upper bound of the inside air (mean inner-face temperature, not below
+$T_{pad}$).}
+\label{fig:temps}
+\end{figure}
+
+The maxima are in Table~\ref{tab:heat}. The outer face peaks just after burnout (\SI{9.6}{s}), the
+inner face \SI{2}{s} later and the tip insert, with its larger heat capacity, at 12--\SI{13}{s}:
+\begin{itemize}
+\item the outer face of the shell stays below the DP490 limit of \SI{120}{\celsius}, also on the hot day
+(\val{A-hot-Tout50}\,\si{\celsius});
+\item the inner face (\val{A-nominal-Tin50}\,\si{\celsius}) and the inside air
+(\val{A-nominal-Tair}\,\si{\celsius}) exceed Req\_10 (\SI{67}{\celsius}) on a nominal day; whether
+Req\_10 applies to the air or to the wall is still open with SE;
+\item the tip insert of B gets \SI{20}{\percent} less heat than A's (its front is thinner, so less surface
+in the first \SI{80}{mm}) and stays \SI{5}{}--\SI{6}{\celsius} cooler.
+\end{itemize}
+For a thermal FEA, the data tables give $h$ and the driving temperature along the flight at the tip
+and at 20, 50, 80 and \SI{150}{mm}, and $T_{aw}(x)$, $q_w(x)$, $h(x)$ at burnout (Appendix~\ref{app:data}).

@@ -463,6 +463,52 @@ def numbers(des: dict, ff: dict, fsm: pd.DataFrame) -> dict:
     put("B-own-burnout-M", allp.loc[("B", "burnout"), "mach"], "{:.3f}")
     put("pad-p", 1e-3 * des["A"].tr["nominal"]["p"][0], "{:.1f}")
     put("pad-T", des["A"].tr["nominal"]["T"][0], "{:.2f}"), put("pad-Thot", des["A"].tr["hot"]["T"][0], "{:.2f}")
+    v.update(calibration_numbers(des, fsm))
+    cfg = des["A"].mdl.cfg
+    mats = cfg.heating.materials
+    for key, m in (("cfrp", mats[cfg.heating.shell_material]), ("al", mats[cfg.heating.tip_material])):
+        put(f"{key}-k", m["conductivity"], "{:g}"), put(f"{key}-rho", m["density"], "{:g}")
+        put(f"{key}-c", m["specific_heat"], "{:g}")
+    put("shell-t", 1e3 * cfg.heating.shell_thickness, "{:g}"), put("tip-mass", 1e3 * cfg.structure.tip_mass, "{:g}")
+    put("tip-length", 1e3 * cfg.heating.tip_length, "{:g}")
+    return v
+
+
+def calibration_numbers(des: dict, fsm: pd.DataFrame) -> dict:
+    """Fluent / model ratios behind the calibration factors (model uncalibrated, wall at 300 K, burnout)."""
+    from nosecone import constants as C
+    from nosecone.geometry import surface
+    M, p, T = fsm.loc["burnout", ["mach", "p_Pa", "T_K"]]
+    V = M * np.sqrt(GAMMA_F * R_F * T)
+    hs, T0 = ht.h_stagnation(M, p, T, des["A"].mdl.rn)
+    v = {}
+    for s, d in des.items():
+        hx = d.hx
+        v[f"{s}-ratio-s"] = f"{hx.q_w_300K_W_m2.iloc[0] / (hs * (T0 - T_WALL)):.3f}"
+        sel = hx[(hx.x_mm >= 50) & (hx.x_mm <= 1e3 * d.xS)]
+        ratio = sel.h_W_m2K.values / np.array([ht.h_turbulent(M, p, T, V, 1e-3 * x, T_WALL)[0] for x in sel.x_mm])
+        v[f"{s}-ratio-t"] = f"{np.median(ratio):.3f}"
+        v[f"{s}-ratio-t-lo"], v[f"{s}-ratio-t-hi"] = (f"{q:.2f}" for q in np.percentile(ratio, [10, 90]))
+        x_tip = d.mdl.cfg.heating.tip_length                # heat into the tip-insert surface, x <= x_tip
+        tz = hx[hx.x_mm <= 1e3 * x_tip]
+        A, _ = ring_area_s(1e-3 * tz.x_mm.values, 1e-3 * tz.r_mm.values)
+        Qf = float(np.sum(tz.q_w_300K_W_m2.values * A))
+        xs, ys = surface(d.mdl.pr(d.shape), d.L, d.mdl.R, d.mdl.rn, n=3000)
+        m = xs <= x_tip
+        A_tot = np.sum(2 * np.pi * 0.5 * (ys[m][1:] + ys[m][:-1]) * np.hypot(np.diff(xs[m]), np.diff(ys[m])))
+        A_cap = 2 * np.pi * d.mdl.rn**2 * C.TIP_CAP_AREA_FRACTION
+        h_l, T_r = ht.h_turbulent(M, p, T, V, 0.5 * x_tip, T_WALL)
+        h = d.mdl.cfg.heating
+        Qm = (h.calibration_stagnation * C.HEMISPHERE_H_FACTOR * hs * A_cap * (T0 - T_WALL)
+              + h.calibration_turbulent * h_l * (A_tot - A_cap) * (T_r - T_WALL))
+        v[f"{s}-Qtip-fluent"], v[f"{s}-Qtip-model"] = f"{Qf:.0f}", f"{Qm:.0f}"
+        v[f"{s}-ratio-tip"] = f"{Qf / Qm:.3f}"
+        far = hx[hx.x_mm >= 50]
+        v[f"{s}-recovery"] = f"{np.mean((far.T_aw_K - T) / (T0 - T)):.3f}"
+        v[f"{s}-Taw-far-lo"], v[f"{s}-Taw-far-hi"] = f"{far.T_aw_K.min():.0f}", f"{far.T_aw_K.max():.0f}"
+    v["Tr-model"] = f"{ht.h_turbulent(M, p, T, V, 0.1, T_WALL)[1]:.1f}"
+    v["recovery-model"] = f"{0.71 ** (1 / 3):.3f}"
+    v["T0-burnout"] = f"{T0:.1f}"
     return v
 
 
@@ -477,8 +523,7 @@ def write_data(des: dict, out: Path) -> None:
                 pw = smooth_tip(d.x, d.p_wall(c, i))
                 w[f"p_wall_{lc}_{c}_kPa"] = 1e-3 * pw
                 w[f"dp_{lc}_{c}_kPa"] = 1e-3 * (pw - (d.p_in(c, True)[i] if lc == "LC3" else d.p_in(c, False)[i]))
-        hx = d.hx.set_index(d.hx.index)
-        w["T_aw_LC1_K"] = d.hx.T_aw_K.values if len(d.hx) == len(w) else np.interp(w.x_mm, d.hx.x_mm, d.hx.T_aw_K)
+        w["T_aw_LC1_K"] = np.interp(w.x_mm, d.hx.x_mm, d.hx.T_aw_K)
         w["q_w_300K_LC1_kW_m2"] = 1e-3 * smooth_tip(d.x, np.interp(w.x_mm, d.hx.x_mm, d.hx.q_w_300K_W_m2))
         w["h_LC1_W_m2K"] = smooth_tip(d.x, np.interp(w.x_mm, d.hx.x_mm, d.hx.h_W_m2K))
         w.round(5).to_csv(out / f"{s}_wall_x.csv", index=False)
@@ -491,6 +536,11 @@ def write_data(des: dict, out: Path) -> None:
             for k in ("T_tip_insert", "T_shell_out_50mm", "T_shell_in_50mm"):
                 dp[k + "_C"] = hh[k].values - 273.15
             dp["T_air_upper_C"] = d.T_in[c] - 273.15
+            # thermal boundary conditions of the calibrated model (h on a 300 K wall, driving temperature)
+            dp["h_stag_W_m2K"], dp["T0_K"] = hh.h_stag.values, hh.T0.values
+            for x in fd.X_TURB:
+                k = f"{1e3 * x:.0f}mm"
+                dp[f"h_{k}_W_m2K"], dp[f"T_r_{k}_K"] = hh[f"h_turb_{k}"].values, hh[f"T_r_{k}"].values
             hist.append(dp)
         pd.concat(hist).round(4).to_csv(out / f"{s}_history_t.csv", index=False)
         d.normal_load().round(4).to_csv(out / f"{s}_normal_load_x.csv", index=False)

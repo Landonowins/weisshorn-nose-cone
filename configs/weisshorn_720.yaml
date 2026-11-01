@@ -31,4 +31,4 @@ aerodynamics:
 heating:                       # Fluent calibration at burnout (CFD/study720, REPORT-5)
   calibration_stagnation: 0.946  # q_w(0) Fluent / Fay-Riddell: 0.943 (A), 0.949 (B)
   calibration_turbulent: 1.02    # median h Fluent / Eckert over x = 50 mm..shoulder: 1.010 (A), 1.033 (B)
-  calibration_tip: 1.13          # heat into the tip insert (x <= 80 mm) Fluent / model: 1.124 (A), 1.135 (B)
+  calibration_tip: 1.14          # heat into the tip insert (x <= 80 mm) Fluent / model: 1.133 (A), 1.145 (B)
