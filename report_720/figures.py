@@ -243,7 +243,7 @@ def fig_dp_x(des: dict, out: Path) -> None:
         a.set_xscale("symlog", linthresh=20, linscale=0.6)
         a.set_xticks([0, 10, 20, 50, 100, 200, 400, 720])
         a.set_xticklabels(["0", "10", "20", "50", "100", "200", "400", "720"])
-    axs[0].set(ylabel=r"net pressure $\Delta p = p_w - p_{in}$ [kPa]", ylim=(-90, 170))
+    axs[0].set(ylabel=r"net pressure $\Delta p = p_w - p_{in}$ [kPa]", ylim=(-90, 190))
     axs[1].legend(handles=[Line2D([], [], color=col, label=f"{lc}, {lab}") for lc, (lab, col) in lcs.items()]
                   + [Line2D([], [], color=fs.INK2, ls=CASE_LS[c], label=("nominal" if c == "nominal" else "hot day"))
                      for c in CASES], loc="upper right", fontsize=7)
@@ -262,7 +262,7 @@ def fig_dp_t(des: dict, out: Path) -> None:
                 a.plot(h.t, 1e-3 * h[f"dp_{name}_high"], color=col, ls=CASE_LS[c], lw=0.5)
         a.axhline(0, color=fs.GRID, lw=0.6, zorder=0)
         a.set(xlim=(0, 45), xlabel=r"$t$ [s]", title=f"design {s}")
-    axs[0].set(ylabel=r"$\Delta p = p_w - p_{in}$ [kPa]", ylim=(-90, 170))
+    axs[0].set(ylabel=r"$\Delta p = p_w - p_{in}$ [kPa]", ylim=(-90, 190))
     axs[1].legend(handles=[Line2D([], [], color=col, label=n) for n, col in cols.items()]
                   + [Line2D([], [], color=fs.INK2, lw=1.0, label=r"$p_{in}$ at $T_{pad}$"),
                      Line2D([], [], color=fs.INK2, lw=0.5, label=r"$p_{in}$, heated air")],
@@ -397,6 +397,9 @@ def numbers(des: dict, ff: dict, fsm: pd.DataFrame) -> dict:
             k = {"M0.95": "M095", "M1.20": "M120", "adiab": "M147"}[row.run]
             put(f"{s}-Fp-{k}", row.Fp_nose, "{:.1f}"), put(f"{s}-Fv-{k}", row.Fv_nose, "{:.1f}")
             put(f"{s}-Fc-{k}", row.Fv_coupler, "{:.1f}"), put(f"{s}-F-{k}", row.F_total, "{:.1f}")
+        for k, w in d.walls.items():
+            kk = {"M0.95": "M095", "M1.20": "M120", "adiab": "M147"}[k]
+            put(f"{s}-cp0-{kk}", w.Cp.iloc[0], "{:.2f}"), put(f"{s}-cpmin-{kk}", w.Cp.min(), "{:.2f}")
         put(f"{s}-L", 1e3 * d.L, "{:.1f}"), put(f"{s}-delta", 1e3 * d.eq["delta"], "{:.1f}")
         put(f"{s}-fineness", d.L / (2 * d.mdl.R), "{:.2f}")
         put(f"{s}-apogee-hot", d.tr["hot"]["apogee"])
@@ -424,6 +427,11 @@ def numbers(des: dict, ff: dict, fsm: pd.DataFrame) -> dict:
                 Ax = ring_area_x(d.x, d.r)              # net pressure force on the joint, > 0 compression
                 put(f"{pre}-Fplo", np.sum((pw - lo) * Ax))
                 put(f"{pre}-Fphi", np.sum((pw - hi) * Ax))
+            for name in d.stations():                    # extremes over the flight at each station
+                k = name.replace(" mm", "")
+                lo_, hi_ = dpt[f"dp_{name}_low"], dpt[f"dp_{name}_high"]
+                put(f"{s}-{c}-st{k}-max", 1e-3 * lo_.max()), put(f"{s}-{c}-st{k}-tmax", dpt.t[lo_.idxmax()], "{:.1f}")
+                put(f"{s}-{c}-st{k}-min", 1e-3 * hi_.min()), put(f"{s}-{c}-st{k}-tmin", dpt.t[hi_.idxmin()], "{:.1f}")
             p0 = ht.stagnation_state(tr["M"][idx["LC1"]], tr["p"][idx["LC1"]], tr["T"][idx["LC1"]])[0]
             put(f"{s}-{c}-p0check", 100 * ((d.p_wall(c, idx["LC1"])[0]) / p0 - 1), "{:+.1f}")
             put(f"{s}-{c}-dpminall", 1e-3 * min(dpt[[k for k in dpt if k.endswith("_high")]].min()), "{:.0f}")
