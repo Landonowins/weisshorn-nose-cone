@@ -230,10 +230,10 @@ class Model:
         pr = self.pr(shape)
         out = dict(T0=[float(np.max(ht.stagnation_state(tr["M"], tr["p"], tr["T"])[1])) - 273.15 for tr in (nom, env)],
                    tip=[float(ht.tip_insert(tr, pr, L, self.R, self.rn, h.tip_length, cfg.structure.tip_mass,
-                                            mats[h.tip_material])["T"].max()) - 273.15 for tr in (nom, env)])
+                                            mats[h.tip_material], **ht.calibration(h, tip=True))["T"].max()) - 273.15 for tr in (nom, env)])
         for key, x in (("shell_50", 0.05), ("shell_mid", 0.5 * L), ("shell_base", L)):
             out[key] = [float(ht.wall_response(tr, mats[h.shell_material], h.shell_thickness, x,
-                                               n=h.wall_nodes)["T_in"].max()) - 273.15 for tr in (nom, env)]
+                                               n=h.wall_nodes, **ht.calibration(h))["T_in"].max()) - 273.15 for tr in (nom, env)]
         return out
 
 

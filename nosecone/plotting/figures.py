@@ -518,7 +518,7 @@ def fig_bluntness(ctx: PlotContext) -> None:
     hh = {}
     for tr, ls, lab in [(nom, "-", "nominal"), (env, "--", "envelope")]:
         i = np.argmax(tr["M"])
-        h = np.array([ht.h_stagnation(tr["M"][i], tr["p"][i], tr["T"][i], r)[0] for r in rn])
+        h = np.array([ht.h_stagnation(tr["M"][i], tr["p"][i], tr["T"][i], r, cfg.heating.calibration_stagnation)[0] for r in rn])
         hh[lab] = h
         b.plot(1e3 * rn, h / 1e3, color="#2a78d6", ls=ls, label=lab)
     guide = ctx.opt("bluntness", "guide")
@@ -558,7 +558,7 @@ def fig_thermal(ctx: PlotContext) -> None:
     tmax = []
     for tr, ls in [(nom, "-"), (env, "--")]:
         for x, c, lab in stations:
-            r = ht.wall_response(tr, mats[h.shell_material], h.shell_thickness, x, n=h.wall_nodes)
+            r = ht.wall_response(tr, mats[h.shell_material], h.shell_thickness, x, n=h.wall_nodes, **ht.calibration(h))
             a.plot(r["t"], r["T_in"] - 273.15, color=c, ls=ls)
         p0, T0 = ht.stagnation_state(tr["M"], tr["p"], tr["T"])
         a.plot(tr["t"], T0 - 273.15, color=INK, lw=0.7, ls=ls)
@@ -575,8 +575,10 @@ def fig_thermal(ctx: PlotContext) -> None:
     rn = rnr * ctx.R
     pr = ctx.p(p)
     for tr, ls in [(nom, "-"), (env, "--")]:
-        r1 = ht.wall_response(tr, mats[h.printed_tip_material], h.printed_tip_thickness, "stagnation", rn=rn, n=h.wall_nodes)
-        r2 = ht.tip_insert(tr, pr, L, ctx.R, rn, h.tip_length, cfg.structure.tip_mass, mats[h.tip_material])
+        r1 = ht.wall_response(tr, mats[h.printed_tip_material], h.printed_tip_thickness, "stagnation", rn=rn, n=h.wall_nodes,
+                              **ht.calibration(h))
+        r2 = ht.tip_insert(tr, pr, L, ctx.R, rn, h.tip_length, cfg.structure.tip_mass, mats[h.tip_material],
+                           **ht.calibration(h, tip=True))
         b.plot(r1["t"], r1["T_out"] - 273.15, color="#eb6834", ls=ls)
         b.plot(r2["t"], r2["T"] - 273.15, color="#2a78d6", ls=ls)
         p0, T0 = ht.stagnation_state(tr["M"], tr["p"], tr["T"])

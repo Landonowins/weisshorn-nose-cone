@@ -254,14 +254,16 @@ class Study:
         p, f, rnr = self.design
         pr = self.profiles[p]
         L, rn = self.L(f), rnr * self.R
-        tip = [ht.tip_insert(tr, pr, L, self.R, rn, h.tip_length, cfg.structure.tip_mass, mats[h.tip_material])["T"].max()
+        tip = [ht.tip_insert(tr, pr, L, self.R, rn, h.tip_length, cfg.structure.tip_mass, mats[h.tip_material],
+                             **ht.calibration(h, tip=True))["T"].max()
                - 273.15 for tr in (nom, env)]
         printed = [ht.wall_response(tr, mats[h.printed_tip_material], h.printed_tip_thickness, "stagnation", rn=rn,
-                                    n=h.wall_nodes)["T_out"].max() - 273.15 for tr in (nom, env)]
+                                    n=h.wall_nodes, **ht.calibration(h))["T_out"].max() - 273.15 for tr in (nom, env)]
         stations = [parse_station(s, L) for s in h.shell_stations]
         shell = []
         for tr in (nom, env):
-            shell.append(max(ht.wall_response(tr, mats[h.shell_material], h.shell_thickness, x, n=h.wall_nodes)["T_in"].max()
+            shell.append(max(ht.wall_response(tr, mats[h.shell_material], h.shell_thickness, x, n=h.wall_nodes,
+                                               **ht.calibration(h))["T_in"].max()
                              for x in stations) - 273.15)
         p0, T0 = ht.stagnation_state(nom["M"], nom["p"], nom["T"])
         p0e, T0e = ht.stagnation_state(env["M"], env["p"], env["T"])

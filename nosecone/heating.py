@@ -7,6 +7,8 @@ temperature and the Reynolds analogy, St = 0.0296 Re_x*^-0.2 Pr^-2/3, driven by 
 temperature T_r = T_inf (1 + r (gamma - 1)/2 M^2), r = Pr^(1/3).
 Wall response: 1D transient conduction (explicit finite differences), adiabatic inner face.
 Metal tip insert: lumped capacitance.
+Optional factors k_s, k_t (on h_s, h_t) and k_tip (on the heat into the tip insert) calibrate the
+model against Fluent (REPORT-5); they default to 1.
 """
 from __future__ import annotations
 
@@ -56,27 +58,36 @@ def stagnation_state(M: ArrayLike, p: ArrayLike, T: ArrayLike) -> tuple:
     return (p0 if p0.ndim else float(p0)), T0
 
 
-def h_stagnation(M: float, p: float, T: float, rn: float) -> tuple[float, float]:
-    """Laminar stagnation-point heat-transfer coefficient [W/(m^2 K)] and T_0 [K]."""
+def calibration(hcfg, tip: bool = False) -> dict:
+    """Calibration factors of a heating configuration, as keyword arguments."""
+    k = dict(k_stag=hcfg.calibration_stagnation, k_turb=hcfg.calibration_turbulent)
+    if tip:
+        k["k_tip"] = hcfg.calibration_tip
+    return k
+
+
+def h_stagnation(M: float, p: float, T: float, rn: float, k: float = 1.0) -> tuple[float, float]:
+    """Laminar stagnation-point heat-transfer coefficient [W/(m^2 K)] (times k) and T_0 [K]."""
     p0, T0 = stagnation_state(M, p, T)
     rho_s = p0 / (C.R_AIR * T0)
     due = np.sqrt(max(2 * (p0 - p), 0.0) / rho_s) / rn
-    return C.FAY_RIDDELL_COEFF * PR**C.FAY_RIDDELL_PR_EXP * np.sqrt(rho_s * sutherland(T0) * due) * C.CP_AIR, T0
+    return k * C.FAY_RIDDELL_COEFF * PR**C.FAY_RIDDELL_PR_EXP * np.sqrt(rho_s * sutherland(T0) * due) * C.CP_AIR, T0
 
 
-def h_turbulent(M: float, p: float, T: float, V: float, x: float, Tw: float) -> tuple[float, float]:
-    """Local turbulent heat-transfer coefficient at distance x from the tip, and T_r."""
+def h_turbulent(M: float, p: float, T: float, V: float, x: float, Tw: float, k: float = 1.0) -> tuple[float, float]:
+    """Local turbulent heat-transfer coefficient at distance x from the tip (times k), and T_r."""
     r = PR ** C.RECOVERY_PR_EXP
     Tr = T * (1 + r * 0.5 * (G - 1) * M**2)
     Ts = T * (1 + C.ECKERT_A * M**2 + C.ECKERT_B * (Tw / T - 1))      # Eckert reference temperature
     rho_s = p / (C.R_AIR * Ts)
     Re = rho_s * V * x / sutherland(Ts)
     St = C.STANTON_COEFF * max(Re, C.HEAT_RE_MIN) ** C.STANTON_RE_EXP * PR ** C.STANTON_PR_EXP
-    return St * rho_s * V * C.CP_AIR, Tr
+    return k * St * rho_s * V * C.CP_AIR, Tr
 
 
 def wall_response(traj: dict, material: Material, thickness: float, station: Union[str, float],
-                  rn: float = None, n: int = 40, T_init: float = None) -> dict:
+                  rn: float = None, n: int = 40, T_init: float = None, k_stag: float = 1.0,
+                  k_turb: float = 1.0) -> dict:
     """Outer and inner wall temperature histories of a slab heated on one face.
 
     Args:
@@ -87,6 +98,7 @@ def wall_response(traj: dict, material: Material, thickness: float, station: Uni
         rn: tip radius [m] for the stagnation station.
         n: number of cells through the thickness.
         T_init: initial temperature [K] (default: ambient at launch).
+        k_stag, k_turb: calibration factors on h_s and h_t.
     """
     k, rho, c = material.conductivity, material.density, material.specific_heat
     a = k / (rho * c)
@@ -98,9 +110,9 @@ def wall_response(traj: dict, material: Material, thickness: float, station: Uni
     for kk in range(len(t) - 1):
         tt, t1 = t[kk], t[kk + 1]
         if station == "stagnation":
-            h, Tr = h_stagnation(M[kk], p[kk], T[kk], rn)
+            h, Tr = h_stagnation(M[kk], p[kk], T[kk], rn, k_stag)
         else:
-            h, Tr = h_turbulent(M[kk], p[kk], T[kk], V[kk], station, Tw[0])
+            h, Tr = h_turbulent(M[kk], p[kk], T[kk], V[kk], station, Tw[0], k_turb)
         # explicit FD with a Biot-limited step
         dt_h = C.FD_STABILITY * dx * rho * c * dx / (h * dx + k)
         nsub = int(np.ceil((t1 - tt) / min(dt_stab, dt_h)))
@@ -119,7 +131,7 @@ def wall_response(traj: dict, material: Material, thickness: float, station: Uni
 
 
 def tip_insert(traj: dict, profile: Profile, L: float, R: float, rn: float, x_tip: float, mass: float,
-               material: Material) -> dict:
+               material: Material, k_stag: float = 1.0, k_turb: float = 1.0, k_tip: float = 1.0) -> dict:
     """Lumped metal tip insert covering the nose from the apex to x_tip.
 
     Spherical cap at 0.55 h_s (hemisphere-averaged laminar value, driven by T_0); the remaining
@@ -136,9 +148,9 @@ def tip_insert(traj: dict, profile: Profile, L: float, R: float, rn: float, x_ti
     Tt = T[0]
     out = []
     for kk in range(len(t) - 1):
-        hs, T0 = h_stagnation(M[kk], p[kk], T[kk], rn)
-        ht, Tr = h_turbulent(M[kk], p[kk], T[kk], V[kk], 0.5 * x_tip, Tt)
-        Q = C.HEMISPHERE_H_FACTOR * hs * A_cap * (T0 - Tt) + ht * A_lat * (Tr - Tt)
+        hs, T0 = h_stagnation(M[kk], p[kk], T[kk], rn, k_stag)
+        ht, Tr = h_turbulent(M[kk], p[kk], T[kk], V[kk], 0.5 * x_tip, Tt, k_turb)
+        Q = k_tip * (C.HEMISPHERE_H_FACTOR * hs * A_cap * (T0 - Tt) + ht * A_lat * (Tr - Tt))
         Tt += (t[kk + 1] - t[kk]) * Q / (mass * c)
         out.append(Tt)
     return dict(t=t[1:], T=np.array(out), A=A_tot)

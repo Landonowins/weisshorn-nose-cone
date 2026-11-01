@@ -178,14 +178,16 @@ def heating_history(mdl: tl.Model, shape: str, L: float, tr: dict) -> pd.DataFra
     pr = mdl.pr(shape)
     t, M, p, T, V = tr["t"], tr["M"], tr["p"], tr["T"], tr["V"]
     d = dict(t=t, z=tr["z"], M=M, V=V, p=p, T=T)
-    hs, T0 = zip(*(ht.h_stagnation(M[i], p[i], T[i], mdl.rn) for i in range(len(t))))
+    hs, T0 = zip(*(ht.h_stagnation(M[i], p[i], T[i], mdl.rn, h.calibration_stagnation) for i in range(len(t))))
     d["h_stag"], d["T0"] = np.array(hs), np.array(T0)
     for x in X_TURB:
-        hx, Tr = zip(*(ht.h_turbulent(M[i], p[i], T[i], max(V[i], 1e-3), x, T_WALL_REF) for i in range(len(t))))
+        hx, Tr = zip(*(ht.h_turbulent(M[i], p[i], T[i], max(V[i], 1e-3), x, T_WALL_REF,
+                                     h.calibration_turbulent) for i in range(len(t))))
         d[f"h_turb_{1e3 * x:.0f}mm"], d[f"T_r_{1e3 * x:.0f}mm"] = np.array(hx), np.array(Tr)
-    tip = ht.tip_insert(tr, pr, L, mdl.R, mdl.rn, h.tip_length, cfg.structure.tip_mass, mats[h.tip_material])
+    tip = ht.tip_insert(tr, pr, L, mdl.R, mdl.rn, h.tip_length, cfg.structure.tip_mass, mats[h.tip_material],
+                         **ht.calibration(h, tip=True))
     d["T_tip_insert"] = np.concatenate([[T[0]], tip["T"]])
-    wr = ht.wall_response(tr, mats[h.shell_material], h.shell_thickness, 0.05, n=h.wall_nodes)
+    wr = ht.wall_response(tr, mats[h.shell_material], h.shell_thickness, 0.05, n=h.wall_nodes, **ht.calibration(h))
     d["T_shell_out_50mm"] = np.concatenate([[T[0]], wr["T_out"]])
     d["T_shell_in_50mm"] = np.concatenate([[T[0]], wr["T_in"]])
     return pd.DataFrame(d)
