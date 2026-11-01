@@ -289,7 +289,7 @@ def fig_cd(des: dict, mdl650: tl.Model, out: Path) -> None:
         f = fl[fl.design == s].sort_values("mach")
         a.plot(f.mach, f.cd, "o", color=SHAPE_COL[s], mfc="white", ms=5, label=f"{s}: Fluent")
     a.set(xlim=(0.3, 1.5), ylim=(0, 0.11), xlabel=r"Mach number $M$", ylabel=r"nose $C_D$ (smooth wall)")
-    a.legend(loc="lower right", fontsize=6.3, ncol=2, columnspacing=1.0)
+    a.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), fontsize=6.5, ncol=2, columnspacing=1.0)
     fs.save(fig, "fig_cd_mach", out)
 
 
@@ -400,6 +400,13 @@ def numbers(des: dict, ff: dict, fsm: pd.DataFrame) -> dict:
         for k, w in d.walls.items():
             kk = {"M0.95": "M095", "M1.20": "M120", "adiab": "M147"}[k]
             put(f"{s}-cp0-{kk}", w.Cp.iloc[0], "{:.2f}"), put(f"{s}-cpmin-{kk}", w.Cp.min(), "{:.2f}")
+        pc = pd.read_csv(CFD / "python_compare_720.csv").set_index("run")   # model of report 2 (rise from 0.8)
+        veh = d.mdl.vehicle(d.shape, d.L, d.c)
+        for run, kk in ((f"{s}_M0.95", "M095"), (f"{s}_M1.20", "M120"), (f"{s}_adiab", "M147")):
+            r = pc.loc[run]
+            new = float(veh.cdw(r.mach)) + r.python_f                    # calibrated model, smooth wall
+            put(f"{s}-cdold-{kk}", r.python, "{:.4f}"), put(f"{s}-cdnew-{kk}", new, "{:.4f}")
+            put(f"{s}-dcd-{kk}", 100 * (r.fluent / new - 1), "{:+.1f}")
         put(f"{s}-L", 1e3 * d.L, "{:.1f}"), put(f"{s}-delta", 1e3 * d.eq["delta"], "{:.1f}")
         put(f"{s}-fineness", d.L / (2 * d.mdl.R), "{:.2f}")
         put(f"{s}-apogee-hot", d.tr["hot"]["apogee"])
