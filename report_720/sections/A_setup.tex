@@ -1,0 +1,26 @@
+\section{CFD setup: differences from REPORT-4}
+\label{app:setup}
+
+The runs follow the study-A workflow of REPORT-4 (geometry, mesh, models, boundary conditions and
+solvers). Only these points differ.
+
+\begin{itemize}
+\item \textbf{Domain}: built in Ansys Discovery from the 3D STEP of each nose: the end disc is pulled to
+$x = \SI{2520}{mm}$, a $6120 \times \SI{3600}{mm}$ rectangle on the XY plane of the origin is subtracted from
+it. Area \SI{21.8233}{m^2} (A) and \SI{21.8269}{m^2} (B), within \SI{0.001}{\percent} of the domains
+of \file{CFD/make_domain_2d.py}.
+\item \textbf{Named selections}: the body line is split at the end of the coupler, $x = \SI{720}{mm}$,
+into \zone{wall\_coupler} and \zone{wall\_body}; seven zones in all.
+\item \textbf{Mesh}: \zone{wall\_body} edge sizing hard, from \SI{0.55}{mm} at $x = \SI{720}{mm}$ to
+\SI{1.65}{mm} at the outlet; inflation scoped on the face with the three walls as boundary.
+\item \textbf{Fluent}: 2024~R2 started on its own and set up by script (\file{CFD/study720/setup_fluent.py},
+\file{run_queue.py}, PyFluent). Turbulence intensity set to \SI{1}{\percent} (the standalone default is
+\SI{5}{\percent}). Report definitions \texttt{cd-total} (three walls) and \texttt{cd-nose}
+(\zone{wall\_nose}); residual stopping off.
+\item \textbf{Iterations}: 500 first order at Courant 1, 500 at Courant 5, then second order at Courant 5
+up to 4000. $M = 0.95$: pressure-based coupled solver, 1200 iterations. \SI{300}{K} walls: 3500 more
+iterations from the adiabatic solution.
+\end{itemize}
+
+Scripts, wall exports, $C_D$ histories, figures and meshes are in \file{CFD/study720/} of the repository
+(README there); the case and data files stay on the DLL PC.

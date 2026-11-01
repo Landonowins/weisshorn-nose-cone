@@ -506,6 +506,15 @@ def calibration_numbers(des: dict, fsm: pd.DataFrame) -> dict:
         far = hx[hx.x_mm >= 50]
         v[f"{s}-recovery"] = f"{np.mean((far.T_aw_K - T) / (T0 - T)):.3f}"
         v[f"{s}-Taw-far-lo"], v[f"{s}-Taw-far-hi"] = f"{far.T_aw_K.min():.0f}", f"{far.T_aw_K.max():.0f}"
+    conv, yn, yc = [], [], []                          # convergence and wall y+ of every run
+    for s, d in des.items():
+        for run in list(RUNS) + ["T300"]:
+            h = pd.read_csv(CFD / "cd_history" / f"{s}_{run}.csv").cd_nose.values[-500:]
+            conv.append(100 * (h.max() - h.min()) / h.mean())
+            w = d.walls.get(run, d.cold)
+            yn.append(w.yplus[w.x <= d.xS].max()), yc.append(w.yplus[w.x > d.xS].max())
+    v["conv-lo"], v["conv-hi"] = f"{min(conv):.3f}", f"{max(conv):.3f}"
+    v["yplus-nose"], v["yplus-coupler"] = f"{max(yn):.2f}", f"{max(yc):.2f}"
     v["Tr-model"] = f"{ht.h_turbulent(M, p, T, V, 0.1, T_WALL)[1]:.1f}"
     v["recovery-model"] = f"{0.71 ** (1 / 3):.3f}"
     v["T0-burnout"] = f"{T0:.1f}"
@@ -530,6 +539,7 @@ def write_data(des: dict, out: Path) -> None:
         hist = []
         for c in CASES:
             dp = d.dp_history(c)
+            dp.columns = [("t_s" if k == "t" else k if k == "M" else f"{k.replace(' mm', 'mm')}_Pa") for k in dp]
             dp.insert(0, "case", c)
             dp["D_n_N"] = d.Dn[c].D_n.values
             hh = d.hist[c]
