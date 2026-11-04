@@ -1,0 +1,43 @@
+# Defiance Mk. IV, University of Toronto Aerospace Team, Launch Canada (24.08.2024). N2O hybrid.
+# Recorded apogee 9308.3 m above the pad (Canadian amateur record): the only 9 km-class flight
+# available, apogee only (no time history). Data: RocketPy docs/examples/defiance_flight_sim.ipynb
+# and data/rockets/defiance.
+base: _base.yaml
+
+project:
+  name: Defiance-LC24
+
+vehicle:
+  diameter: 0.140
+  length: 4.907             # nose tip at 4.947 m, tail end at 0.040 m (RocketPy positions)
+  reference_nose_length: 0.563
+  mass_wet: 70.576          # rocket 37.211 + motor dry 13.832 + N2O 17.0 + grain 2.533
+  mass_dry: 51.043
+  nozzle_exit_diameter: 0.0894
+  base_diameter: 0.128      # boat-tail 60 mm long
+
+engine:
+  thrust_curve: ../../data/flights/defiance/thrust.csv
+
+fins:
+  count: 3
+  root_chord: 0.40
+  tip_chord: 0.20
+  span: 0.115
+  sweep: 0.20
+  thickness: 0.005          # not published (assumed)
+
+launch:
+  rail_length: 10.0
+  rail_elevation: 85.0
+  site_altitude: 1383.4
+
+atmosphere:                 # site: 279.17 K, 857.70 hPa (standard atmosphere in RocketPy)
+  ground_temperature: 288.16
+  ground_pressure: 101321.0
+
+nose:
+  design_profile: vonkarman
+  design_fineness: 4.0214    # 563 / 140
+  baseline_profile: vonkarman
+  baseline_fineness: 4.0214

@@ -1,0 +1,42 @@
+# Andromeda, Aristotle Space and Aeronautics Team, EuRoC 2022 (14.10.2022). Cesaroni M2020 solid
+# (team-measured thrust curve). Official apogee 3443 m. Data: RocketPy
+# docs/examples/andromeda_flight_sim.ipynb and data/rockets/andromeda (permission P. Antoniadis, 2024).
+base: _base.yaml
+
+project:
+  name: Andromeda-EuRoC22
+
+vehicle:
+  diameter: 0.1507
+  length: 2.4996
+  reference_nose_length: 0.30
+  mass_wet: 25.323          # 20.977 + grain 4.346
+  mass_dry: 20.977
+  nozzle_exit_diameter: 0.05625
+  base_diameter: 0.0
+
+engine:
+  thrust_curve: ../../data/flights/andromeda/thrust.csv
+
+fins:
+  count: 3
+  root_chord: 0.23
+  tip_chord: 0.11
+  span: 0.185
+  sweep: 0.12
+  thickness: 0.005          # not published (assumed)
+
+launch:
+  rail_length: 12.0
+  rail_elevation: 84.0
+  site_altitude: 160.0
+
+atmosphere:                 # site: 298.89 K, 1000.0 hPa (ERA5)
+  ground_temperature: 299.93
+  ground_pressure: 101842.0
+
+nose:
+  design_profile: vonkarman
+  design_fineness: 1.9907    # 300 / 150.7, below the database: C_D,w f^2 held from f = 2.5
+  baseline_profile: vonkarman
+  baseline_fineness: 1.9907

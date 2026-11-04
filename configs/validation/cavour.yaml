@@ -1,0 +1,42 @@
+# Cavour, PoliTo Rocket Team, EuRoC 2023 (13.10.2023). Cesaroni L995 solid. Official apogee
+# 2789 m (ballistic descent; the ascent is nominal). Data: RocketPy docs/examples/cavour_flight_sim.ipynb
+# and data/rockets/polito (permission E. Viglietti, 2024).
+base: _base.yaml
+
+project:
+  name: Cavour-EuRoC23
+
+vehicle:
+  diameter: 0.104
+  length: 2.7224
+  reference_nose_length: 0.52
+  mass_wet: 10.132          # 8.219 + three grains 1.913
+  mass_dry: 8.219
+  nozzle_exit_diameter: 0.067
+  base_diameter: 0.0        # no boat-tail
+
+engine:
+  thrust_curve: ../../data/flights/cavour/thrust.csv   # Cesaroni 3618L995-P
+
+fins:
+  count: 4
+  root_chord: 0.20
+  tip_chord: 0.07
+  span: 0.10
+  sweep: 0.13
+  thickness: 0.005          # not published (assumed)
+
+launch:
+  rail_length: 12.0
+  rail_elevation: 84.0
+  site_altitude: 150.0
+
+atmosphere:                 # site: 296.08 K, 1000.0 hPa (ERA5)
+  ground_temperature: 297.06
+  ground_pressure: 101743.0
+
+nose:
+  design_profile: vonkarman
+  design_fineness: 5.0       # 520 / 104
+  baseline_profile: vonkarman
+  baseline_fineness: 5.0

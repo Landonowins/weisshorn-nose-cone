@@ -1,0 +1,42 @@
+# Halcyon, Aerospace Team Graz, EuRoC 2023 (13.10.2023), overall champions. N2O hybrid.
+# Official apogee 3450 m (altimeter log 3470 m). Data: RocketPy docs/examples/halcyon_flight_sim.ipynb
+# and data/rockets/astg (permission D. Krasser, 2024).
+base: _base.yaml
+
+project:
+  name: Halcyon-EuRoC23
+
+vehicle:
+  diameter: 0.1524
+  length: 3.556
+  reference_nose_length: 0.46
+  mass_wet: 30.686          # rocket 14.613 + motor dry 10.670 + N2O 4.2 + grain 1.203
+  mass_dry: 25.283
+  nozzle_exit_diameter: 0.0282
+  base_diameter: 0.0992     # boat-tail 254 mm long
+
+engine:
+  thrust_curve: ../../data/flights/halcyon/thrust.csv   # 4th hot fire
+
+fins:
+  count: 4
+  root_chord: 0.247
+  tip_chord: 0.045
+  span: 0.125
+  sweep: 0.202              # RocketPy default: trailing edge normal to the body
+  thickness: 0.005          # not published (assumed)
+
+launch:
+  rail_length: 12.0
+  rail_elevation: 85.0
+  site_altitude: 130.0
+
+atmosphere:                 # site: 296.79 K, 1000.0 hPa (ERA5)
+  ground_temperature: 297.64
+  ground_pressure: 101506.0
+
+nose:
+  design_profile: vonkarman
+  design_fineness: 3.0184    # 460 / 152.4
+  baseline_profile: vonkarman
+  baseline_fineness: 3.0184

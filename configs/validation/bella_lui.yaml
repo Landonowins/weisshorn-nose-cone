@@ -1,0 +1,42 @@
+# Bella Lui, EPFL Rocket Team, Kaltbrunn (22.02.2020). AeroTech K828FJ solid. Measured apogee
+# 459 m. Data: RocketPy docs/examples/bella_lui_flight_sim.ipynb and data/rockets/EPFL_Bella_Lui
+# (permission A. Scardigli, 2020).
+base: _base.yaml
+
+project:
+  name: BellaLui-2020
+
+vehicle:
+  diameter: 0.156
+  length: 2.678
+  reference_nose_length: 0.242
+  mass_wet: 19.600          # 18.227 + propellant 1.373
+  mass_dry: 18.227
+  nozzle_exit_diameter: 0.0445   # RocketPy gives 44.45 mm as "nozzle radius"; taken as the diameter (54 mm motor)
+  base_diameter: 0.135      # boat-tail 50 mm long
+
+engine:
+  thrust_curve: ../../data/flights/bella_lui/thrust.csv
+
+fins:
+  count: 3
+  root_chord: 0.280
+  tip_chord: 0.125
+  span: 0.200
+  sweep: 0.155
+  thickness: 0.005          # not published (assumed)
+
+launch:
+  rail_length: 4.2
+  rail_elevation: 89.0
+  site_altitude: 407.0
+
+atmosphere:                 # site: 286.63 K, 980.43 hPa (ERA5)
+  ground_temperature: 289.28
+  ground_pressure: 102893.0
+
+nose:
+  design_profile: ogive      # tangent ogive
+  design_fineness: 1.5513    # 242 / 156, below the database (subsonic flight: no wave drag)
+  baseline_profile: ogive
+  baseline_fineness: 1.5513

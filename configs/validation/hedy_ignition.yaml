@@ -1,0 +1,15 @@
+# Hedy with the other reading of its thrust curve: as in the RocketPy example, the published curve
+# is flown from ignition and cut at the 8.05 s burn time of the tanks (11.0 kN s instead of 9.7 kN s),
+# with the loaded mass at ignition. The flight log suggests the truth is in between: the measured
+# acceleration at lift-off fits the curve after the 1.4 s hold-down (hedy.yaml), but the engine
+# burned about 1 s longer after release than that curve shows.
+base: hedy.yaml
+
+project:
+  name: Hedy-EuRoC25-ignition
+
+vehicle:
+  mass_wet: 25.573          # loaded, at ignition
+
+engine:
+  thrust_curve: ../../data/flights/hedy/thrust_from_ignition.csv

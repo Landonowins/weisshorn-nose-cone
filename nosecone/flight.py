@@ -7,6 +7,7 @@ single factor k, calibrated so that the baseline nose reaches the target apogee.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Callable, Optional, Union
 
 import numpy as np
@@ -81,6 +82,7 @@ class DragModel:
         self.S_body = S_nose + np.pi * self.D * self.L_body
         self.roughness = v.surface_roughness
         self.nozzle_exit_d = v.nozzle_exit_diameter
+        self.base_d = v.base_diameter if v.base_diameter > 0 else self.D    # boat-tail: smaller base
         self.fins = f
         cr, ct, s = f.root_chord, f.tip_chord, f.span
         self.S_fin = 0.5 * (cr + ct) * s        # one side of one fin
@@ -105,9 +107,11 @@ class DragModel:
         w = np.clip((M - C.FIN_BLEND_START) / C.FIN_BLEND_WIDTH, 0, 1)
         w = w * w * (3 - 2 * w)
         cd_fp = (1 - w) * sub + w * sup
-        # base drag (OpenRocket form); the nozzle exit fills part of the base while burning
+        # base drag (OpenRocket form) on the base area (smaller behind a boat-tail); the nozzle exit
+        # fills part of the base while burning
         cb = np.where(M < 1, C.BASE_CD_SUB_A + C.BASE_CD_SUB_B * M**2, C.BASE_CD_SUP / np.maximum(M, 1e-3))
-        base_frac = 1 - (self.nozzle_exit_d / self.D) ** 2 if burning else 1.0
+        a_base = (self.base_d / self.D) ** 2
+        base_frac = max(a_base - (self.nozzle_exit_d / self.D) ** 2, 0.0) if burning else a_base
         cd_b = cb * base_frac
         # excrescences (rail buttons, seams): ERT-Sim K_e law on the wetted area
         a4, a3, a2, a1, a0 = C.EXCRESCENCE_POLY_TRANSONIC
@@ -126,6 +130,32 @@ class DragModel:
 
 
 # ------------------------------------------------------------------------------ trajectory
+def load_thrust_curve(path: Union[str, Path]) -> tuple[np.ndarray, np.ndarray]:
+    """Time [s] and thrust [N] of a thrust-curve file.
+
+    Reads a CSV with two numeric columns (a header line is allowed) or a RASP .eng file (';'
+    comments, one header line, then 'time thrust' pairs). A curve that starts after t = 0 gets a
+    zero-thrust point at t = 0.
+    """
+    rows = []
+    for line in Path(path).read_text(encoding="utf-8", errors="replace").splitlines():
+        tok = line.split(";")[0].replace(",", " ").split()
+        if len(tok) < 2:
+            continue
+        try:
+            rows.append((float(tok[0]), float(tok[1])))
+        except ValueError:                      # header line (column names or RASP motor line)
+            continue
+    if len(rows) < 2:
+        raise ValueError(f"thrust curve {path}: fewer than two (time, thrust) points")
+    t, F = np.array(rows, dtype=float).T
+    order = np.argsort(t, kind="stable")
+    t, F = t[order], np.maximum(F[order], 0.0)
+    if t[0] > 0:
+        t, F = np.r_[0.0, t], np.r_[0.0, F]
+    return t, F
+
+
 def burnout_mass(cfg: Config, mass_model: str) -> float:
     """Mass at burn-out [kg] for a mass model ('isp' or 'lvo')."""
     v, e = cfg.vehicle, cfg.engine
@@ -154,19 +184,30 @@ def simulate(cfg: Config, drag: DragModel, m_nose_delta: float = 0.0, ground_tem
     mass_model = mass_model or fl.mass_model
     dt_out = dt_out or fl.output_step
     atm = Atmosphere.from_config(cfg, ground_temperature)
-    T_b = e.burn_time
-    F = e.thrust * thrust_scale
     m0 = v.mass_wet + m_nose_delta
-    if mass_model == "lvo":
-        mdot = (v.mass_wet - v.mass_dry) / T_b
+    if e.thrust_curve:
+        # measured thrust curve: the propellant is used in proportion to the impulse delivered
+        tc, Fc = load_thrust_curve(cfg.path(e.thrust_curve))
+        Ic = np.concatenate([[0.0], np.cumsum(0.5 * (Fc[1:] + Fc[:-1]) * np.diff(tc))])
+        T_b = float(tc[np.nonzero(Fc > 0)[0][-1]])
+        m_prop = v.mass_wet - v.mass_dry if mass_model == "lvo" else Ic[-1] / (e.specific_impulse * C.G0)
+        thrust_at = lambda t: thrust_scale * float(np.interp(t, tc, Fc, right=0.0))  # noqa: E731
+        mass_at = lambda t: m0 - m_prop * float(np.interp(t, tc, Ic)) / Ic[-1]     # noqa: E731
     else:
-        mdot = e.total_impulse / (e.specific_impulse * C.G0) / T_b
+        T_b = e.burn_time
+        F = e.thrust * thrust_scale
+        if mass_model == "lvo":
+            mdot = (v.mass_wet - v.mass_dry) / T_b
+        else:
+            mdot = e.total_impulse / (e.specific_impulse * C.G0) / T_b
+        thrust_at = lambda t: F if t < T_b else 0.0                                  # noqa: E731
+        mass_at = lambda t: m0 - mdot * min(t, T_b)                                  # noqa: E731
     el = np.radians(la.rail_elevation)
 
     def rhs(t, y):
         x, z, vx, vz = y
         burning = t < T_b
-        m = m0 - mdot * min(t, T_b)
+        m = mass_at(t)
         V = np.hypot(vx, vz)
         Tt, p, rho, mu, a = atm(z + la.site_altitude)
         M = V / a
@@ -175,7 +216,7 @@ def simulate(cfg: Config, drag: DragModel, m_nose_delta: float = 0.0, ground_tem
         # on the rail the direction is fixed; afterwards thrust and drag follow the velocity
         on_rail = (x * np.cos(el) + z * np.sin(el)) < la.rail_length
         ex, ez = (np.cos(el), np.sin(el)) if (on_rail or V < 1e-6) else (vx / V, vz / V)
-        Th = F if burning else 0.0
+        Th = thrust_at(t)
         ax = (Th - Dg) * ex / m
         az = (Th - Dg) * ez / m - C.G0
         if on_rail:
@@ -183,7 +224,9 @@ def simulate(cfg: Config, drag: DragModel, m_nose_delta: float = 0.0, ground_tem
             ax, az = max(acc, 0.0) * ex, max(acc, 0.0) * ez
         return [vx, vz, ax, az]
 
-    apogee = lambda t, y: y[3]  # noqa: E731
+    # apogee: v_z crosses zero downwards; held positive until the rocket has left the pad, since a
+    # thrust curve that starts below the weight keeps v_z = 0 for the first instants
+    apogee = lambda t, y: y[3] if y[1] > 1.0 else 1.0  # noqa: E731
     apogee.terminal, apogee.direction = True, -1
     sol = solve_ivp(rhs, [0, fl.t_max], [0, 0, 0, 0], events=apogee, max_step=fl.max_step, rtol=fl.rtol,
                     atol=fl.atol, dense_output=True)

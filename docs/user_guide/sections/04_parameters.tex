@@ -38,9 +38,11 @@ Parameter & Unit & Meaning \\
 \key{vehicle.length}, \key{reference\_nose\_length} & m & total length; the nose length included in it \\
 \key{vehicle.mass\_wet}, \key{mass\_dry} & kg & lift-off and burn-out mass \\
 \key{vehicle.nozzle\_exit\_diameter} & m & removed from the base area while burning \\
+\key{vehicle.base\_diameter} & m & base behind a boat-tail (0: no boat-tail) \\
 \midrule
 \key{engine.thrust}, \key{burn\_time} & N, s & constant thrust and burn duration \\
 \key{engine.total\_impulse}, \key{specific\_impulse} & N\,s, s & set the propellant mass \\
+\key{engine.thrust\_curve} & path & measured thrust curve (CSV or .eng); replaces thrust and burn time \\
 \midrule
 \key{fins.count}, \key{root\_chord}, \key{tip\_chord}, \key{span}, \key{sweep}, \key{thickness} & --, m & trapezoidal fins \\
 \key{launch.rail\_length}, \key{rail\_elevation}, \key{site\_altitude} & m, \textdegree, m & launch rail and site \\

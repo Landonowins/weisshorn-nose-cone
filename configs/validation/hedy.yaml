@@ -1,0 +1,42 @@
+# Hedy, TU Wien Space Team, EuRoC 2025 (12.10.2025, Ponte de Sor). LOX / ethanol bi-liquid
+# (pressure-fed, N2), the closest analog of Weisshorn. Measured apogee 5231.5 m (CATS flight
+# computer). Data: RocketPy docs/examples/hedy_flight_sim.ipynb and data/rockets/hedy.
+base: _base.yaml
+
+project:
+  name: Hedy-EuRoC25
+
+vehicle:
+  diameter: 0.1328
+  length: 3.707             # tip to tail
+  reference_nose_length: 0.461   # LV-Haack 461 mm + 100 mm cylinder (part of the body here)
+  mass_wet: 24.85           # at release, after the 1.4 s hold-down (0.72 kg burnt on the pad)
+  mass_dry: 17.2            # weighed
+  nozzle_exit_diameter: 0.075
+  base_diameter: 0.108      # boat-tail 245 mm long to 108 mm
+
+engine:
+  thrust_curve: ../../data/flights/hedy/thrust.csv   # measured, from the release
+
+fins:                       # 4 biconvex free-form fins, approximated as a trapezoid
+  count: 4
+  root_chord: 0.250
+  tip_chord: 0.055
+  span: 0.108
+  sweep: 0.195
+  thickness: 0.005          # not published (assumed)
+
+launch:
+  rail_length: 11.0
+  rail_elevation: 84.0
+  site_altitude: 160.0
+
+atmosphere:                 # site: 298.82 K, 996.64 hPa (ERA5 reanalysis, RocketPy)
+  ground_temperature: 299.86
+  ground_pressure: 101501.0
+
+nose:
+  design_profile: lvhaack
+  design_fineness: 3.4714    # 461 / 132.8
+  baseline_profile: lvhaack
+  baseline_fineness: 3.4714

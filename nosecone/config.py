@@ -86,16 +86,18 @@ class VehicleConfig:
     mass_dry: float = param(45.0, "kg", "Burn-out mass used by mass_model 'lvo'", POS)
     surface_roughness: float = param(20e-6, "m", "Equivalent sand roughness of the skin (painted CFRP ~ 20 um)", NONNEG)
     nozzle_exit_diameter: float = param(0.075, "m", "Nozzle exit diameter; removed from the base area while burning", NONNEG)
+    base_diameter: float = param(0.0, "m", "Base diameter behind a boat-tail (base drag on this area); 0: no boat-tail, the base is the body diameter", NONNEG)
 
 
 @dataclass
 class EngineConfig:
-    """Constant-thrust engine model."""
+    """Engine model: constant thrust, or a measured thrust curve when `thrust_curve` is set."""
 
     thrust: float = param(4500.0, "N", "Thrust (constant over the burn)", POS)
     burn_time: float = param(9.1, "s", "Burn duration", POS)
     total_impulse: float = param(40960.0, "N s", "Total impulse (sets the propellant mass for mass_model 'isp')", POS)
     specific_impulse: float = param(200.0, "s", "Specific impulse (propellant mass = I_t / (I_sp g0))", POS)
+    thrust_curve: str = param("", "path", "Optional thrust curve, CSV or RASP .eng (time [s], thrust [N]); replaces thrust and burn_time, and the propellant is used in proportion to the impulse")
 
 
 @dataclass
@@ -565,9 +567,13 @@ def validate(cfg: Config) -> None:
     if v.mass_dry >= v.mass_wet:
         raise ConfigError("vehicle.mass_dry must be smaller than vehicle.mass_wet")
     e = cfg.engine
-    m_prop = e.total_impulse / (e.specific_impulse * G0)
-    if m_prop >= v.mass_wet:
-        raise ConfigError(f"engine: propellant mass I_t/(I_sp g0) = {m_prop:.1f} kg exceeds vehicle.mass_wet")
+    if e.thrust_curve:                  # the impulse comes from the curve, not from total_impulse
+        if not cfg.path(e.thrust_curve).exists():
+            raise ConfigError(f"engine.thrust_curve: file not found: {cfg.path(e.thrust_curve)}")
+    else:
+        m_prop = e.total_impulse / (e.specific_impulse * G0)
+        if m_prop >= v.mass_wet:
+            raise ConfigError(f"engine: propellant mass I_t/(I_sp g0) = {m_prop:.1f} kg exceeds vehicle.mass_wet")
     a = cfg.aerodynamics
     if sorted(a.machs) != list(a.machs) or len(a.machs) < 2:
         raise ConfigError("aerodynamics.machs must be at least two increasing Mach numbers")

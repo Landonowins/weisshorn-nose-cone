@@ -1,0 +1,26 @@
+# =============================================================================================
+#  Common settings of the flight-model validation (studies/flight_validation.py).
+#
+#  The flown rockets use the same drag build-up, atmosphere and numerics as the Weisshorn 720 mm
+#  study, but WITHOUT the calibration of the drag to a target apogee: k = 1, the build-up as is.
+#  Each rocket file sets its geometry, masses, measured thrust curve and launch conditions.
+#
+#  Atmosphere: the model is a troposphere from sea level; ground_temperature and ground_pressure
+#  are the sea-level values that give the temperature and pressure measured at the launch site
+#  (T0 = T_site + 0.0065 h_site, p0 = p_site (T0 / T_site)^(g / (R 0.0065))).
+# =============================================================================================
+base: ../weisshorn_720.yaml
+
+project:
+  output_dir: ../../output/validation
+
+flight:
+  calibrate: false          # the point of the validation: the build-up as is
+  drag_factor: 1.0
+  mass_model: lvo           # wet -> dry with the measured masses; propellant used in proportion to the impulse
+
+aerodynamics:               # transonic_onset 0.94 (Fluent study 720) is inherited
+  studies: [main, f45, f650]  # f650 adds fineness 2.5; below it C_D,w f^2 is held
+
+payload:
+  enabled: false
