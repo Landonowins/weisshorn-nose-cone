@@ -1,0 +1,88 @@
+\section{Summary}
+\label{sec:summary}
+
+\paragraph{What this report is for.} It gives the thermal profile, the drag and the air loads of the two
+candidate 720\,mm nose cones. It compares design A with design B, and gives the structure team (ST)
+what it needs to size the shell, the aluminium tip insert and the joint to the body tube. ST computes the
+stresses from these loads.
+
+\paragraph{The two noses.} Both are 720\,mm long and \SI{180}{mm} in diameter, with a \SI{4.5}{mm}
+rounded tip. Their geometry is in \file{2027_C_FD_NOSE-CONE-720MM_GEOMETRY}.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+ & Design A (baseline) & Design B (backup)\\
+\midrule
+Shape & LV-Haack & Von K\'arm\'an\\
+3U payload & inside the nose & elsewhere in the rocket\\
+Curved part + cylindrical coupler & \val{A-xS} + \val{A-c}\,mm & \val{B-xS} + \val{B-c}\,mm\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{keybox}[Main findings]
+\begin{enumerate}[leftmargin=*, itemsep=4pt]
+\item \textbf{Thermal profile (Section~\ref{sec:heating}).} The shell is hottest just behind the tip and
+cools along the nose. Its \textbf{outer face} stays below the \SI{120}{\celsius} of the DP490 bond: at
+most \val{th-B-nominal-Tout-hi}\,\si{\celsius} on a nominal day and \val{th-B-hot-Tout-hi}\,\si{\celsius}
+on a hot day, so the hot-day margin is small. Its \textbf{inner face} is above the \SI{67}{\celsius} of
+Req\_10 over the whole length, already on a nominal day (\val{th-A-nominal-Tin-lo} to
+\val{th-B-nominal-Tin-hi}\,\si{\celsius}); so is the air inside.
+\item \textbf{A against B, heating.} Both designs heat up the same way: the shell temperatures differ by
+less than \SI{1}{\celsius}. Only the tip insert of B is 5--6\,\si{\celsius} cooler.
+\item \textbf{A against B, drag (Section~\ref{sec:drag}).} Below Mach 1 both noses have the same drag.
+Above Mach 1 design B has \val{BlessA-M120}--\val{BlessA-M147}\,\% less: \val{B-F-M147}\,N against
+\val{A-F-M147}\,N at burnout (Fluent). B reaches \val{B-apogee}\,m against \val{A-apogee}\,m for A.
+\item \textbf{The largest structural load comes from the nose being sealed.} The air inside stays at the
+pad pressure (\val{pad-p}\,kPa), while the outside pressure falls to \val{A-nominal-LC3-pinf}\,kPa at
+apogee. The shell is then pushed outward by about \absval{A-nominal-LC3-dpmin}\,kPa, and the nose is pulled
+off the joint with up to \absval{B-hot-LC3-Fphi}\,N, close to the 2000\,N of Req\_07. Vent holes would remove
+this load.
+\item \textbf{The highest inward pressure is on the tip at burnout}: up to \val{B-hot-LC1-dpstag}\,kPa on
+the rounded tip only. Further back it is at most \val{A-hot-LC1-dpmax2}\,kPa (A) and
+\val{B-hot-LC1-dpmax2}\,kPa (B), and about 10\,kPa or less beyond 50\,mm.
+\item \textbf{Side force}: \val{B-hot-LC1-Nperdeg}\,N per degree of angle of attack at burnout (hot day),
+acting \val{A-xcp}\,mm (A) or \val{B-xcp}\,mm (B) behind the tip.
+\end{enumerate}
+\end{keybox}
+
+\begin{table}[H]
+\centering
+\caption{Values to design for. Each value is the worst case over the flight. The hot day is the worst
+case for every quantity. These are flight values, without a factor of safety, and air loads only: the
+inertial loads and the recovery load (Req\_07) are not included. \ok: below the limit; \bad: above it.}
+\label{tab:design}
+\small
+\begin{tabular}{@{}llcclc@{}}
+\toprule
+ & Unit & Design A & Design B & When & Limit\\
+\midrule
+\grouprow{6}{Temperatures (Section~\ref{sec:heating})}
+Shell outer face, 10\,mm (hottest station) & \si{\celsius} & \val{th-A-hot-Tout-hi} & \val{th-B-hot-Tout-hi} & 9.4\,s & 120 (DP490) \ok\\
+Shell outer face, shoulder & \si{\celsius} & \val{th-A-hot-Tout-shoulder} & \val{th-B-hot-Tout-shoulder} & 10.2\,s & 120 (DP490) \ok\\
+Shell inner face, 10\,mm (hottest station) & \si{\celsius} & \val{th-A-hot-Tin-hi} & \val{th-B-hot-Tin-hi} & 11.2\,s & 67 (Req\_10) \bad\\
+Shell inner face, shoulder & \si{\celsius} & \val{th-A-hot-Tin-shoulder} & \val{th-B-hot-Tin-shoulder} & 12.2\,s & 67 (Req\_10) \bad\\
+Air inside the nose (upper bound) & \si{\celsius} & \val{A-hot-Tair} & \val{B-hot-Tair} & 12\,s & 67 (Req\_10) \bad\\
+Aluminium tip insert & \si{\celsius} & \val{A-hot-Ttip} & \val{B-hot-Ttip} & 12--13\,s & \\
+\midrule
+\grouprow{6}{Drag and forces on the joint (Sections~\ref{sec:drag} and~\ref{sec:loads})}
+Drag (compression) & N & \val{A-hot-LC1-Dn} & \val{B-hot-LC1-Dn} & burnout & \\
+Pull-off force of the sealed nose (tension) & N & \absval{A-hot-LC3-Fphi} & \absval{B-hot-LC3-Fphi} & apogee & Req\_07: 2000\\
+Side force per degree of angle of attack & N/$^\circ$ & \val{A-hot-LC1-Nperdeg} & \val{B-hot-LC1-Nperdeg} & burnout & \\
+Where the side force acts, from the tip & mm & \val{A-xcp} & \val{B-xcp} & always & \\
+\midrule
+\grouprow{6}{Pressure on the shell (Section~\ref{sec:loads})}
+Inward pressure on the rounded tip & kPa & \val{A-hot-LC1-dpstag} & \val{B-hot-LC1-dpstag} & burnout & \\
+Inward pressure behind the tip ($x > 2$\,mm) & kPa & \val{A-hot-LC1-dpmax2} & \val{B-hot-LC1-dpmax2} & burnout & \\
+Outward pressure on the shell & kPa & \absval{A-hot-dpminall} & \absval{B-hot-dpminall} & coast to apogee & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Where the numbers come from.} Eight Fluent CFD runs of the two noses (2D, no angle of attack)
+at three moments of the climb, and the team's Python flight model, calibrated on these runs, for the
+rest of the flight and for the hot day. Appendix~\ref{app:method} explains the method. The data behind
+every figure are in the CSV files of \file{report_720/data/}.

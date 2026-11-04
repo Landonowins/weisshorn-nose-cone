@@ -11,6 +11,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{longtable}
 \usepackage{array}
 \usepackage{float}
 \usepackage[font=small,skip=4pt]{caption}
@@ -25,8 +26,11 @@
 \hypersetup{hidelinks}
 \usepackage{url}
 \usepackage{tikz} % Used for positioning text on title
+\usetikzlibrary{arrows.meta}
 \usepackage{eso-pic}
 \usepackage[useregional]{datetime2}
+\usepackage[most]{tcolorbox}
+\usepackage{pifont}
 
 % FIGURES: plots of report_720/figures.py in figures/, native Fluent figures in ../CFD/study720/figures/
 \graphicspath{{../CFD/source/pictures/template/}{figures/}{../CFD/study720/figures/}}
@@ -36,6 +40,30 @@
 
 % COLORS
 \definecolor{ertred}{RGB}{226,12,24}
+\definecolor{inward}{RGB}{208,59,59}   % same red as the figures
+\definecolor{outward}{RGB}{42,120,214} % same blue as the figures
+\definecolor{okgreen}{RGB}{20,130,70}
+
+% READING AIDS
+% key-result box at the start of each section: \begin{keybox}[title] ... \end{keybox}
+\newtcolorbox{keybox}[1][In short]{enhanced, breakable, sharp corners, boxrule=0pt, leftrule=3pt,
+  colback=black!4, colframe=ertred, left=8pt, right=8pt, top=6pt, bottom=6pt,
+  before skip=8pt, after skip=10pt,
+  before upper={{\color{ertred}\bfseries #1}\par\smallskip}}
+\newcommand{\ok}{\textcolor{okgreen}{\ding{51}}}   % below the limit
+\newcommand{\bad}{\textcolor{ertred}{\ding{55}}}    % above the limit
+% header of the tables with the four flight cases (columns: quantity, unit, A nom, A hot, B nom, B hot)
+\newcommand{\caseheader}{%
+ & & \multicolumn{2}{c}{Design A} & \multicolumn{2}{c}{Design B}\\
+\cmidrule(lr){3-4}\cmidrule(l){5-6}
+ & Unit & Nominal & Hot day & Nominal & Hot day\\}
+% same with a last column for the limit
+\newcommand{\caseheaderlimit}{%
+ & & \multicolumn{2}{c}{Design A} & \multicolumn{2}{c}{Design B} & \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+ & Unit & Nominal & Hot day & Nominal & Hot day & Limit\\}
+% a group title row inside a table
+\newcommand{\grouprow}[2]{\multicolumn{#1}{@{}l}{\textbf{#2}}\\}
 
 % MARGINS
 \geometry{
@@ -74,6 +102,12 @@ headsep=13mm
 
 % NUMBERS: every value quoted in the text, written by figures.py
 \input{sections/numbers}
+\input{sections/numbers_thermal} % written by thermal_profile.py
+% \absval{key}: the value without its minus sign, for sentences that give the direction in words
+\makeatletter
+\newcommand{\absval}[1]{\expandafter\expandafter\expandafter\absval@\csname v@#1\endcsname\@nil}
+\def\absval@#1#2\@nil{\ifx-#1#2\else#1#2\fi}
+\makeatother
 
 \begin{document}
 
@@ -105,7 +139,7 @@ headsep=13mm
 \bfseries\fontsize{34}{38}\selectfont
 REPORT 5 -\\
 NOSE CONE 720\,MM\\
-LOADS FOR STRUCTURE\\
+HEATING, DRAG \& LOADS\\
 }
 \newline
 \hspace*{-1.2cm}
@@ -119,7 +153,7 @@ Fabio Feig - 315169 \\ % Names and scipers
 \node[anchor=south east,inner sep=39mm] at (current page.south east) {
 \parbox[b][-2.37cm][t]{15cm}{
 \raggedleft
-\fontsize{12}{12} \selectfont \normalfont \textbf{Weisshorn -- 720\,mm Nose Cone: Pressure, Forces and Heating}
+\fontsize{12}{12} \selectfont \normalfont \textbf{Weisshorn -- 720\,mm Nose Cone: Thermal Profile, Drag A vs B and Loads}
 }
 };
 \end{tikzpicture}
@@ -154,17 +188,16 @@ Fabio Feig - 315169 \\ % Names and scipers
 \pagenumbering{arabic}
 \setcounter{page}{1}
 
-% MAIN CONTENT
-\input{sections/01_results}
-\input{sections/02_flight}
-\input{sections/03_pressure}
-\input{sections/04_forces}
-\input{sections/05_heating}
-\input{sections/06_limits}
+% MAIN CONTENT: results first, in plain words; how they were obtained is in Appendix A
+\input{sections/01_summary}
+\input{sections/02_cases}
+\input{sections/03_thermal}
+\input{sections/04_drag}
+\input{sections/05_loads}
 
 \clearpage
 \appendix
-\input{sections/A_setup}
-\input{sections/B_data}
+\input{sections/A_method}
+\input{sections/B_setup}
 
 \end{document}
