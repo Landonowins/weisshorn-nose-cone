@@ -28,3 +28,6 @@ Thumbs.db
 ME474/runs/**/*.h5
 ME474/runs/**/autosave/
 !ME474/runs/**/*.out
+# Fluent's own session files in ME474/ (auto-transcript, cleanup script)
+ME474/*.trn
+ME474/cleanup-fluent-*.bat

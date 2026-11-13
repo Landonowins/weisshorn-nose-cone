@@ -38,11 +38,15 @@ NUM = r"[-+]?\d+(?:\.\d*)?(?:[eE][-+]?\d+)?"
 
 def read_report(path, default=("cd-total", "cd-nose")):
     """Iteration -> {report name: value} from a Fluent report file (.out). Column names from its
-    '"Iteration" "..."' header line, else `default` (the layout of the Rocket Team cd files)."""
+    '("Iteration" ...)' header line, else `default` (the layout of the Rocket Team cd files).
+    Fluent 2024 R2 writes a short '"Iteration" "cd-total etc.."' line first, then the full list,
+    so the longest list of names wins."""
     names, rows = None, {}
     for line in open(path):
-        if names is None and '"Iteration"' in line:
-            names = re.findall(r'"([^"]+)"', line)[1:]
+        if '"Iteration"' in line:
+            found = re.findall(r'"([^"]+)"', line)[1:]
+            if names is None or len(found) > len(names):
+                names = found
             continue
         parts = line.split()
         if parts and parts[0].isdigit():
