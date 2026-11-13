@@ -14,6 +14,13 @@ Each step is skipped when its result is already there. The first run installs ev
 * the Claude Code home is moved to Z:\ with CLAUDE_CONFIG_DIR instead of a junction: a junction
   cannot point to a network drive, so the guide's mklink /J to Z:\ does not work.
 
+Two MCP servers are registered side by side, to compare them:
+* "fluent" is server.py. Fluent is opened by hand, then attached with connect_to_fluent
+  (server/start-server in the console). It has TUI and Scheme access.
+* "fluent-official" is Ansys's ansys-fluent-mcp. Its connect tool either launches Fluent itself
+  or attaches to the same server-info file. Its sandbox only allows the settings API (no TUI, no
+  Scheme, no file I/O). It needs Python 3.12+ and is skipped on the Ansys Python 3.10.
+
 AppLocker blocks executables and native Python modules on Z:\, so claude.exe and the Python
 packages live on C:\. The network home (Z:\, or the Documents folder when there is no Z:\) keeps
 the golden copies (tools\), the login (home\.claude) and this repository.
@@ -29,9 +36,15 @@ $Wheels     = Join-Path $Persist "tools\wheels"
 $ClaudeGold = Join-Path $Persist "tools\claude-code"
 $ClaudeHome = Join-Path $Persist "home\.claude"
 $ClaudeExe  = "$env:USERPROFILE\.local\bin\claude.exe"   # where the native installer puts it
-# The versions server.py is written for. mcp 2 renamed FastMCP, and later PyFluent releases drop
-# the oldest Fluent versions, so the guide's open ranges (>=0.30, >=1.2) are pinned here.
+# The versions server.py is written for (mcp 2 renamed FastMCP), so the guide's open ranges
+# (>=0.30, >=1.2) are pinned here. PyFluent stays below 0.44: 0.44 needs ansys-units 0.16, which
+# ansys-fluent-mcp 0.8 refuses (it pins 0.15), and it needs Python 3.12+. Both 0.43 and 0.44
+# support Fluent 2024 R2 SP05 and later.
 $Packages   = @("ansys-fluent-core>=0.43,<0.44", "mcp>=2.3,<3")
+# Ansys's own server, pinned to the version compared (it changes fast: 0.3 to 0.8 in three months).
+# It pulls fastmcp 4, which needs mcp >= 2.3, so it shares the packages above. Tested together on
+# 2026-11-13: PyFluent 0.43.0, mcp 2.3.0, ansys-fluent-mcp 0.8.0, fastmcp 4.2.0 (13 + 24 tools).
+$Official   = "ansys-fluent-mcp>=0.8,<0.9"
 
 function Step($Text) { Write-Host "`n== $Text" -ForegroundColor Cyan }
 
@@ -80,9 +93,18 @@ if (-not $Python) {
 if (-not $Python) { throw "Python 3.10+ not found. The guide expects C:\Program Files\Python313\python.exe." }
 Step "Python: $Python"
 
-$check = "import importlib.metadata as m, sys; sys.exit(not (m.version('ansys-fluent-core').startswith('0.43.') and m.version('mcp').startswith('2.')))"
+$WithOfficial = Test-Native { & $Python -c "import sys; sys.exit(sys.version_info < (3, 12))" }
+if ($WithOfficial) {
+    $Packages += $Official
+    $checkOfficial = " and m.version('ansys-fluent-mcp').startswith('0.8.')"
+} else {
+    $checkOfficial = ""
+    Write-Host "Warning: ansys-fluent-mcp needs Python 3.12+, $Python is older. Only server.py is set up." -ForegroundColor Yellow
+}
+
+$check = "import importlib.metadata as m, sys; sys.exit(not (m.version('ansys-fluent-core').startswith('0.43.') and m.version('mcp').startswith('2.')$checkOfficial))"
 if (-not (Test-Native { & $Python -c $check })) {
-    Step "Installing PyFluent and mcp on C:\ (pip --user)"
+    Step "Installing $($Packages -join ', ') on C:\ (pip --user)"
     if (-not (Test-Native { & $Python -m pip download --dest $Wheels @Packages --quiet })) {
         Write-Host "pip download failed (no internet?). Using the wheels already in $Wheels."
     }
@@ -90,7 +112,7 @@ if (-not (Test-Native { & $Python -c $check })) {
     & $Python -m pip install --user --no-index --find-links $Wheels @Packages --quiet
     if ($LASTEXITCODE -ne 0) { throw "pip install failed. Check that $Wheels holds the wheels." }
 }
-& $Python -c "import ansys.fluent.core as f, importlib.metadata as m; print('PyFluent', f.__version__, '| mcp', m.version('mcp'))"
+& $Python -c "import ansys.fluent.core as f, importlib.metadata as m; print('PyFluent', f.__version__, '| mcp', m.version('mcp'), '| ansys-fluent-mcp', m.version('ansys-fluent-mcp') if '$WithOfficial' == 'True' else 'not installed')"
 
 # --- Claude Code (binary on C:\, golden copy and login on Z:\) ------------------------------------
 if (-not (Test-Path $ClaudeExe)) {
@@ -115,25 +137,42 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
 Write-Host "Claude Code $(& $ClaudeExe --version), home $ClaudeHome"
 
 # --- MCP server registration: project .mcp.json, UTF-8 without BOM (not tracked by git) -----------
-$config = [ordered]@{
-    mcpServers = [ordered]@{
-        fluent = [ordered]@{
-            command = $Python
-            args    = @($Server)
-            env     = [ordered]@{ $AwpName = $AwpRoot; PYFLUENT_LAUNCH_CONTAINER = "0" }
+$servers = [ordered]@{
+    fluent = [ordered]@{
+        command = $Python
+        args    = @($Server)
+        env     = [ordered]@{ $AwpName = $AwpRoot; PYFLUENT_LAUNCH_CONTAINER = "0" }
+    }
+}
+if ($WithOfficial) {
+    # python -m, not the ansys-fluent-mcp.exe launcher: AppLocker may block that exe in %APPDATA%.
+    # Its session logs default to %APPDATA% (wiped with C:\), so they go to the runs folder.
+    $servers["fluent-official"] = [ordered]@{
+        command = $Python
+        args    = @("-m", "ansys.fluent.mcp")
+        env     = [ordered]@{
+            $AwpName                   = $AwpRoot
+            PYFLUENT_LAUNCH_CONTAINER  = "0"
+            FLUIDS_MCP_SESSION_LOG_DIR = "$Repo\CFD\runs\official-logs"
         }
     }
 }
+$config = [ordered]@{ mcpServers = $servers }
 [IO.File]::WriteAllText("$Repo\.mcp.json", ($config | ConvertTo-Json -Depth 5), (New-Object Text.UTF8Encoding($false)))
-Write-Host "Wrote $Repo\.mcp.json"
+Write-Host "Wrote $Repo\.mcp.json ($($servers.Keys -join ', '))"
 
 # --- Start -----------------------------------------------------------------------------------------
 $env:MCP_TIMEOUT = "60000"         # PyFluent takes a while to import
 $env:MCP_TOOL_TIMEOUT = "3600000"  # long iterate calls
 $runs = "$Repo\CFD\runs" -replace '\\', '/'
 Step "Starting Claude Code in $Repo"
-Write-Host "First run: sign in in the browser, trust the folder, approve the 'fluent' server (/mcp)."
-Write-Host "In Fluent, after reading the case:  (chdir `"$runs`")  then  server/start-server  (Enter)"
-Write-Host "Then ask Claude to connect_to_fluent with $runs"
+Write-Host "First run: sign in in the browser, trust the folder, approve the servers (/mcp)."
+Write-Host "[fluent] In Fluent, after reading the case:  (chdir `"$runs`")  then  server/start-server  (Enter)"
+Write-Host "         Then ask Claude to connect_to_fluent with $runs"
+if ($WithOfficial) {
+    Write-Host "[fluent-official] Either ask Claude to launch Fluent with the official connect tool (needs a"
+    Write-Host "         second licence if the other Fluent is still open), or to attach it to the server_info file"
+    Write-Host "         in $runs. Drive one session with one server at a time."
+}
 Set-Location $Repo
 & $ClaudeExe
