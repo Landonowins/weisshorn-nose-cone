@@ -35,7 +35,54 @@ with wall forces, `mesh/check`, `mesh/quality`). It found one bug, which is now 
   After it, `check_run.py` fills all 20 columns from the dry-run files.
 
 **Queue** `python run_queue.py A_study720@M0.95 A_study720@M1.20:pressure` (log `runs/queue_smoke.txt`):
-results in section 2a, filled in when the queue finishes.
+both runs finished without errors, 8 min each (22:34 to 22:42 and 22:42 to 22:50), including
+setup and exports. `check_run.py` fills every column of `runs/summary.csv`.
+
+### 2a. Smoke results (old mesh A_study720, 174 380 cells, pressure-based Coupled)
+
+| | A_study720_M0.95 | A_study720_M1.20_pressure | study720 reference |
+|---|---:|---:|---|
+| Iterations, cd-nose spread over the last 500 | 1200, 0.009 % | 1200, 0.000 % | |
+| `wall_nose` C_D (pressure + viscous) | **0.03200** (0.00317 + 0.02883) | **0.09456** (0.06832 + 0.02623) | M 0.95: 0.03200 (0.0032 + 0.0288). M 1.20, density-based: 0.0949 (0.0686 + 0.0263) |
+| Mass / heat imbalance (net / inlet) | 7e-8 % / 2e-7 % | 5e-9 % / 6e-9 % | target < 0.2 % |
+| Residual drop, iteration 1 → 1200 | continuity 6.0 orders, the others 5.6 to 7.7 | continuity 5.7, k 3.3, ω 3.7 orders | k and ω stall near 1e-4 in second order at M 1.20 |
+| Total pressure: inlet / axis max | 0.000 % / +1.445 % (x = −6.9 mm) | 0.000 % / +2.05 % (inside the shock, x = −6.9 mm) | |
+| Highest wall pressure vs theoretical stagnation pressure | **+1.231 %** | **−0.006 %** of pitot | M 0.95 pressure-based: +1.23 %. M 1.20 density-based: −0.3 to −0.5 % |
+| Max y+ | 0.54 | 0.63 | |
+| Min orthogonal quality / max aspect ratio | 0.088 at (718.5, 90.0) mm / 1648 at the outlet end of `wall_body` | same mesh | |
+
+**Backflow T0 fix:** no visible effect. C_D, its split and the stagnation excess are the same as in study720
+to all printed digits. With the body running out through the outlet, there is probably no backflow at all.
+
+**Axis diagnosis (item 6), M 0.95:** the inlet is clean (p0 −0.0001 %, T0 exact), so the boundary condition
+and the domain are not the cause. The total pressure then rises gradually along the decelerating
+stagnation streamline, while T0 stays within 0.002 % (an entropy decrease, not an energy error):
+
+| x [mm] | −978 | −481 | −201 | −105 | −49 | −20 | −10 | −2.1 | −0.2 | 0 (wall) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Mach | 0.949 | 0.945 | 0.935 | 0.917 | 0.885 | 0.822 | 0.742 | 0.431 | 0.073 | 0.0005 |
+| p0 / p0∞ − 1 [%] | +0.003 | +0.020 | +0.088 | +0.228 | +0.487 | +0.926 | +1.168 | +1.228 | +1.261 | +1.231 |
+
+It is neither "high at the inlet" (boundary condition) nor "only at the tip": it builds up wherever
+the flow slows down in growing cells, mostly in the last 100 mm before the tip. That is outside the
+old 15 mm, 0.2 mm sphere, where the cells grow towards 50 mm. On top of that, one axis face at x = −6.9 mm
+has +1.445 %, a local spike, probably the cell at the top of the inflation stack in front of the tip.
+
+**Does it follow the pressure-based solver? No.** At M 1.20 the same solver gives a stagnation pressure
+within −0.006 % of pitot. Behind the bow shock (standoff 7 mm) the axis total pressure is −0.66 to −0.73 %,
+against −0.72 % for a normal shock. There the deceleration happens in the 7 mm shock layer, inside
+the 0.2 mm cells. At M 0.95 it happens over about a metre of coarse cells. The +2.05 % axis maximum
+at M 1.20 lies inside the captured shock, where a total pressure computed from smeared p and M has no meaning.
+So the excess most likely follows the mesh along the subsonic deceleration, not the solver. Two checks:
+
+* the mesh study at M 0.95 (group 1): `p_stag_pct` and `p0_axis_max_pct` should fall from A_coarse to
+  A_fine, and the 40 mm sphere already puts the last 40 mm before the tip at 0.2 mm;
+* recommended extra run on the old mesh, 0.6 h: `A_study720@M0.95:density`. If the density-based solver
+  also gives about +1.2 %, the cause is the mesh. If not, it is the pressure-based discretisation.
+
+**Solver cross-check on the old mesh, M 1.20:** pressure-based C_D 0.09456 against density-based 0.0949
+(study720): −0.4 % in total, −0.4 % pressure and −0.3 % viscous. The pressure-based solver is fit for the
+transonic points. Group 4 repeats this on A_medium.
 
 ## 3. Run list, in order
 
@@ -43,7 +90,8 @@ Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20
 
 | # | Needs | Purpose | Queue |
 |---|---|---|---|
-| 0 | old mesh | smoke (running) | `A_study720@M0.95 A_study720@M1.20:pressure` |
+| 0 | old mesh | smoke (done, section 2a) | `A_study720@M0.95 A_study720@M1.20:pressure` |
+| 0b | old mesh | recommended: is the M 0.95 excess the mesh or the solver? (0.6 h, can run now) | `A_study720@M0.95:density` |
 | 1 | A_coarse, A_medium, A_fine | mesh study, subsonic | `A_coarse@M0.95 A_medium@M0.95 A_fine@M0.95` |
 | 2 | A_coarse, A_medium, A_fine | mesh study, burnout | `A_coarse@burnout A_medium@burnout A_fine@burnout` |
 | 3 | A_D10, A_D40 (+ A_medium from 1) | domain study | `A_D10@M0.95 A_D40@M0.95` |
@@ -139,6 +187,9 @@ x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on 
   In the old mesh, "1 mm, bias 3" over 1800 divisions gave 0.549 mm at x = 720, which was the
   1 → 0.55 mm step. For the cone with its outlet at 2520 mm (1780 mm of body) the medium count is 978.
 * Inflation: 45 layers of growth 1.2 from 1 µm reach 18.3 mm, with a last layer of 3.05 mm.
+* Aspect ratio: the first layer (1 µm) on the last `wall_body` cell gives 4500 / 3000 / 2000 at the outlet
+  end (coarse / medium / fine), against 1648 in the old mesh, with which both solvers converged. It is far behind the
+  nose. If a coarse run converges badly, look there first; otherwise it only explains `max_aspect` in `summary.csv`.
 * **Cell count:** the old A mesh has 174 380 cells. Of these, 45 × 2599 wall faces = 117k are inflation quads
   (wall_nose 758, wall_coupler 41, wall_body 1800 faces) and 57k are triangles. Inside a 40 mm radius around the
   tip there are 2100 mm² of fluid, which takes up to 121k triangles at 0.2 mm (54k at 0.3 mm, 273k at 0.133 mm),

@@ -1,0 +1,12 @@
+{
+ "run": "A_study720_M0.95",
+ "mesh": "A_study720",
+ "point": "M0.95",
+ "solver": "pressure",
+ "p_inf": 90714.2,
+ "mach": 0.95,
+ "t_inf": 282.149,
+ "t0": 332.951,
+ "p0": 162098.0,
+ "p0_pitot": 162098.0
+}

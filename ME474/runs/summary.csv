@@ -1,0 +1,3 @@
+run,mesh,cells,point,mach,solver,iterations,cd_nose,cd_total,cd_spread_pct,cd_p,cd_v,mass_imb_pct,heat_imb_pct,p0_inlet_pct,p0_axis_max_pct,p_stag_pct,yplus_max,min_orth_q,max_aspect
+A_study720_M0.95,A_study720,174380,M0.95,0.95,pressure,1200,0.03200,0.11330,0.009,0.0031702395,0.028833016,0.0000,0.0000,-0.000,+1.445,+1.231,0.540,8.77342e-02,1.64783e+03
+A_study720_M1.20_pressure,A_study720,174380,M1.20,1.2,pressure,1200,0.09456,0.17117,0.000,0.068324191,0.02623259,0.0000,0.0000,+0.000,+2.051,-0.006,0.631,8.77342e-02,1.64783e+03
