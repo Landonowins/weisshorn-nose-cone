@@ -17,8 +17,8 @@ from one measurement: the pressure-based speed on the old 174k mesh.
 | Last boot | 13 Nov 2026 19:03 |
 
 Speed (pressure-based Coupled, A_study720, 174 380 cells, 8 processes): **0.45 s/iteration first
-order, 0.39 s/iteration second order** (iterations 312 → 496 in 72 s). Density-based Roe-FDS has not
-run yet on this VM: below I assume **0.50 s/iteration** at 174k and correct it after the first density run.
+order, 0.39 s/iteration second order** (iterations 312 → 496 in 72 s). Density-based Roe-FDS
+(run 0b): **0.465 s/iteration first order, 0.51 s/iteration on average in second order**, so section 4 uses 0.50 s/iteration at 174k.
 Time per iteration scales with the cell count.
 
 ## 2. Smoke tests
@@ -73,12 +73,41 @@ within −0.006 % of pitot. Behind the bow shock (standoff 7 mm) the axis total 
 against −0.72 % for a normal shock. There the deceleration happens in the 7 mm shock layer, inside
 the 0.2 mm cells. At M 0.95 it happens over about a metre of coarse cells. The +2.05 % axis maximum
 at M 1.20 lies inside the captured shock, where a total pressure computed from smeared p and M has no meaning.
-So the excess most likely follows the mesh along the subsonic deceleration, not the solver. Two checks:
+That fits an error from the subsonic deceleration through coarse cells, but it does not prove it. The
+density-based run on the same mesh (section 2b) did not converge and cannot decide between mesh and
+solver. The check is now the mesh study at M 0.95 (group 1): if `p_stag_pct` and `p0_axis_max_pct`
+fall from A_coarse to A_fine, the excess is a discretisation error of the pressure-based run. The
+40 mm sphere already puts the last 40 mm before the tip at 0.2 mm.
 
-* the mesh study at M 0.95 (group 1): `p_stag_pct` and `p0_axis_max_pct` should fall from A_coarse to
-  A_fine, and the 40 mm sphere already puts the last 40 mm before the tip at 0.2 mm;
-* recommended extra run on the old mesh, 0.6 h: `A_study720@M0.95:density`. If the density-based solver
-  also gives about +1.2 %, the cause is the mesh. If not, it is the pressure-based discretisation.
+### 2b. A_study720@M0.95:density (14 Nov): no convergence, stopped at iteration ≈ 5300
+
+Run 0b was meant to tell whether the M 0.95 excess comes from the mesh or the solver. It ran the density
+schedule (4000 iterations), then the 500-iteration blocks. It did not converge:
+
+* **C_D limit cycle:** the nose C_D oscillates between 0.0290 and 0.0336 (±7 % about 0.0313) with a period
+  of about 460 iterations. The cycle stopped decaying after iteration 4000 (peaks 0.03343 and 0.03358),
+  and continuity stalls near 8e-3, about 2 orders down. The spread over the last 500 iterations is 13 %.
+* **Stagnation pressure drifts,** in autosaves written at the block ends:
+
+  | Iteration | 2000 | 2500 | 3000 | 3500 | 4000 | 4500 | 5000 | ≈ 5300 (stop) |
+  |---|---:|---:|---:|---:|---:|---:|---:|---:|
+  | Highest wall p vs p0 [%] | −3.24 | −1.55 | +0.55 | +1.80 | +2.74 | +2.99 | +2.76 | −2.00 |
+  | Axis max p0 [%] | +0.24 | +0.21 | +0.68 | +1.81 | +2.75 | +3.00 | +2.77 | +0.02 |
+  | Nose C_D | 0.03626 | 0.03511 | 0.03522 | 0.03399 | 0.03273 | 0.03162 | 0.03065 | 0.03316 |
+
+  The inlet stays exact (|p0_inlet| ≤ 0.002 %). The stagnation pressure is not steady in this run, so
+  it cannot be compared with the pressure-based +1.23 %.
+* **Stopped by hand** at about iteration 5300, after 5023 iterations in 42 min. The remaining blocks (up to 9000 iterations)
+  would only have ended NOT CONVERGED. `run_queue.py` was killed during a block. Fluent kept iterating and
+  processed the save and exports between iterations, so the files in `runs/A_study720_M0.95_density/` are a
+  snapshot at about iteration 5300 of an unconverged run. Re-reading the saved data reproduces those exports.
+  Killing `run_queue.py` therefore does not stop Fluent. Stop it in the Fluent console instead, or let the block end.
+* **Speed:** 0.465 s/iteration first order, 0.51 s/iteration on average over iterations 500 to 5000
+  (174k cells), as assumed in section 4.
+* **Consequence for the plan:** none for the defaults. Density-based at M ≤ 1.10 does not settle with this
+  schedule (Roe-FDS, CFL 5), which confirms pressure-based up to M 1.10. Making the density-based
+  solver converge at M 0.95 would need other numerics (for example a lower CFL in second order). That is not proposed,
+  since density-based is not the production solver there.
 
 **Solver cross-check on the old mesh, M 1.20:** pressure-based C_D 0.09456 against density-based 0.0949
 (study720): −0.4 % in total, −0.4 % pressure and −0.3 % viscous. The pressure-based solver is fit for the
@@ -91,7 +120,7 @@ Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20
 | # | Needs | Purpose | Queue |
 |---|---|---|---|
 | 0 | old mesh | smoke (done, section 2a) | `A_study720@M0.95 A_study720@M1.20:pressure` |
-| 0b | old mesh | recommended: is the M 0.95 excess the mesh or the solver? (0.6 h, can run now) | `A_study720@M0.95:density` |
+| 0b | old mesh | done 14 Nov: no convergence (limit cycle), question goes to group 1 (section 2b) | `A_study720@M0.95:density` |
 | 1 | A_coarse, A_medium, A_fine | mesh study, subsonic | `A_coarse@M0.95 A_medium@M0.95 A_fine@M0.95` |
 | 2 | A_coarse, A_medium, A_fine | mesh study, burnout | `A_coarse@burnout A_medium@burnout A_fine@burnout` |
 | 3 | A_D10, A_D40 (+ A_medium from 1) | domain study | `A_D10@M0.95 A_D40@M0.95` |
@@ -260,8 +289,11 @@ value is expected.
    the crossing is below 0.95, and a point at M 0.90 has to be added to `fluent_points.csv` (via `make_points.py`;
    I would ask first).
 4. **Where to keep the case/data** (section 8).
-5. **Pressure-based solver for M ≤ 1.10**: depends on the smoke results (section 2a). It stays as it is
-   unless they show a problem.
+5. **Pressure-based solver for M ≤ 1.10**: confirmed. Density-based at M 0.95 runs into a limit cycle
+   (section 2b). Whether the pressure-based +1.23 % stagnation excess is a mesh error is decided by
+   `p_stag_pct` in group 1. If it does not shrink with refinement, it has to be reported as a limitation
+   of the pressure-based runs. Rough size: +1.23 % of p0 is ΔCp ≈ 0.035 on the stagnation region. Over the
+   64 mm² projected area of the 4.5 mm tip, that is about 1e-4 in C_D, 0.3 % of 0.032.
 
 ## 8. Case and data files of the final runs
 
