@@ -24,3 +24,7 @@ server_info*.txt
 .idea/
 .DS_Store
 Thumbs.db
+# ME-474 Fluent runs: keep the small text outputs (report files, exports, summary), not the case/data
+ME474/runs/**/*.h5
+ME474/runs/**/autosave/
+!ME474/runs/**/*.out
