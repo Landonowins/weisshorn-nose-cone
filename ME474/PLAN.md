@@ -260,6 +260,9 @@ x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on 
   near the rear of the nose (recomputed from the .msh: 0.9147; only 2 cells above 0.85, mean 0.062). Ansys
   rates 0.80-0.94 acceptable. `wall_coupler` 13 faces of 1.538 mm on 20 mm, `wall_body` 1.498 to 4.494 mm,
   0.30 mm out to r = 40 mm.
+* **B_fine, 14 Nov:** 449 190 cells. Skewness max 0.880 / avg 0.078, orthogonal quality min 0.302 / avg 0.952,
+  aspect ratio max 1999 / avg 35. `wall_body` 0.666 to 1.999 mm, `wall_coupler` 30 faces of 0.667 mm,
+  0.133 mm out to r = 40 mm. B: r21 = 1.382, r32 = 1.345 (A: 1.380 / 1.345).
 
 * Behaviour (hard/soft), growth rate and the other defaults: as in study720.
 * `wall_body` divisions: for a 1800 mm body (outlet at 2520 mm) with bias 3. The bias factor is the
