@@ -282,13 +282,13 @@ value is expected.
    of the medium mesh, otherwise 40 D for M ≤ 1.10 (B_D40 to mesh). At M 0.95 the 20 D domain acts like
    ≈ 6 D (√(1 − M²) = 0.31), and M 1.00 is the worst case. Optional, if 20 vs 40 D is close at M 0.95:
    `A_D40@M1.00` against `A_medium@M1.00` (0.2 to 0.8 h).
-3. **Drag-rise Mach number**: proposal dC_D/dM = 0.1, from finite differences of the `wall_nose` C_D
+3. **Drag-rise Mach number: decided 14 Nov, dC_D/dM = 0.1**, from finite differences of the `wall_nose` C_D
    between neighbouring points (slope at each midpoint, crossing by linear interpolation). Study720 gives
    0.032 at M 0.95 and about 0.095 at M 1.20, a mean slope of 0.25, so the crossing lies between
    about 0.95 and 1.0. Hence M 0.98 in production. If the slope from 0.95 to 0.98 is already above 0.1,
    the crossing is below 0.95, and a point at M 0.90 has to be added to `fluent_points.csv` (via `make_points.py`;
    I would ask first).
-4. **Where to keep the case/data** (section 8).
+4. **Where to keep the case/data: decided 14 Nov, `Z:\ME474\runs\`** (section 8).
 5. **Pressure-based solver for M ≤ 1.10**: confirmed. Density-based at M 0.95 runs into a limit cycle
    (section 2b). Whether the pressure-based +1.23 % stagnation excess is a mesh error is decided by
    `p_stag_pct` in group 1. If it does not shrink with refinement, it has to be reported as a limitation
@@ -301,9 +301,10 @@ Size: a converged run on 174k cells writes about 24 MB of case + data (5 MB case
 9 MB of the `_init` data is less because the iteration history is not in it yet). So about 35 MB at 250k and
 65 MB at 480k. About 25 final runs need **≈ 0.9 GB**, without the `_init` files and `autosave/`.
 
-Proposal: keep working on `C:` and copy each finished run's final `<run>.cas.h5` / `<run>.dat.h5` to your
+Decided on 14 Nov: keep working on `C:` and copy each finished run's final `<run>.cas.h5` / `<run>.dat.h5` to your
 personal EPFL home **`Z:\ME474\runs\`**. It holds 2.3 GB free, is backed up, is not purged with the VM
-profile, and is visible from every DLL VM. AppLocker on Z: only blocks executables. Once per run, after `check_run.py`:
+profile, and is visible from every DLL VM. AppLocker on Z: only blocks executables. Once per run, after `check_run.py`
+(the three old-mesh runs of 13-14 Nov were copied on 14 Nov, 66 MB):
 
 ```powershell
 robocopy C:\Users\feig\weisshorn-nose-cone-git\ME474\runs Z:\ME474\runs *.cas.h5 *.dat.h5 /S /XD autosave /XF *_init.cas.h5 *_init.dat.h5
