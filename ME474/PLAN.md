@@ -303,6 +303,10 @@ x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on 
 * **A_D10, 14 Nov:** 221 469 cells (A_medium recipe). Skewness max 0.801 / avg 0.069, orthogonal quality min
   0.416 / avg 0.958, aspect ratio max 2999 / avg 69. Inlet x = -1800, far field y = 1800 (edges 1800 / 4320 mm),
   outlet 1710 mm, face area 7.567314e+06 mm² as in section 6. Made from a duplicate of A's Workbench system.
+* **A_D40, 15 Nov:** 273 310 cells (A_medium recipe). Skewness max 0.877 / avg 0.068 (single triangles on top of
+  the inflation stack along the nose, e.g. (504, 96) mm), orthogonal quality min 0.238 / avg 0.959, aspect ratio
+  max 2999 / avg 56. Inlet x = -7200, far field y = 7200 (edges 7200 / 9720 mm), outlet 7110 mm, face area
+  6.977531e+07 mm² as in section 6.
 
 * Behaviour (hard/soft), growth rate and the other defaults: as in study720.
 * `wall_body` divisions: for a 1800 mm body (outlet at 2520 mm) with bias 3. The bias factor is the
