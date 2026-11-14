@@ -113,6 +113,27 @@ schedule (4000 iterations), then the 500-iteration blocks. It did not converge:
 (study720): −0.4 % in total, −0.4 % pressure and −0.3 % viscous. The pressure-based solver is fit for the
 transonic points. Group 4 repeats this on A_medium.
 
+### 2c. Mesh study A at M 0.95 (group 1, 14 Nov)
+
+| | A_coarse | A_medium | A_fine | Richardson | GCI fine / medium | p |
+|---|---:|---:|---:|---:|---:|---:|
+| cells | 128 834 | 232 937 | 443 322 | | r32 = 1.345, r21 = 1.380 | |
+| cd_nose | 0.03206 | 0.03198 | 0.03191 | 0.03163 | 1.08 % / 1.35 % | 0.70 |
+| cd_p | 0.00324 | 0.00318 | 0.00310 | 0.00277 | 13.5 % / 10.7 % | |
+| cd_v | 0.02882 | 0.02880 | 0.02881 | 0.02881 | 0.02 % / 0.06 % | |
+| p_stag_pct (excess) | +0.454 | +0.704 | +0.735 | +0.738 | | |
+
+* cd_nose converges monotonically, asymptotic ratio 0.998 (in the asymptotic range). The low observed order
+  p = 0.70 comes from the pressure part; the viscous part is mesh-independent already on coarse. The
+  pressure-drag GCI is large in per cent only because cd_p is small at M 0.95 (0.0004 absolute).
+* **The stagnation excess does not shrink with the mesh:** it converges to about +0.74 % (Richardson),
+  against +1.23 % on the old mesh with the 15 mm sphere. So it is not a discretisation error that vanishes
+  on finer meshes inside the 40 mm sphere; the larger sphere halved it, and further refinement does not
+  remove it. Still open: the domain study (group 3) and a look at k and total pressure along the axis.
+  Effect on C_D stays small (section 2a: about 1e-4).
+* All three runs converged within the 1200-iteration schedule (cd spread ≤ 0.005 %), mass and heat balance
+  below 1e-4 %, y+ max 0.54. Fluent's minimum orthogonal quality (its own definition): 0.22 / 0.19 / 0.15.
+
 ## 3. Run list, in order
 
 Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20 (the defaults).
@@ -123,6 +144,7 @@ Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20
 | 0b | old mesh | done 14 Nov: no convergence (limit cycle), question goes to group 1 (section 2b) | `A_study720@M0.95:density` |
 | 1 | A_coarse, A_medium, A_fine | mesh study, subsonic | `A_coarse@M0.95 A_medium@M0.95 A_fine@M0.95` |
 | 2 | A_coarse, A_medium, A_fine | mesh study, burnout | `A_coarse@burnout A_medium@burnout A_fine@burnout` |
+| 2B | B_coarse, B_medium, B_fine | mesh study for B too (decided 14 Nov); B_medium's two runs are also production | `B_coarse@M0.95 B_medium@M0.95 B_fine@M0.95 B_coarse@burnout B_medium@burnout B_fine@burnout` |
 | 3 | A_D10, A_D40 (+ A_medium from 1) | domain study | `A_D10@M0.95 A_D40@M0.95` |
 | 4 | A_medium | solver cross-check (the density run is also production) | `A_medium@M1.20:pressure A_medium@M1.20` |
 | 5 | cone | validation (Taylor-Maccoll) | `cone@burnout cone@M1.20` |
