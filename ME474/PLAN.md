@@ -209,7 +209,7 @@ x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on 
 | Sphere of influence at the tip (centre x = 0, y = 0), radius 40 mm, element size | 0.30 mm | 0.20 mm | 0.133 mm |
 | Inflation on the three walls: first layer, layers, growth | 1 µm, 45, 1.2 | 1 µm, 45, 1.2 | 1 µm, 45, 1.2 |
 | Expected cells (estimate) | ≈ 130k | ≈ 250k | ≈ 480k |
-| Built | | 232 937 (14 Nov) | |
+| Built | 128 834 (14 Nov) | 232 937 (14 Nov) | |
 
 * **A_medium, 14 Nov** (Meshing 2024 R2 works again after the JScript9Legacy registry fix): 232 937 cells,
   147 932 triangles + 85 005 quads (= 45 layers × 1889 wall faces). Meshing metrics: skewness max 0.809 /
@@ -218,6 +218,11 @@ x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on 
   size step is gone. `wall_nose` and the triangles are 0.20 mm out to r = 40 mm (98.7k triangles inside
   it, against 13k in the old mesh), 0.8 mm at r = 40-60 mm on the wall. Same zone names and types as
   A_study720. All values in `meshes/mesh_quality.csv`.
+* **A_coarse, 14 Nov:** 128 834 cells (71 909 triangles + 56 925 quads = 45 × 1265 wall faces). Skewness
+  max 0.777 / avg 0.059, orthogonal quality min 0.505 / avg 0.965, aspect ratio max 4494 / avg 119.
+  `wall_body` 660 faces from 1.498 to 4.494 mm, `wall_nose` 1.50 mm, `wall_coupler` 1.519 mm (27 faces on
+  41 mm), 0.30 mm out to r = 40 mm. r21 = √(232 937 / 128 834) = 1.34. A_fine needs at least 394k cells
+  for r32 ≥ 1.3.
 
 * Behaviour (hard/soft), growth rate and the other defaults: as in study720.
 * `wall_body` divisions: for a 1800 mm body (outlet at 2520 mm) with bias 3. The bias factor is the
