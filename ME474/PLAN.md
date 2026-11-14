@@ -209,7 +209,7 @@ x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on 
 | Sphere of influence at the tip (centre x = 0, y = 0), radius 40 mm, element size | 0.30 mm | 0.20 mm | 0.133 mm |
 | Inflation on the three walls: first layer, layers, growth | 1 µm, 45, 1.2 | 1 µm, 45, 1.2 | 1 µm, 45, 1.2 |
 | Expected cells (estimate) | ≈ 130k | ≈ 250k | ≈ 480k |
-| Built | 128 834 (14 Nov) | 232 937 (14 Nov) | |
+| Built | 128 834 (14 Nov) | 232 937 (14 Nov) | 443 322 (14 Nov) |
 
 * **A_medium, 14 Nov** (Meshing 2024 R2 works again after the JScript9Legacy registry fix): 232 937 cells,
   147 932 triangles + 85 005 quads (= 45 layers × 1889 wall faces). Meshing metrics: skewness max 0.809 /
@@ -223,6 +223,11 @@ x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on 
   `wall_body` 660 faces from 1.498 to 4.494 mm, `wall_nose` 1.50 mm, `wall_coupler` 1.519 mm (27 faces on
   41 mm), 0.30 mm out to r = 40 mm. r21 = √(232 937 / 128 834) = 1.34. A_fine needs at least 394k cells
   for r32 ≥ 1.3.
+* **A_fine, 14 Nov:** 443 322 cells (316 017 triangles + 127 305 quads = 45 × 2829 wall faces). Skewness
+  max 0.853 / avg 0.079, orthogonal quality min 0.312 / avg 0.952, aspect ratio max 1999 / avg 35.
+  `wall_body` 1484 faces from 0.666 to 1.999 mm, `wall_nose` 0.667 mm, `wall_coupler` 0.672 mm (61 faces),
+  0.133 mm out to r = 40 mm (232k triangles inside it). r32 = √(443 322 / 232 937) = 1.38. All three A meshes
+  are done, so groups 1 and 2 (mesh study) can start.
 
 * Behaviour (hard/soft), growth rate and the other defaults: as in study720.
 * `wall_body` divisions: for a 1800 mm body (outlet at 2520 mm) with bias 3. The bias factor is the
