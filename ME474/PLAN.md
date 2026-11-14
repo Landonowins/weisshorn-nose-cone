@@ -281,6 +281,9 @@ x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on 
 * **B_fine, 14 Nov:** 449 190 cells. Skewness max 0.880 / avg 0.078, orthogonal quality min 0.302 / avg 0.952,
   aspect ratio max 1999 / avg 35. `wall_body` 0.666 to 1.999 mm, `wall_coupler` 30 faces of 0.667 mm,
   0.133 mm out to r = 40 mm. B: r21 = 1.382, r32 = 1.345 (A: 1.380 / 1.345).
+* **A_D10, 14 Nov:** 221 469 cells (A_medium recipe). Skewness max 0.801 / avg 0.069, orthogonal quality min
+  0.416 / avg 0.958, aspect ratio max 2999 / avg 69. Inlet x = -1800, far field y = 1800 (edges 1800 / 4320 mm),
+  outlet 1710 mm, face area 7.567314e+06 mm² as in section 6. Made from a duplicate of A's Workbench system.
 
 * Behaviour (hard/soft), growth rate and the other defaults: as in study720.
 * `wall_body` divisions: for a 1800 mm body (outlet at 2520 mm) with bias 3. The bias factor is the
