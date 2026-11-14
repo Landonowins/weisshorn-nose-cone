@@ -228,6 +228,11 @@ x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on 
   `wall_body` 1484 faces from 0.666 to 1.999 mm, `wall_nose` 0.667 mm, `wall_coupler` 0.672 mm (61 faces),
   0.133 mm out to r = 40 mm (232k triangles inside it). r21 = √(443 322 / 232 937) = 1.38 (fine / medium; Celik numbering, 1 = fine as in gci.py). All three A meshes
   are done, so groups 1 and 2 (mesh study) can start.
+* **B_medium, 14 Nov:** 235 223 cells (150 218 triangles + 85 005 quads). Skewness max 0.815 / avg 0.069,
+  orthogonal quality min 0.467 / avg 0.958, aspect ratio max 2999 / avg 65. Same checks as A_medium pass:
+  `wall_body` 1.000 to 2.999 mm, `wall_coupler` 1.000 mm (700 to 720), 0.20 mm out to r = 40 mm, face area
+  2.182686e+07 mm² as in section 6. Geometry: B's 2D Discovery file `FFF-1.dsco` (1 Nov) restored from
+  the shared Drive, because the Workbench project still pointed B's geometry cell at the 3D STEP.
 
 * Behaviour (hard/soft), growth rate and the other defaults: as in study720.
 * `wall_body` divisions: for a 1800 mm body (outlet at 2520 mm) with bias 3. The bias factor is the
