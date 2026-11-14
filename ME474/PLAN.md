@@ -255,6 +255,11 @@ x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on 
   `wall_body` 1.000 to 2.999 mm, `wall_coupler` 1.000 mm (700 to 720), 0.20 mm out to r = 40 mm, face area
   2.182686e+07 mm² as in section 6. Geometry: B's 2D Discovery file `FFF-1.dsco` (1 Nov) restored from
   the shared Drive, because the Workbench project still pointed B's geometry cell at the 3D STEP.
+* **B_coarse, 14 Nov:** 129 993 cells. Skewness max 0.915 / avg 0.062, orthogonal quality min 0.345 / avg 0.963,
+  aspect ratio max 4494 / avg 117. The 0.915 is one triangle at (581, 101) mm, on top of the inflation stack
+  near the rear of the nose (recomputed from the .msh: 0.9147; only 2 cells above 0.85, mean 0.062). Ansys
+  rates 0.80-0.94 acceptable. `wall_coupler` 13 faces of 1.538 mm on 20 mm, `wall_body` 1.498 to 4.494 mm,
+  0.30 mm out to r = 40 mm.
 
 * Behaviour (hard/soft), growth rate and the other defaults: as in study720.
 * `wall_body` divisions: for a 1800 mm body (outlet at 2520 mm) with bias 3. The bias factor is the
