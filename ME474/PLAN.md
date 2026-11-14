@@ -221,12 +221,12 @@ x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on 
 * **A_coarse, 14 Nov:** 128 834 cells (71 909 triangles + 56 925 quads = 45 × 1265 wall faces). Skewness
   max 0.777 / avg 0.059, orthogonal quality min 0.505 / avg 0.965, aspect ratio max 4494 / avg 119.
   `wall_body` 660 faces from 1.498 to 4.494 mm, `wall_nose` 1.50 mm, `wall_coupler` 1.519 mm (27 faces on
-  41 mm), 0.30 mm out to r = 40 mm. r21 = √(232 937 / 128 834) = 1.34. A_fine needs at least 394k cells
-  for r32 ≥ 1.3.
+  41 mm), 0.30 mm out to r = 40 mm. r32 = √(232 937 / 128 834) = 1.34 (medium / coarse). A_fine needs at
+  least 394k cells for r21 ≥ 1.3.
 * **A_fine, 14 Nov:** 443 322 cells (316 017 triangles + 127 305 quads = 45 × 2829 wall faces). Skewness
   max 0.853 / avg 0.079, orthogonal quality min 0.312 / avg 0.952, aspect ratio max 1999 / avg 35.
   `wall_body` 1484 faces from 0.666 to 1.999 mm, `wall_nose` 0.667 mm, `wall_coupler` 0.672 mm (61 faces),
-  0.133 mm out to r = 40 mm (232k triangles inside it). r32 = √(443 322 / 232 937) = 1.38. All three A meshes
+  0.133 mm out to r = 40 mm (232k triangles inside it). r21 = √(443 322 / 232 937) = 1.38 (fine / medium; Celik numbering, 1 = fine as in gci.py). All three A meshes
   are done, so groups 1 and 2 (mesh study) can start.
 
 * Behaviour (hard/soft), growth rate and the other defaults: as in study720.
