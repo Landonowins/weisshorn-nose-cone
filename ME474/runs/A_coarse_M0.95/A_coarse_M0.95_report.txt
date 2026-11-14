@@ -1,0 +1,67 @@
+Transcript Start Time:  20:05:58, 14 Nov 2026 W. Europe Standard Time 
+Current Directory: "C:\Users\feig\weisshorn-nose-cone-git\ME474"
+
+Build Time: May 13 2024 11:28:30 EST  Build Id: 10192 
+Executable Path: C:/PROGRA~1/ANSYS/v242/fluent/ntbin/win64/fluent.exe
+
+-----------------------------------------------------------------------------------------------
+ID    Hostname       Core  O.S.         PID    Vendor                                         
+-----------------------------------------------------------------------------------------------
+n7    DLLSTIGEPC211  8/16  Windows-x64  14892  11th Gen Intel(R) Core(TM) i7-11700 @ 2.50GHz  
+n6    DLLSTIGEPC211  7/16  Windows-x64  13496  11th Gen Intel(R) Core(TM) i7-11700 @ 2.50GHz  
+n5    DLLSTIGEPC211  6/16  Windows-x64  19088  11th Gen Intel(R) Core(TM) i7-11700 @ 2.50GHz  
+n4    DLLSTIGEPC211  5/16  Windows-x64  10812  11th Gen Intel(R) Core(TM) i7-11700 @ 2.50GHz  
+n3    DLLSTIGEPC211  4/16  Windows-x64  15876  11th Gen Intel(R) Core(TM) i7-11700 @ 2.50GHz  
+n2    DLLSTIGEPC211  3/16  Windows-x64  6884   11th Gen Intel(R) Core(TM) i7-11700 @ 2.50GHz  
+n1    DLLSTIGEPC211  2/16  Windows-x64  20236  11th Gen Intel(R) Core(TM) i7-11700 @ 2.50GHz  
+n0*   DLLSTIGEPC211  1/16  Windows-x64  11992  11th Gen Intel(R) Core(TM) i7-11700 @ 2.50GHz  
+host  DLLSTIGEPC211        Windows-x64  16628  11th Gen Intel(R) Core(TM) i7-11700 @ 2.50GHz  
+
+MPI Option Selected: intel
+Selected system interconnect: default
+-----------------------------------------------------------------------------------------------
+
+Cortex Process ID: 14760 
+License Server Path: 1055@software.epfl.ch 
+
+Forces
+                          Forces [N]                                                                                                                                Coefficients                                                                                                                             
+Zone                      Pressure                                      Viscous                                       Total                                         Pressure                                      Viscous                                       Total                                        
+wall_body                 (-2.5290166e-16 0 0)                          (115.02085 0 0)                               (115.02085 0 0)                               (-1.7354093e-19 0 0)                          (0.078927221 0 0)                             (0.078927221 0 0)                            
+wall_coupler              (0 0 0)                                       (2.9275387 0 0)                               (2.9275387 0 0)                               (0 0 0)                                       (0.0020088749 0 0)                            (0.0020088749 0 0)                           
+wall_nose                 (4.7231686 0 0)                               (41.993572 0 0)                               (46.716741 0 0)                               (0.0032410348 0 0)                            (0.028815958 0 0)                             (0.032056993 0 0)                            
+------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- ---------------------------------------------
+Net                       (4.7231686 0 0)                               (159.94196 0 0)                               (164.66513 0 0)                               (0.0032410348 0 0)                            (0.10975205 0 0)                              (0.11299309 0 0)                             
+
+Forces - Direction Vector (1 0 0)
+                          Forces [N]                                      Coefficients                                   
+Zone                      Pressure        Viscous         Total           Pressure        Viscous         Total          
+wall_body                 -2.5290166e-16  115.02085       115.02085       -1.7354093e-19  0.078927221     0.078927221    
+wall_coupler              0               2.9275387       2.9275387       0               0.0020088749    0.0020088749   
+wall_nose                 4.7231686       41.993572       46.716741       0.0032410348    0.028815958     0.032056993    
+------------------------- --------------- --------------- --------------- --------------- --------------- ---------------
+Net                       4.7231686       159.94196       164.66513       0.0032410348    0.10975205      0.11299309     
+
+ Domain Extents:
+   x-coordinate: min (m) = -3.600000e+00, max (m) = 2.520000e+00
+   y-coordinate: min (m) = 0.000000e+00, max (m) = 3.600000e+00
+ Volume statistics:
+   minimum volume (m3): 2.825520e-13
+   maximum volume (m3): 1.099544e-01
+     total volume (m3): 2.491194e+02
+   minimum 2d volume (m3): 2.994149e-10
+   maximum 2d volume (m3): 5.279834e-03
+ Face area statistics:
+   minimum face area (m2): 9.924220e-07
+   maximum face area (m2): 1.185668e-01
+ Checking mesh......................................
+Done.
+ 
+Mesh Quality:
+
+Minimum Orthogonal Quality =  2.22848e-01 cell 2277 on zone 2 (ID: 122663 on partition: 0) at location ( 5.99246e-01,  1.03497e-01)
+
+
+Maximum Aspect Ratio =  4.49365e+03 cell 0 on zone 2 (ID: 1 on partition: 3) at location ( 2.51775e+00,  9.00005e-02)
+Transcript Stop Time:  20:06:03, 14 Nov 2026 W. Europe Standard Time 
+Total Transcript Time: 0 Minute 5 Second.
