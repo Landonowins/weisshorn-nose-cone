@@ -152,6 +152,25 @@ transonic points. Group 4 repeats this on A_medium.
   −0.14 % (fine), which are physical.
 * Medium and fine converged within the 4000-iteration schedule; mass and heat balance below 1e-3 %, y+ max 0.72.
 
+### 2e. Mesh study B at M 0.95 and the A-B difference (group 2B, 15 Nov)
+
+cd_nose, mean of the last 100 iterations:
+
+| | coarse | medium | fine |
+|---|---:|---:|---:|
+| A | 0.032057 | 0.031985 | 0.031913 |
+| B | 0.031918 | 0.031940 | 0.031858 |
+| ΔC_D = A − B | +0.000139 | +0.000045 | +0.000054 |
+
+* B converges **oscillatory** (up from coarse to medium, down to fine), so Celik's GCI formula does not apply
+  (gci.py: p = 3.8, asymptotic ratio 0.09). Use the oscillation range instead: 0.000082, 0.26 % of C_D.
+* ΔC_D is positive on every mesh (A marginally higher), between +0.4e-4 and +1.4e-4 (0.15-0.45 % of C_D).
+  It is smaller than A's own GCI on the fine mesh (1.08 % = 0.00035). Combined uncertainty
+  √(0.00035² + 0.00008²) ≈ 0.00036, so **ΔC_D = +0.00005 ± 0.00036 at M 0.95: zero is inside the band, A and B
+  have equal drag at M 0.95 within the numerical uncertainty.** (The errors of A and B are probably correlated,
+  same recipe, so this band is conservative.)
+* B's stagnation excess: +0.341 / +0.438 / +0.534 % (coarse / medium / fine), the same trend as A.
+
 ## 3. Run list, in order
 
 Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20 (the defaults).
