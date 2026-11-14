@@ -1,0 +1,3 @@
+mesh,date,elements,nodes,triangles,quads,skew_max,skew_avg,oq_min,oq_avg,ar_max,ar_avg,wall_body_faces,wall_body_first_mm,wall_body_last_mm,wall_nose_faces,tip_cell_mm,tri_in_r40
+A_study720,2026-11-01,174380,147236,57425,116955,0.90,,0.088,,1648,,1800,0.549,1.648,758,0.2,13092
+A_medium,2026-11-14,232937,160244,147932,85005,0.80859,0.068796,0.33899,0.95855,2998.9,66.023,989,1.000,2.999,859,0.2,98715
