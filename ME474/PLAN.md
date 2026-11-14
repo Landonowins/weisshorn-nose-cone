@@ -134,6 +134,24 @@ transonic points. Group 4 repeats this on A_medium.
 * All three runs converged within the 1200-iteration schedule (cd spread ≤ 0.005 %), mass and heat balance
   below 1e-4 %, y+ max 0.54. Fluent's minimum orthogonal quality (its own definition): 0.22 / 0.19 / 0.15.
 
+### 2d. Mesh study A at burnout (group 2, 14 Nov)
+
+| | A_coarse | A_medium | A_fine | Richardson | GCI fine / medium |
+|---|---:|---:|---:|---:|---:|
+| cd_nose, mean of the last 500 iterations | 0.093448 | 0.093441 | 0.093428 | 0.093409 | 0.025 % / 0.015 % |
+| cd_p (last iteration) | 0.069083 | 0.069039 | 0.069055 | | |
+| cd_v (last iteration) | 0.024404 | 0.024402 | 0.024387 | | |
+| p_stag_pct (tip vs pitot) | +2.224 | −0.303 | −0.135 | | |
+
+* At burnout C_D is mesh-independent: the three meshes agree within 0.02 %, which is the level of the iterative
+  noise (A_fine still moves by 0.034 % over its last 500 iterations), so the formal order (p = 1.6, asymptotic
+  ratio 0.35) means little. Against the 15 % A-B difference at burnout this is negligible.
+* A_coarse oscillates by ±0.05 % (period about 57 iterations) around a constant mean and ran all 8 extra blocks,
+  so the queue marked it NOT CONVERGED on the max-min criterion only; its mean is the value above. The coarse
+  0.3 mm cells also smear the bow shock: the tip pressure is +2.2 % above pitot, against −0.30 % (medium) and
+  −0.14 % (fine), which are physical.
+* Medium and fine converged within the 4000-iteration schedule; mass and heat balance below 1e-3 %, y+ max 0.72.
+
 ## 3. Run list, in order
 
 Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20 (the defaults).
