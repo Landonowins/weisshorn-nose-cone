@@ -136,7 +136,7 @@ Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20
 * Production assumes the medium mesh and the 20 D domain. If decision 1 picks the fine mesh,
   groups 6 and 7 move to `A_fine` / `B_fine` (B_fine still to mesh) and cost about twice as much.
   If decision 2 picks 40 D, the points up to M 1.10 move to `A_D40` / `B_D40`.
-* After every run: `python check_run.py`, copy the case/data (section 6), commit and push `ME474/runs/`.
+* After every run: `python check_run.py`, copy the case/data (section 8), commit and push `ME474/runs/`.
 
 Start long queues detached, so that they survive a restart of Claude Code (PowerShell):
 
@@ -297,8 +297,9 @@ value is expected.
 
 ## 8. Case and data files of the final runs
 
-Size: 14 MB per case + data at 174k cells (5 + 9 MB), so about 20 MB at 250k and 40 MB at 480k.
-About 25 final runs need **≈ 0.6 GB**, without the `_init` files and `autosave/`.
+Size: a converged run on 174k cells writes about 24 MB of case + data (5 MB case, 15 to 19 MB data; the
+9 MB of the `_init` data is less because the iteration history is not in it yet). So about 35 MB at 250k and
+65 MB at 480k. About 25 final runs need **≈ 0.9 GB**, without the `_init` files and `autosave/`.
 
 Proposal: keep working on `C:` and copy each finished run's final `<run>.cas.h5` / `<run>.dat.h5` to your
 personal EPFL home **`Z:\ME474\runs\`**. It holds 2.3 GB free, is backed up, is not purged with the VM
