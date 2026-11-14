@@ -145,7 +145,7 @@ Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20
 | 1 | A_coarse, A_medium, A_fine | mesh study, subsonic | `A_coarse@M0.95 A_medium@M0.95 A_fine@M0.95` |
 | 2 | A_coarse, A_medium, A_fine | mesh study, burnout | `A_coarse@burnout A_medium@burnout A_fine@burnout` |
 | 2B | B_coarse, B_medium, B_fine | mesh study for B too (decided 14 Nov); B_medium's two runs are also production | `B_coarse@M0.95 B_medium@M0.95 B_fine@M0.95 B_coarse@burnout B_medium@burnout B_fine@burnout` |
-| 3 | A_D10, A_D40 (+ A_medium from 1) | domain study | `A_D10@M0.95 A_D40@M0.95` |
+| 3 | A_D10, A_D40 (+ A_medium from 1) | domain study at M 0.95, and at M 1.00 (added 14 Nov: near M 1 the far field has the most influence and reflected waves return near the nose; A_medium@M1.00 is production group 6, run here) | `A_D10@M0.95 A_D40@M0.95 A_D10@M1.00 A_medium@M1.00 A_D40@M1.00` |
 | 4 | A_medium | solver cross-check (the density run is also production) | `A_medium@M1.20:pressure A_medium@M1.20` |
 | 5 | cone | validation (Taylor-Maccoll) | `cone@burnout cone@M1.20` |
 | 6 | A_medium | production A (M 0.95 and burnout come from 1 and 2) | `A_medium@M0.98 A_medium@M1.00 A_medium@M1.05 A_medium@M1.10` |
