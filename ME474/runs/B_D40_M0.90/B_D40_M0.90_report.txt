@@ -1,0 +1,48 @@
+
+Forces
+                          Forces [N]                                                                                                                                Coefficients                                                                                                                             
+Zone                      Pressure                                      Viscous                                       Total                                         Pressure                                      Viscous                                       Total                                        
+wall_body                 (-1.0929375e-16 0 0)                          (106.78407 0 0)                               (106.78407 0 0)                               (-8.2623208e-20 0 0)                          (0.08072596 0 0)                              (0.08072596 0 0)                             
+wall_coupler              (0 0 0)                                       (1.3837576 0 0)                               (1.3837576 0 0)                               (0 0 0)                                       (0.0010460844 0 0)                            (0.0010460844 0 0)                           
+wall_nose                 (2.7091827 0 0)                               (37.068354 0 0)                               (39.777536 0 0)                               (0.0020480711 0 0)                            (0.028022703 0 0)                             (0.030070774 0 0)                            
+------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- ---------------------------------------------
+Net                       (2.7091827 0 0)                               (145.23619 0 0)                               (147.94537 0 0)                               (0.0020480711 0 0)                            (0.10979475 0 0)                              (0.11184282 0 0)                             
+
+Forces - Direction Vector (1 0 0)
+                          Forces [N]                                      Coefficients                                   
+Zone                      Pressure        Viscous         Total           Pressure        Viscous         Total          
+wall_body                 -1.0929375e-16  106.78407       106.78407       -8.2623208e-20  0.08072596      0.08072596     
+wall_coupler              0               1.3837576       1.3837576       0               0.0010460844    0.0010460844   
+wall_nose                 2.7091827       37.068354       39.777536       0.0020480711    0.028022703     0.030070774    
+------------------------- --------------- --------------- --------------- --------------- --------------- ---------------
+Net                       2.7091827       145.23619       147.94537       0.0020480711    0.10979475      0.11184282     
+
+ Domain Extents:
+   x-coordinate: min (m) = -7.200000e+00, max (m) = 2.520000e+00
+   y-coordinate: min (m) = -9.325873e-15, max (m) = 7.200000e+00
+ Volume statistics:
+   minimum volume (m3): 1.259596e-13
+   maximum volume (m3): 9.662344e-02
+     total volume (m3): 1.582945e+03
+   minimum 2d volume (m3): 1.998783e-10
+   maximum 2d volume (m3): 2.597030e-03
+ Face area statistics:
+   minimum face area (m2): 9.959942e-07
+   maximum face area (m2): 8.403930e-02
+ Checking mesh..............
+WARNING: Invalid axisymmetric mesh with nodes lying below the x-axis.........................
+Done.
+
+WARNING: Mesh check failed.
+
+To get more detailed information about the mesh check failure
+increase the mesh check verbosity via the TUI command
+/mesh/check-verbosity.
+Fluent can also try to fix the mesh check problems via the TUI command
+/mesh/repair-improve/repair. 
+Mesh Quality:
+
+Minimum Orthogonal Quality =  2.10621e-01 cell 23329 on zone 2 (ID: 271019 on partition: 0) at location ( 1.36053e+00,  1.06365e-01)
+
+
+Maximum Aspect Ratio =  2.99895e+03 cell 0 on zone 2 (ID: 1 on partition: 0) at location ( 2.51850e+00,  9.00005e-02)
