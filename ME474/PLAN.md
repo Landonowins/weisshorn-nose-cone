@@ -4,7 +4,7 @@
 > (`mesh_quality.csv`, section 5). Mesh studies A and B done (sections 2c-2f): A = B at M 0.95 within the
 > uncertainty, B 15.3 % below A at burnout. Queued behind it (`runs/queue_3.txt`, started by a detached
 > waiter when queue_2B ends): `A_D10@M0.95 A_D40@M0.95 A_D10@M1.00 A_medium@M1.00 A_D40@M1.00 cone@burnout
-> cone@M1.20`, about 3 h, so everything should be done around 05:30. Fluent 2024 R2 runs in this folder with
+> cone@M1.20` (all done 05:38: domain study in 2g, cone validation in 2h). Fluent 2024 R2 runs in this folder with
 > `server_info-A.txt`. **Disconnect RDP, never sign out** (signing out kills Fluent and the queue).
 > If no Claude session commits the finished runs, do it for each finished run: `python check_run.py`, commit and
 > push `runs/<run>/` (text files only, git ignores *.h5), and copy `runs/<run>/<run>.cas.h5` and `.dat.h5` to
@@ -218,6 +218,32 @@ cd_nose, mean of the last 100 iterations:
   dC_D/dM = 0.1 lies below M 0.98, probably below 0.95. The M 0.98 point will tell; a point at M 0.90 is likely
   needed (decision 3).
 * All five runs converged (one extra block for A_medium and A_D40 at M 1.00); mass and heat balance below 1e-3 %.
+
+### 2h. Validation: sharp cone vs Taylor-Maccoll (group 5, 15 Nov)
+
+| | burnout (M 1.465) | M 1.20 |
+|---|---:|---:|
+| surface Cp, x = 50-650 mm, Fluent | 0.07335 | 0.08705 |
+| surface Cp, Taylor-Maccoll (inviscid) | 0.0723 | 0.0859 |
+| difference | +1.45 % | +1.34 % |
+| shock angle near the tip (y = 10-30 mm, 0.2 mm cells), `shock_angle.py` | 43.42° | 56.91° |
+| shock angle, Taylor-Maccoll | 43.3° | 56.7° |
+| difference | +0.12° | +0.21° |
+| shock angle far out (y = 150-600 mm, 10-50 mm cells) | 44.39° | 58.45° |
+
+* Surface Cp is 1.3-1.5 % above the inviscid value, and falls slowly along the cone (burnout 0.0739 at
+  x = 20-50 mm to 0.0732 at 500-650 mm): the boundary-layer displacement makes the cone look slightly thicker,
+  most near the tip. Expected sign and size.
+* The shock angle matches within 0.2° where the cells resolve it. Far out the shock is smeared over 10-50 mm
+  cells, its foot moves upstream and the angle comes out 1-1.8° too steep: a far-field resolution effect.
+  At these Mach numbers the cone shock is only 0.3° steeper than the Mach angle, so the shock angle mostly tests
+  the free-stream Mach number; **the surface Cp is the meaningful check.**
+* **Open, M 1.20 only:** from x ≈ 290 mm the wall pressure zigzags by about ±25 % from face to face (two faces
+  high, two low), around the right mean. At burnout on the same mesh the scatter is ±0.5 %, so it comes from the
+  flow (surface Mach 1.135, close to sonic), not the mesh: probably an odd-even oscillation of the Roe scheme.
+  Not changed (numerics are fixed by the plan). Check whether A_medium@M1.20 shows the same before production.
+* Both runs converged in the schedule (0.001 % / 0.044 %) despite the tip slivers (Fluent orthogonal quality
+  0.0075 there). The stagnation check (p_stag_pct) does not apply to a sharp tip.
 
 ## 3. Run list, in order
 
@@ -492,6 +518,9 @@ Results
   The domain study (M 0.95 and M 1.00) adds the domain-size side.
 * **B converges oscillatory at M 0.95** (0.031918 / 0.031940 / 0.031858): Celik's GCI does not apply, the range
   (0.26 %) is the uncertainty. **A = B at M 0.95 within the numerical uncertainty** (ΔC_D = +0.00005 ± 0.00036).
+* **Cone at M 1.20: wall-pressure zigzag** (±25 % face to face from x ≈ 290 mm) around the correct mean; not at
+  burnout. Explain or show it does not affect the mean Cp (section 2h).
+* **Shock angle resolution:** report the near-tip value (0.2 mm cells); the far-field lines are smeared by 1-1.8°.
 * **Domain study also at M 1.00:** near M 1 the far field has the most influence and reflected waves return near
   the nose (Mach angle about 90°).
 * **B geometry:** the study720 Discovery geometry used for all B meshes lies within 2 µm of the CAD rebuilt from
