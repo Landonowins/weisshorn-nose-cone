@@ -259,7 +259,7 @@ Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20
 | 2 | A_coarse, A_medium, A_fine | mesh study, burnout | `A_coarse@burnout A_medium@burnout A_fine@burnout` |
 | 2B | B_coarse, B_medium, B_fine | mesh study for B too (decided 14 Nov); B_medium's two runs are also production | `B_coarse@M0.95 B_medium@M0.95 B_fine@M0.95 B_coarse@burnout B_medium@burnout B_fine@burnout` |
 | 3 | A_D10, A_D40 (+ A_medium from 1) | domain study at M 0.95, and at M 1.00 (added 14 Nov: near M 1 the far field has the most influence and reflected waves return near the nose; A_medium@M1.00 is production group 6, run here) | `A_D10@M0.95 A_D40@M0.95 A_D10@M1.00 A_medium@M1.00 A_D40@M1.00` |
-| 4 | A_medium | solver cross-check (the density run is also production); running 15 Nov, `queue_4.txt` | `A_medium@M1.20 A_medium@M1.20:pressure` |
+| 4 | A_medium | solver cross-check (the density run is also production); done 15 Nov: density 0.09495, pressure 0.09479 (-0.17 %), decision 6 | `A_medium@M1.20 A_medium@M1.20:pressure` |
 | 5 | cone | validation (Taylor-Maccoll) | `cone@burnout cone@M1.20` |
 | 6+7 | A_D40, B_D40, B_medium | production (decided 15 Nov), A and B alternating; chained behind 4, `queue_5.txt` | `A_D40@M0.90 B_D40@M0.90 B_D40@M0.95 A_D40@M0.98 B_D40@M0.98 B_D40@M1.00 A_D40@M1.05 B_D40@M1.05 A_D40@M1.10 B_D40@M1.10 B_medium@M1.20 A_D40@M1.20` |
 | 8 | (fallback) | only if M 1.00 does not converge (both A_D40 and A_medium did) | `A_D40@M1.02 B_D40@M1.02` |
@@ -489,6 +489,14 @@ value is expected.
    `p_stag_pct` in group 1. If it does not shrink with refinement, it has to be reported as a limitation
    of the pressure-based runs. Rough size: +1.23 % of p0 is ΔCp ≈ 0.035 on the stagnation region. Over the
    64 mm² projected area of the 4.5 mm tip, that is about 1e-4 in C_D, 0.3 % of 0.032.
+
+6. **Solver at M 1.20 (to decide, 15 Nov).** Group 4 on A_medium: density-based C_D 0.09495, pressure-based 0.09479
+   (-0.17 %; cd_p -0.20 %, cd_v -0.12 %), so the solver switch causes no jump beyond the GCI. Density-based: stagnation
+   within 0.04 % of pitot, but a face-to-face wall-pressure zigzag from x = 360 mm (Cp scatter 0.004-0.009 rms, cone
+   0.018-0.021, burnout 0.0003) and continuity / energy stalled at 2.3 orders (`residuals.py`). Pressure-based: smooth
+   (0.00006 rms), 6-7 orders on continuity and energy, k / omega 3.4 / 3.8 orders with some creep, but the stagnation
+   pressure 0.74 % below pitot and +1.7 % total-pressure overshoot on the axis at the bow shock. Proposal: keep
+   density-based from M 1.20 (no numerics change), report both, draw the M 1.20 Cp(x) from the pressure-based run.
 
 ## 8. Case and data files of the final runs
 
