@@ -1,0 +1,12 @@
+{
+ "run": "B_medium_burnout",
+ "mesh": "B_medium",
+ "point": "burnout",
+ "solver": "density",
+ "p_inf": 77684.7,
+ "mach": 1.46548,
+ "t_inf": 273.947,
+ "t0": 391.323,
+ "p0": 271231.0,
+ "p0_pitot": 255044.0
+}
