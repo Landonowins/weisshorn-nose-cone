@@ -261,9 +261,9 @@ Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20
 | 3 | A_D10, A_D40 (+ A_medium from 1) | domain study at M 0.95, and at M 1.00 (added 14 Nov: near M 1 the far field has the most influence and reflected waves return near the nose; A_medium@M1.00 is production group 6, run here) | `A_D10@M0.95 A_D40@M0.95 A_D10@M1.00 A_medium@M1.00 A_D40@M1.00` |
 | 4 | A_medium | solver cross-check (the density run is also production); running 15 Nov, `queue_4.txt` | `A_medium@M1.20 A_medium@M1.20:pressure` |
 | 5 | cone | validation (Taylor-Maccoll) | `cone@burnout cone@M1.20` |
-| 6+7 | A_D40, B_D40, B_medium | production (decided 15 Nov), A and B alternating; chained behind 4, `queue_5.txt` | `A_D40@M0.90 B_D40@M0.90 B_D40@M0.95 A_D40@M0.98 B_D40@M0.98 B_D40@M1.00 A_D40@M1.05 B_D40@M1.05 A_D40@M1.10 B_D40@M1.10 B_medium@M1.20` |
+| 6+7 | A_D40, B_D40, B_medium | production (decided 15 Nov), A and B alternating; chained behind 4, `queue_5.txt` | `A_D40@M0.90 B_D40@M0.90 B_D40@M0.95 A_D40@M0.98 B_D40@M0.98 B_D40@M1.00 A_D40@M1.05 B_D40@M1.05 A_D40@M1.10 B_D40@M1.10 B_medium@M1.20 A_D40@M1.20` |
 | 8 | (fallback) | only if M 1.00 does not converge (both A_D40 and A_medium did) | `A_D40@M1.02 B_D40@M1.02` |
-| 8b | (proposed 15 Nov, not decided) | the domain changes where the solver does (M 1.10 → 1.20): is 20 D enough at M 1.20? | `A_D40@M1.20` |
+| 8b | A_D40 (decided 15 Nov, last in `queue_5.txt`) | the domain changes where the solver does (M 1.10 → 1.20): is 20 D enough at M 1.20? | `A_D40@M1.20` |
 | 9 | (optional) | needs a new script option, which I would ask about first | first order to convergence `A_medium@burnout`; turbulence inlet 0.1 %/1 vs 1 %/10 |
 
 * M 0.98 is in production, not only a fallback: the drag-rise definition needs the slope at the
@@ -472,7 +472,7 @@ value is expected.
    `A_D40@M1.00` against `A_medium@M1.00` (0.2 to 0.8 h).
    **Decided 15 Nov: 40 D for M ≤ 1.10, 20 D from M 1.20.** At M 0.95 the 20 → 40 D change is 1.5 %, above the
    1.35 % GCI (section 2g). M 1.00 is not domain-converged even at 40 D (+5.5 % from 20 to 40 D): report a
-   domain uncertainty there. Proposed, not decided: `A_D40@M1.20` (group 8b), since the domain now changes
+   domain uncertainty there. `A_D40@M1.20` (group 8b, added 15 Nov) checks 20 D at M 1.20, since the domain now changes
    at the same Mach number as the solver.
 3. **Drag-rise Mach number: decided 14 Nov, dC_D/dM = 0.1**, from finite differences of the `wall_nose` C_D
    between neighbouring points (slope at each midpoint, crossing by linear interpolation). Study720 gives
