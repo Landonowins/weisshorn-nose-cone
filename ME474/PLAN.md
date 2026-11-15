@@ -1,16 +1,12 @@
 # ME-474 run plan, group 13 (draft for approval)
 
-> **Status 15 Nov 2026, 16:00.** Steps 2-5 and 8 done: all 10 meshes, the mesh studies A and B
-> (sections 2c-2f), the domain study (2g) and the cone validation (2h). **Decided 15 Nov** (section 7): medium
-> mesh; 40 D domain up to M 1.10 (`A_D40`, `B_D40`), 20 D (`A_medium`, `B_medium`) at M 1.20 and burnout; an
-> M 0.90 point (added to `fluent_points.csv`, commit 937aaeb). Running: `runs/queue_4.txt` =
-> `A_medium@M1.20 A_medium@M1.20:pressure` (group 4: solver cross-check, and does the cone's M 1.20 wall-pressure
-> zigzag appear on A?). Chained behind it by a detached waiter: `runs/queue_5.txt` = groups 6 and 7, A_D40 and
-> B_D40 alternating by Mach number, then `B_medium@M1.20`. `B_D40` meshed and checked 15 Nov (section 5).
-> Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out** (signing out kills
-> Fluent and the queue). If no Claude session commits the finished runs, do it for each finished run:
-> `python check_run.py`, commit and push `runs/<run>/` (text files only, git ignores *.h5), and copy
-> `runs/<run>/<run>.cas.h5` and `.dat.h5` to `Z:\ME474\runs\<run>\`.
+> **Status 15 Nov 2026, 19:30.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
+> drag rise A M 0.951, B M 0.937; B lower except M 0.95-1.02; -12.8 % at M 1.20, -15.3 % at burnout. Decisions 1-3 and 6
+> taken 15 Nov (section 7): medium mesh, 40 D up to M 1.10 and 20 D above, M 0.90 added, density-based from M 1.20.
+> Running: `A_D40@M1.20` (`runs/queue_5.txt`, the last run: is 20 D enough at M 1.20?). Next: post-processing and
+> report (step 10). Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
+> For a finished run without a Claude session: `python check_run.py`, commit and push `runs/<run>/` (text only), and
+> copy `runs/<run>/<run>.cas.h5` and `.dat.h5` to `Z:\ME474uns\<run>\`.
 
 Written on 13 Nov 2026 on the DLL VM while the smoke tests ran. Nothing long starts before the
 plan is approved. The decision points (section 7) are for you to settle. Every time below scales
@@ -243,9 +239,44 @@ cd_nose, mean of the last 100 iterations:
 * **Open, M 1.20 only:** from x ≈ 290 mm the wall pressure zigzags by about ±25 % from face to face (two faces
   high, two low), around the right mean. At burnout on the same mesh the scatter is ±0.5 %, so it comes from the
   flow (surface Mach 1.135, close to sonic), not the mesh: probably an odd-even oscillation of the Roe scheme.
-  Not changed (numerics are fixed by the plan). Check whether A_medium@M1.20 shows the same before production.
+  Not changed (numerics are fixed by the plan). **15 Nov:** A_medium@M1.20 and B_medium@M1.20 show it too (section 2i).
 * Both runs converged in the schedule (0.001 % / 0.044 %) despite the tip slivers (Fluent orthogonal quality
   0.0075 there). The stagnation check (p_stag_pct) does not apply to a sharp tip.
+
+### 2i. Solver cross-check and production (groups 4, 6+7, 15 Nov)
+
+Group 4, A_medium at M 1.20: density-based 0.09495, pressure-based 0.09479 (-0.17 %; cd_p -0.20 %, cd_v -0.12 %).
+No jump at the solver switch beyond the GCI. Density-based (kept, decision 6): stagnation within 0.04 % of pitot,
+wall-pressure zigzag from x = 360 mm (Cp scatter 0.004-0.009 rms; B_medium 0.007-0.019; cone 0.018-0.021; burnout
+0.0003), continuity and energy stalled at 2.2-2.4 orders. Pressure-based: smooth Cp, 6-7 orders, but stagnation
+0.74 % below pitot. Use the pressure-based run for the A M 1.20 Cp(x) figure, or show both.
+
+Production, `wall_nose` C_D (`python drag_curve.py`, `runs/drag_curve.csv`; 40 D up to M 1.10, 20 D above):
+
+| M | A | B | B vs A | A cd_p / cd_v | B cd_p / cd_v |
+|---|---:|---:|---:|---|---|
+| 0.90 | 0.03126 | 0.03007 | -3.8 % | 0.00219 / 0.02908 | 0.00205 / 0.02802 |
+| 0.95 | 0.03151 | 0.03149 | -0.1 % | 0.00269 / 0.02881 | 0.00368 / 0.02781 |
+| 0.98 | 0.03610 | 0.03956 | +9.6 % | 0.00737 / 0.02874 | 0.01207 / 0.02749 |
+| 1.00 | 0.05265 | 0.05569 | +5.8 % | 0.02422 / 0.02843 | 0.02853 / 0.02715 |
+| 1.05 | 0.08442 | 0.08104 | -4.0 % | 0.05681 / 0.02761 | 0.05464 / 0.02640 |
+| 1.10 | 0.09155 | 0.08308 | -9.3 % | 0.06445 / 0.02710 | 0.05712 / 0.02595 |
+| 1.20 | 0.09495 | 0.08275 | -12.8 % | 0.06868 / 0.02627 | 0.05750 / 0.02525 |
+| 1.465 | 0.09344 | 0.07917 | -15.3 % | 0.06904 / 0.02440 | 0.05568 / 0.02349 |
+
+* **Drag rise (dC_D/dM = 0.1, slopes at interval midpoints):** A at M 0.951, B at M 0.937 (about +-0.01 from the
+  0.03-0.05 spacing). B's rise starts earlier and is steeper (0.27 against 0.15 from M 0.95 to 0.98).
+* **Lower drag:** B everywhere except M 0.95-1.02, where its earlier rise puts it up to 9.6 % above A. The curves
+  cross at M 0.950 (equal there) and M 1.024. B's viscous part is 3.5-4.5 % below A's at every Mach number; the
+  swing is all pressure drag (B +64 % at M 0.98, -19 % at burnout). M 1.20 and burnout match study720 (-12.8 / -15 %).
+* **Domain error is common to A and B:** at M 0.95, 20 -> 40 D changes A by -1.47 % and B by -1.41 %; A - B is
+  +0.00004 on 20 D and +0.00002 on 40 D. So B_medium@M1.00 is not needed for the comparison.
+* **Convergence:** every production run met the 0.1 % C_D criterion (at most one extra block: M 0.98 and 1.00).
+  Residuals (`residuals.py`): pressure-based 3.6-8 orders; from M 1.05 the k residual creeps back up 1-2 orders after
+  its minimum (k drop 3.0-4.1), with C_D flat; density-based M 1.20 stalls at 2.2-2.4 (see above).
+* **Stagnation excess** (pressure-based): +0.09 to +0.80 % of the theoretical value from M 0.90 to 1.10 (A larger
+  than B), the effect of section 2c; about 1e-4 in C_D.
+* Pending: `A_D40@M1.20` (is 20 D enough at M 1.20?).
 
 ## 3. Run list, in order
 
