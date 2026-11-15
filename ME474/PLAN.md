@@ -1,8 +1,8 @@
 # ME-474 run plan, group 13 (draft for approval)
 
 > **Status 15 Nov 2026, 02:30.** Steps 2 and 3 done: all 10 meshes are in `meshes/` and checked
-> (`mesh_quality.csv`, section 5). Mesh study A done (sections 2c, 2d), B at M 0.95 done (2e), B at burnout:
-> coarse and medium done, fine running. Queued behind it (`runs/queue_3.txt`, started by a detached
+> (`mesh_quality.csv`, section 5). Mesh studies A and B done (sections 2c-2f): A = B at M 0.95 within the
+> uncertainty, B 15.3 % below A at burnout. Queued behind it (`runs/queue_3.txt`, started by a detached
 > waiter when queue_2B ends): `A_D10@M0.95 A_D40@M0.95 A_D10@M1.00 A_medium@M1.00 A_D40@M1.00 cone@burnout
 > cone@M1.20`, about 3 h, so everything should be done around 05:30. Fluent 2024 R2 runs in this folder with
 > `server_info-A.txt`. **Disconnect RDP, never sign out** (signing out kills Fluent and the queue).
@@ -180,6 +180,21 @@ cd_nose, mean of the last 100 iterations:
   have equal drag at M 0.95 within the numerical uncertainty.** (The errors of A and B are probably correlated,
   same recipe, so this band is conservative.)
 * B's stagnation excess: +0.341 / +0.438 / +0.534 % (coarse / medium / fine), the same trend as A.
+
+### 2f. Mesh study B at burnout (group 2B, 15 Nov)
+
+| | B_coarse | B_medium | B_fine | Richardson | GCI fine / medium |
+|---|---:|---:|---:|---:|---:|
+| cd_nose, mean of the last 500 iterations | 0.079179 | 0.079174 | 0.079099 | 0.079093 | 0.010 % / 0.001 % |
+| A − B (A from section 2d) | 0.014269 | 0.014267 | 0.014329 | | |
+| B / A − 1 | −15.27 % | −15.27 % | −15.34 % | | |
+
+* B at burnout is mesh-independent within 0.1 % (the formal p = 7.9 and asymptotic ratio 0.006 only reflect
+  that coarse and medium are equal to 0.006 %). **B is 15.3 % below A at burnout on every mesh.**
+* B_coarse oscillates like A_coarse (±0.06 % around a constant 1000-iteration mean of 0.07918) and ran all 8 extra
+  blocks; its commit note wrongly says the mean drifts. B_medium and B_fine converged within the schedule
+  (0.005 % / 0.034 %); tip pressure −0.30 % / −0.16 % of pitot; the coarse axis total-pressure overshoot
+  (+3.3 %) is gone on medium and fine.
 
 ## 3. Run list, in order
 
