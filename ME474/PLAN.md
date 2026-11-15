@@ -490,7 +490,7 @@ value is expected.
    of the pressure-based runs. Rough size: +1.23 % of p0 is ΔCp ≈ 0.035 on the stagnation region. Over the
    64 mm² projected area of the 4.5 mm tip, that is about 1e-4 in C_D, 0.3 % of 0.032.
 
-6. **Solver at M 1.20 (to decide, 15 Nov).** Group 4 on A_medium: density-based C_D 0.09495, pressure-based 0.09479
+6. **Solver at M 1.20: decided 15 Nov, density-based as planned** (the user, after the cross-check). Group 4 on A_medium: density-based C_D 0.09495, pressure-based 0.09479
    (-0.17 %; cd_p -0.20 %, cd_v -0.12 %), so the solver switch causes no jump beyond the GCI. Density-based: stagnation
    within 0.04 % of pitot, but a face-to-face wall-pressure zigzag from x = 360 mm (Cp scatter 0.004-0.009 rms, cone
    0.018-0.021, burnout 0.0003) and continuity / energy stalled at 2.3 orders (`residuals.py`). Pressure-based: smooth
