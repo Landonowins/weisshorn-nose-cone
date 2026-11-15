@@ -6,7 +6,7 @@
 > Running: `A_D40@M1.20` (`runs/queue_5.txt`, the last run: is 20 D enough at M 1.20?). Next: post-processing and
 > report (step 10). Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
 > For a finished run without a Claude session: `python check_run.py`, commit and push `runs/<run>/` (text only), and
-> copy `runs/<run>/<run>.cas.h5` and `.dat.h5` to `Z:\ME474uns\<run>\`.
+> copy `runs/<run>/<run>.cas.h5` and `.dat.h5` to `Z:\ME474\runs\<run>\`.
 
 Written on 13 Nov 2026 on the DLL VM while the smoke tests ran. Nothing long starts before the
 plan is approved. The decision points (section 7) are for you to settle. Every time below scales
