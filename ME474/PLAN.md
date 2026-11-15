@@ -196,6 +196,29 @@ cd_nose, mean of the last 100 iterations:
   (0.005 % / 0.034 %); tip pressure −0.30 % / −0.16 % of pitot; the coarse axis total-pressure overshoot
   (+3.3 %) is gone on medium and fine.
 
+### 2g. Domain study A (group 3, 15 Nov)
+
+| cd_nose (cd_p + cd_v) | A_D10 (10 D) | A_medium (20 D) | A_D40 (40 D) |
+|---|---:|---:|---:|
+| M 0.95 | 0.03412 (0.00534 + 0.02877) | 0.03198 (0.00318 + 0.02880) | 0.03151 (0.00269 + 0.02881) |
+| M 1.00 | 0.04569 (0.01721 + 0.02848) | 0.04989 (0.02144 + 0.02845) | 0.05265 (0.02422 + 0.02843) |
+| stagnation excess M 0.95 / 1.00 | +0.66 / +0.84 % | +0.70 / +0.86 % | +0.70 / +0.90 % |
+
+* Only the pressure drag depends on the domain; the viscous part is constant within 0.2 %.
+* **M 0.95:** the change shrinks about 4.5× per doubling (−0.00214, then −0.00047). Extrapolated to an
+  infinite domain about 0.0314: 40 D is within about 0.4 %, 20 D within about 2 %. The 20 → 40 D change (1.5 %)
+  is just above the medium mesh's GCI (1.35 %), so by decision 2's rule the points up to M 1.10 need 40 D.
+* **M 1.00:** C_D *rises* with the domain size (+0.00420, then +0.00276), and the change only shrinks about
+  1.5× per doubling: even 40 D is not converged (a geometric extrapolation would add another ~0.005, about 10 %,
+  but with a ratio this close to 1 it is unreliable). This is the slow far-field decay of transonic flow near
+  M = 1. C_D at M 1.00 therefore carries a domain uncertainty of several per cent; say so in the report.
+* The **stagnation excess does not depend on the domain** (+0.66-0.70 % at M 0.95). With the mesh study it is
+  neither a mesh nor a domain error: a model or solver effect, still about 1e-4 in C_D.
+* **Drag rise:** the slope from M 0.95 to 1.00 is 0.36 (20 D) to 0.42 (40 D), far above 0.1, so the crossing of
+  dC_D/dM = 0.1 lies below M 0.98, probably below 0.95. The M 0.98 point will tell; a point at M 0.90 is likely
+  needed (decision 3).
+* All five runs converged (one extra block for A_medium and A_D40 at M 1.00); mass and heat balance below 1e-3 %.
+
 ## 3. Run list, in order
 
 Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20 (the defaults).
