@@ -307,6 +307,13 @@ x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on 
   the inflation stack along the nose, e.g. (504, 96) mm), orthogonal quality min 0.238 / avg 0.959, aspect ratio
   max 2999 / avg 56. Inlet x = -7200, far field y = 7200 (edges 7200 / 9720 mm), outlet 7110 mm, face area
   6.977531e+07 mm² as in section 6.
+* **cone, 15 Nov:** 253 682 cells (A_medium recipe; outlet 2540, `wall_coupler` 720-740, `wall_body` 740-2540 with
+  989 divisions). Skewness max 0.992 / avg 0.072, orthogonal quality min 0.0099 / avg 0.957, aspect ratio max 2999.
+  The bad cells are one fan of about 20 slivers at the sharp tip (x = -0.07 mm, y = 0-0.02 mm): the 45 inflation
+  layers end against the axis at the 7.1° tip instead of lying along it as at the blunt A/B tips. Away from the tip
+  the cell sizes match A_medium. Run as is (the validation compares Cp and the shock angle away from the tip); if
+  Fluent struggles at the tip, split the axis 18.3 mm in front of the tip and give that piece 45 divisions biased
+  like the inflation layers (1 µm at the tip, bias factor 1.2^44 ≈ 3050), so the triangles there match the layers.
 
 * Behaviour (hard/soft), growth rate and the other defaults: as in study720.
 * `wall_body` divisions: for a 1800 mm body (outlet at 2520 mm) with bias 3. The bias factor is the
