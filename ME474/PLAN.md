@@ -1,5 +1,15 @@
 # ME-474 run plan, group 13 (draft for approval)
 
+> **Status 15 Nov 2026, 02:30.** Steps 2 and 3 done: all 10 meshes are in `meshes/` and checked
+> (`mesh_quality.csv`, section 5). Mesh study A done (sections 2c, 2d), B at M 0.95 done (2e), B at burnout:
+> coarse and medium done, fine running. Queued behind it (`runs/queue_3.txt`, started by a detached
+> waiter when queue_2B ends): `A_D10@M0.95 A_D40@M0.95 A_D10@M1.00 A_medium@M1.00 A_D40@M1.00 cone@burnout
+> cone@M1.20`, about 3 h, so everything should be done around 05:30. Fluent 2024 R2 runs in this folder with
+> `server_info-A.txt`. **Disconnect RDP, never sign out** (signing out kills Fluent and the queue).
+> If no Claude session commits the finished runs, do it for each finished run: `python check_run.py`, commit and
+> push `runs/<run>/` (text files only, git ignores *.h5), and copy `runs/<run>/<run>.cas.h5` and `.dat.h5` to
+> `Z:\ME474uns\<run>\`. Then: decisions 1 and 2 (section 7), the solver cross-check and production.
+
 Written on 13 Nov 2026 on the DLL VM while the smoke tests ran. Nothing long starts before the
 plan is approved. The decision points (section 7) are for you to settle. Every time below scales
 from one measurement: the pressure-based speed on the old 174k mesh.
