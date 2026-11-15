@@ -1,0 +1,44 @@
+
+Forces
+                          Forces [N]                                                                                                                                Coefficients                                                                                                                             
+Zone                      Pressure                                      Viscous                                       Total                                         Pressure                                      Viscous                                       Total                                        
+wall_body                 (-1.3870077e-11 0 0)                          (165.62497 0 0)                               (165.62497 0 0)                               (-6.3809611e-15 0 0)                          (0.07619615 0 0)                              (0.07619615 0 0)                             
+wall_coupler              (-1.5320507e-12 0 0)                          (2.6772617 0 0)                               (2.6772617 0 0)                               (-7.0482346e-16 0 0)                          (0.0012316804 0 0)                            (0.0012316804 0 0)                           
+wall_nose                 (187.01088 0 0)                               (42.564119 0 0)                               (229.575 0 0)                                 (0.086034788 0 0)                             (0.019581721 0 0)                             (0.10561651 0 0)                             
+------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- ---------------------------------------------
+Net                       (187.01088 0 0)                               (210.86635 0 0)                               (397.87723 0 0)                               (0.086034788 0 0)                             (0.097009552 0 0)                             (0.18304434 0 0)                             
+
+Forces - Direction Vector (1 0 0)
+                          Forces [N]                                      Coefficients                                   
+Zone                      Pressure        Viscous         Total           Pressure        Viscous         Total          
+wall_body                 -1.3870077e-11  165.62497       165.62497       -6.3809611e-15  0.07619615      0.07619615     
+wall_coupler              -1.5320507e-12  2.6772617       2.6772617       -7.0482346e-16  0.0012316804    0.0012316804   
+wall_nose                 187.01088       42.564119       229.575         0.086034788     0.019581721     0.10561651     
+------------------------- --------------- --------------- --------------- --------------- --------------- ---------------
+Net                       187.01088       210.86635       397.87723       0.086034788     0.097009552     0.18304434     
+
+ Domain Extents:
+   x-coordinate: min (m) = -3.600000e+00, max (m) = 2.540000e+00
+   y-coordinate: min (m) = 0.000000e+00, max (m) = 3.600000e+00
+ Volume statistics:
+   minimum volume (m3): 2.063828e-16
+   maximum volume (m3): 4.659108e-02
+     total volume (m3): 2.499379e+02
+   minimum 2d volume (m3): 9.930739e-11
+   maximum 2d volume (m3): 2.413968e-03
+ Face area statistics:
+   minimum face area (m2): 9.980676e-07
+   maximum face area (m2): 8.214050e-02
+ Checking mesh......................................
+Done.
+ 
+Mesh Quality:
+
+Minimum Orthogonal Quality =  7.52415e-03 cell 30443 on zone 2 (ID: 250951 on partition: 3) at location (-6.67615e-05,  3.30759e-07)
+Warning: minimum Orthogonal Quality below 0.01.
+
+
+Maximum Aspect Ratio =  2.99895e+03 cell 0 on zone 2 (ID: 1 on partition: 2) at location ( 2.53850e+00,  9.00005e-02)
+
+Fluent can try to improve the mesh quality via the TUI command
+/mesh/repair-improve/improve-quality
