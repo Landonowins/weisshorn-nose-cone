@@ -1,0 +1,12 @@
+{
+ "run": "A_medium_M1.00",
+ "mesh": "A_medium",
+ "point": "M1.00",
+ "solver": "pressure",
+ "p_inf": 89623.2,
+ "mach": 1.0,
+ "t_inf": 281.5,
+ "t0": 337.66,
+ "p0": 169597.0,
+ "p0_pitot": 169597.0
+}
