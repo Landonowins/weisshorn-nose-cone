@@ -1,14 +1,16 @@
 # ME-474 run plan, group 13 (draft for approval)
 
-> **Status 15 Nov 2026, 02:30.** Steps 2 and 3 done: all 10 meshes are in `meshes/` and checked
-> (`mesh_quality.csv`, section 5). Mesh studies A and B done (sections 2c-2f): A = B at M 0.95 within the
-> uncertainty, B 15.3 % below A at burnout. Queued behind it (`runs/queue_3.txt`, started by a detached
-> waiter when queue_2B ends): `A_D10@M0.95 A_D40@M0.95 A_D10@M1.00 A_medium@M1.00 A_D40@M1.00 cone@burnout
-> cone@M1.20` (all done 05:38: domain study in 2g, cone validation in 2h). Fluent 2024 R2 runs in this folder with
-> `server_info-A.txt`. **Disconnect RDP, never sign out** (signing out kills Fluent and the queue).
-> If no Claude session commits the finished runs, do it for each finished run: `python check_run.py`, commit and
-> push `runs/<run>/` (text files only, git ignores *.h5), and copy `runs/<run>/<run>.cas.h5` and `.dat.h5` to
-> `Z:\ME474\runs\<run>\`. Then: decisions 1 and 2 (section 7), the solver cross-check and production.
+> **Status 15 Nov 2026, 16:00.** Steps 2-5 and 8 done: all 10 meshes, the mesh studies A and B
+> (sections 2c-2f), the domain study (2g) and the cone validation (2h). **Decided 15 Nov** (section 7): medium
+> mesh; 40 D domain up to M 1.10 (`A_D40`, `B_D40`), 20 D (`A_medium`, `B_medium`) at M 1.20 and burnout; an
+> M 0.90 point (added to `fluent_points.csv`, commit 937aaeb). Running: `runs/queue_4.txt` =
+> `A_medium@M1.20 A_medium@M1.20:pressure` (group 4: solver cross-check, and does the cone's M 1.20 wall-pressure
+> zigzag appear on A?). Chained behind it by a detached waiter: `runs/queue_5.txt` = `A_D40@M0.90 A_D40@M0.98
+> A_D40@M1.05 A_D40@M1.10 B_medium@M1.20`. You are meshing `B_D40` (section 6); its six runs follow (group 7).
+> Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out** (signing out kills
+> Fluent and the queue). If no Claude session commits the finished runs, do it for each finished run:
+> `python check_run.py`, commit and push `runs/<run>/` (text files only, git ignores *.h5), and copy
+> `runs/<run>/<run>.cas.h5` and `.dat.h5` to `Z:\ME474\runs\<run>\`.
 
 Written on 13 Nov 2026 on the DLL VM while the smoke tests ran. Nothing long starts before the
 plan is approved. The decision points (section 7) are for you to settle. Every time below scales
@@ -257,18 +259,19 @@ Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20
 | 2 | A_coarse, A_medium, A_fine | mesh study, burnout | `A_coarse@burnout A_medium@burnout A_fine@burnout` |
 | 2B | B_coarse, B_medium, B_fine | mesh study for B too (decided 14 Nov); B_medium's two runs are also production | `B_coarse@M0.95 B_medium@M0.95 B_fine@M0.95 B_coarse@burnout B_medium@burnout B_fine@burnout` |
 | 3 | A_D10, A_D40 (+ A_medium from 1) | domain study at M 0.95, and at M 1.00 (added 14 Nov: near M 1 the far field has the most influence and reflected waves return near the nose; A_medium@M1.00 is production group 6, run here) | `A_D10@M0.95 A_D40@M0.95 A_D10@M1.00 A_medium@M1.00 A_D40@M1.00` |
-| 4 | A_medium | solver cross-check (the density run is also production) | `A_medium@M1.20:pressure A_medium@M1.20` |
+| 4 | A_medium | solver cross-check (the density run is also production); running 15 Nov, `queue_4.txt` | `A_medium@M1.20 A_medium@M1.20:pressure` |
 | 5 | cone | validation (Taylor-Maccoll) | `cone@burnout cone@M1.20` |
-| 6 | A_medium | production A (M 0.95 and burnout come from 1 and 2) | `A_medium@M0.98 A_medium@M1.00 A_medium@M1.05 A_medium@M1.10` |
-| 7 | B_medium | production B | `B_medium@M0.95 B_medium@M0.98 B_medium@M1.00 B_medium@M1.05 B_medium@M1.10 B_medium@M1.20 B_medium@burnout` |
-| 8 | (fallback) | only if M 1.00 does not converge | `A_medium@M1.02 B_medium@M1.02` |
+| 6 | A_D40, B_medium | production without a new mesh (decided 15 Nov); chained behind 4, `queue_5.txt` | `A_D40@M0.90 A_D40@M0.98 A_D40@M1.05 A_D40@M1.10 B_medium@M1.20` |
+| 7 | B_D40 | production B up to M 1.10 | `B_D40@M0.90 B_D40@M0.95 B_D40@M0.98 B_D40@M1.00 B_D40@M1.05 B_D40@M1.10` |
+| 8 | (fallback) | only if M 1.00 does not converge (both A_D40 and A_medium did) | `A_D40@M1.02 B_D40@M1.02` |
+| 8b | (proposed 15 Nov, not decided) | the domain changes where the solver does (M 1.10 → 1.20): is 20 D enough at M 1.20? | `A_D40@M1.20` |
 | 9 | (optional) | needs a new script option, which I would ask about first | first order to convergence `A_medium@burnout`; turbulence inlet 0.1 %/1 vs 1 %/10 |
 
 * M 0.98 is in production, not only a fallback: the drag-rise definition needs the slope at the
   start of the rise (decision 3).
-* Production assumes the medium mesh and the 20 D domain. If decision 1 picks the fine mesh,
-  groups 6 and 7 move to `A_fine` / `B_fine` (B_fine still to mesh) and cost about twice as much.
-  If decision 2 picks 40 D, the points up to M 1.10 move to `A_D40` / `B_D40`.
+* Production (decided 15 Nov): medium mesh; 40 D up to M 1.10, 20 D at M 1.20 and burnout. The production set
+  is then A_D40 and B_D40 at M 0.90, 0.95, 0.98, 1.00, 1.05, 1.10 and A_medium, B_medium at M 1.20 and burnout.
+  Already done: `A_D40_M0.95`, `A_D40_M1.00` (group 3), `A_medium_burnout`, `B_medium_burnout` (groups 2, 2B).
 * After every run: `python check_run.py`, copy the case/data (section 8), commit and push `ME474/runs/`.
 
 Start long queues detached, so that they survive a restart of Claude Code (PowerShell):
@@ -422,7 +425,8 @@ it), to compare with the area of your face. Study720 matched within 0.001 %.
 | A_D10 | −1800 | 1800 | 2520 | 7.567314e+06 |
 | A_medium, A_coarse, A_fine (20 D) | −3600 | 3600 | 2520 | 2.182331e+07 |
 | A_D40 | −7200 | 7200 | 2520 | 6.977531e+07 |
-| B_medium (20 D) | −3600 | 3600 | 2520 | 2.182686e+07 |
+| B_medium, B_coarse, B_fine (20 D) | −3600 | 3600 | 2520 | 2.182686e+07 |
+| B_D40 (added 15 Nov) | −7200 | 7200 | 2520 | 6.977886e+07 (A_D40 + the 3550 mm² B − A of the 20 D faces) |
 | cone (20 D) | −3600 | 3600 | 2520 or 2540 | 2.183760e+07 or 2.190780e+07 |
 
 Cone outlet: your table gives 2520 mm. With the cone's coupler ending at 740 mm, "10 D behind
@@ -457,16 +461,24 @@ value is expected.
    **medium** if convergence is monotonic and medium's distance to the Richardson value is smaller
    than half the A-B difference we want to resolve (13-15 % in study720 at M 1.2 and 1.47, so easy
    there). At M 0.95, where A ≈ B, the result is then "equal within the GCI". Otherwise fine.
+   **Decided 15 Nov: medium** (A GCI 1.35 % at M 0.95 and 0.02 % at burnout; B within 0.26 % and 0.1 %).
 2. **Final domain** (after group 3): proposal **20 D** if |C_D(20 D) − C_D(40 D)| is below the GCI
    of the medium mesh, otherwise 40 D for M ≤ 1.10 (B_D40 to mesh). At M 0.95 the 20 D domain acts like
    ≈ 6 D (√(1 − M²) = 0.31), and M 1.00 is the worst case. Optional, if 20 vs 40 D is close at M 0.95:
    `A_D40@M1.00` against `A_medium@M1.00` (0.2 to 0.8 h).
+   **Decided 15 Nov: 40 D for M ≤ 1.10, 20 D from M 1.20.** At M 0.95 the 20 → 40 D change is 1.5 %, above the
+   1.35 % GCI (section 2g). M 1.00 is not domain-converged even at 40 D (+5.5 % from 20 to 40 D): report a
+   domain uncertainty there. Proposed, not decided: `A_D40@M1.20` (group 8b), since the domain now changes
+   at the same Mach number as the solver.
 3. **Drag-rise Mach number: decided 14 Nov, dC_D/dM = 0.1**, from finite differences of the `wall_nose` C_D
    between neighbouring points (slope at each midpoint, crossing by linear interpolation). Study720 gives
    0.032 at M 0.95 and about 0.095 at M 1.20, a mean slope of 0.25, so the crossing lies between
    about 0.95 and 1.0. Hence M 0.98 in production. If the slope from 0.95 to 0.98 is already above 0.1,
    the crossing is below 0.95, and a point at M 0.90 has to be added to `fluent_points.csv` (via `make_points.py`;
-   I would ask first).
+   I would ask first). **15 Nov:** the slope from M 0.95 to 1.00 is 0.36 (20 D) to 0.42 (40 D); **M 0.90 added**
+   (decided 15 Nov; same trajectory, z = 829.9 m, p 91 744.7 Pa, T 282.756 K; the other rows are unchanged).
+   `make_points.py` needs scipy and numpy ≥ 2 (`np.trapezoid`); on the VM it ran on Ansys's CPython 3.10 with
+   `numpy.trapezoid = numpy.trapz` set first.
 4. **Where to keep the case/data: decided 14 Nov, `Z:\ME474\runs\`** (section 8).
 5. **Pressure-based solver for M ≤ 1.10**: confirmed. Density-based at M 0.95 runs into a limit cycle
    (section 2b). Whether the pressure-based +1.23 % stagnation excess is a mesh error is decided by
