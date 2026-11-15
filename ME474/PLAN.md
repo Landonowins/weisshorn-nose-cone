@@ -417,3 +417,34 @@ robocopy C:\Users\feig\weisshorn-nose-cone-git\ME474\runs Z:\ME474\runs *.cas.h5
 
 `M:\rocket_team\` (67.7 GB free) can hold a second copy if the team agrees. It is a shared team
 share, so I have not written there. `fluent_figs.py` then reads the cases from Z: on any DLL VM.
+
+## 9. To mention in the report (collected while running)
+
+Mesh
+* **Cone tip (validation mesh):** about 20 sliver triangles between the axis and the cone surface at the sharp
+  tip (x = -0.07 mm, y = 0-0.02 mm) give skewness max 0.992 and orthogonal quality min 0.0099, just below Fluent's
+  guideline of 0.01. Cause: the 45 inflation layers end against the axis at the 7.1° tip, instead of lying along
+  the axis as at the blunt A/B tips. The validation compares Cp and the shock angle away from the tip. Say so,
+  and show that the tip does not disturb the solution (or show the fixed mesh, section 5).
+* **GCI refinement is not in the wall-normal direction:** the 45 inflation layers (first 1 µm, growth 1.2) are the
+  same on all three meshes, so r = 1.34-1.38 instead of 1.5, and y+ < 1 on all of them.
+* **Single bad triangles on top of the inflation stack** (B_coarse skewness 0.915, A_D40 0.877): Ansys rates
+  0.80-0.94 acceptable; give their location.
+
+Convergence
+* **Coarse meshes at burnout oscillate:** cd-nose ±0.05-0.06 % with a period of about 57 iterations around a
+  constant mean, so the max-min criterion (0.1 % over 500 iterations) flags A_coarse and B_coarse as NOT CONVERGED
+  after 8000 iterations. The mean is used. Medium and fine converge within 4000 iterations (0.002-0.03 %).
+* **Coarse meshes smear the bow shock:** tip pressure +2.2 % above pitot (A_coarse), axis total pressure +3.3 %
+  above p0 (B_coarse); medium and fine are physical (-0.30 % / -0.14 % of pitot).
+
+Results
+* **M 0.95 stagnation excess:** +0.45 / +0.70 / +0.74 % (A coarse / medium / fine), converging to about +0.74 %
+  instead of vanishing; the old 15 mm sphere gave +1.23 %. Not a discretisation error; effect on C_D about 1e-4.
+  The domain study (M 0.95 and M 1.00) adds the domain-size side.
+* **B converges oscillatory at M 0.95** (0.031918 / 0.031940 / 0.031858): Celik's GCI does not apply, the range
+  (0.26 %) is the uncertainty. **A = B at M 0.95 within the numerical uncertainty** (ΔC_D = +0.00005 ± 0.00036).
+* **Domain study also at M 1.00:** near M 1 the far field has the most influence and reflected waves return near
+  the nose (Mach angle about 90°).
+* **B geometry:** the study720 Discovery geometry used for all B meshes lies within 2 µm of the CAD rebuilt from
+  the exact equations (`CFD/geometry_720/B_vonkarman_700_c20_rn4.5_2d.step`).
