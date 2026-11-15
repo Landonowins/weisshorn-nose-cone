@@ -5,8 +5,8 @@
 > mesh; 40 D domain up to M 1.10 (`A_D40`, `B_D40`), 20 D (`A_medium`, `B_medium`) at M 1.20 and burnout; an
 > M 0.90 point (added to `fluent_points.csv`, commit 937aaeb). Running: `runs/queue_4.txt` =
 > `A_medium@M1.20 A_medium@M1.20:pressure` (group 4: solver cross-check, and does the cone's M 1.20 wall-pressure
-> zigzag appear on A?). Chained behind it by a detached waiter: `runs/queue_5.txt` = `A_D40@M0.90 A_D40@M0.98
-> A_D40@M1.05 A_D40@M1.10 B_medium@M1.20`. You are meshing `B_D40` (section 6); its six runs follow (group 7).
+> zigzag appear on A?). Chained behind it by a detached waiter: `runs/queue_5.txt` = groups 6 and 7, A_D40 and
+> B_D40 alternating by Mach number, then `B_medium@M1.20`. `B_D40` meshed and checked 15 Nov (section 5).
 > Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out** (signing out kills
 > Fluent and the queue). If no Claude session commits the finished runs, do it for each finished run:
 > `python check_run.py`, commit and push `runs/<run>/` (text files only, git ignores *.h5), and copy
@@ -261,8 +261,7 @@ Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20
 | 3 | A_D10, A_D40 (+ A_medium from 1) | domain study at M 0.95, and at M 1.00 (added 14 Nov: near M 1 the far field has the most influence and reflected waves return near the nose; A_medium@M1.00 is production group 6, run here) | `A_D10@M0.95 A_D40@M0.95 A_D10@M1.00 A_medium@M1.00 A_D40@M1.00` |
 | 4 | A_medium | solver cross-check (the density run is also production); running 15 Nov, `queue_4.txt` | `A_medium@M1.20 A_medium@M1.20:pressure` |
 | 5 | cone | validation (Taylor-Maccoll) | `cone@burnout cone@M1.20` |
-| 6 | A_D40, B_medium | production without a new mesh (decided 15 Nov); chained behind 4, `queue_5.txt` | `A_D40@M0.90 A_D40@M0.98 A_D40@M1.05 A_D40@M1.10 B_medium@M1.20` |
-| 7 | B_D40 | production B up to M 1.10 | `B_D40@M0.90 B_D40@M0.95 B_D40@M0.98 B_D40@M1.00 B_D40@M1.05 B_D40@M1.10` |
+| 6+7 | A_D40, B_D40, B_medium | production (decided 15 Nov), A and B alternating; chained behind 4, `queue_5.txt` | `A_D40@M0.90 B_D40@M0.90 B_D40@M0.95 A_D40@M0.98 B_D40@M0.98 B_D40@M1.00 A_D40@M1.05 B_D40@M1.05 A_D40@M1.10 B_D40@M1.10 B_medium@M1.20` |
 | 8 | (fallback) | only if M 1.00 does not converge (both A_D40 and A_medium did) | `A_D40@M1.02 B_D40@M1.02` |
 | 8b | (proposed 15 Nov, not decided) | the domain changes where the solver does (M 1.10 → 1.20): is 20 D enough at M 1.20? | `A_D40@M1.20` |
 | 9 | (optional) | needs a new script option, which I would ask about first | first order to convergence `A_medium@burnout`; turbulence inlet 0.1 %/1 vs 1 %/10 |
@@ -384,6 +383,11 @@ x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on 
   the inflation stack along the nose, e.g. (504, 96) mm), orthogonal quality min 0.238 / avg 0.959, aspect ratio
   max 2999 / avg 56. Inlet x = -7200, far field y = 7200 (edges 7200 / 9720 mm), outlet 7110 mm, face area
   6.977531e+07 mm² as in section 6.
+* **B_D40, 15 Nov:** 275 551 cells (A_medium recipe, from a duplicate of B's Workbench system FFF-1, now FFF-5).
+  Skewness max 0.789 / avg 0.068 (recomputed from the .msh: 0.7894, a single triangle at (1361, 106) mm), orthogonal
+  quality min 0.464 / avg 0.959, aspect ratio max 2999 / avg 56. Edges 7200 / 7200 / 9720 / 7110 mm, face area
+  6.977886e+07 mm² (exact), `wall_nose` 709.16 mm, `wall_coupler` 700-720, `wall_body` 1.000-2.999 mm, 101 247
+  triangles within r = 40 mm, as B_medium.
 * **cone, 15 Nov:** 253 682 cells (A_medium recipe; outlet 2540, `wall_coupler` 720-740, `wall_body` 740-2540 with
   989 divisions). Skewness max 0.992 / avg 0.072, orthogonal quality min 0.0099 / avg 0.957, aspect ratio max 2999.
   The bad cells are one fan of about 20 slivers at the sharp tip (x = -0.07 mm, y = 0-0.02 mm): the 45 inflation
