@@ -25,7 +25,7 @@ sys.path.insert(0, str(ROOT / "CFD" / "studyA"))
 from total_length import Model  # noqa: E402
 import freestream_bc as fb  # noqa: E402
 
-MACHS = (0.95, 0.98, 1.00, 1.02, 1.05, 1.10, 1.20)  # + burnout; 0.98 / 1.02 are the fall-backs for M 1.00
+MACHS = (0.90, 0.95, 0.98, 1.00, 1.02, 1.05, 1.10, 1.20)  # + burnout; 1.02 is the fall-back for M 1.00, 0.90 added 15 Nov (drag rise below 0.95)
 SHAPE, L, C = "lvhaack", 0.682345026, 0.041          # design A, as python_points_720.py
 L_NOSE = 0.72                                         # Reynolds length: nose with coupler [m]
 G = fb.GAMMA

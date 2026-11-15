@@ -4,7 +4,7 @@ Usage: python run_queue.py SPEC [SPEC ...]
   SPEC = MESH@POINT[:SOLVER]
     MESH    a mesh in meshes/ without .msh (A_coarse, A_medium, A_fine, B_medium, A_D10, A_D40, cone ...),
             or A_study720 / B_study720: the Rocket Team meshes of CFD/study720/mesh (174k cells)
-    POINT   a row of fluent_points.csv: M0.95 M0.98 M1.00 M1.02 M1.05 M1.10 M1.20 burnout
+    POINT   a row of fluent_points.csv: M0.90 M0.95 M0.98 M1.00 M1.02 M1.05 M1.10 M1.20 burnout
     SOLVER  pressure (pressure-based Coupled) or density (density-based Roe-FDS). Default: pressure
             up to M 1.10, density from M 1.20. Give it only to override, e.g. A_medium@M1.20:pressure
   The run is called MESH_POINT, plus _SOLVER when the solver is not the default. Its files go to
