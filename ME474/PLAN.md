@@ -3,7 +3,7 @@
 > **Status 15 Nov 2026, 19:30.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
 > drag rise A M 0.951, B M 0.937; B lower except M 0.95-1.02; -12.8 % at M 1.20, -15.3 % at burnout. Decisions 1-3 and 6
 > taken 15 Nov (section 7): medium mesh, 40 D up to M 1.10 and 20 D above, M 0.90 added, density-based from M 1.20.
-> Running: `A_D40@M1.20` (`runs/queue_5.txt`, the last run: is 20 D enough at M 1.20?). Next: post-processing and
+> All queued runs done 20:13 (20 D is enough at M 1.20: -0.07 % on 40 D). Fluent idle. Next: post-processing and
 > report (step 10). Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
 > For a finished run without a Claude session: `python check_run.py`, commit and push `runs/<run>/` (text only), and
 > copy `runs/<run>/<run>.cas.h5` and `.dat.h5` to `Z:\ME474\runs\<run>\`.
@@ -276,7 +276,8 @@ Production, `wall_nose` C_D (`python drag_curve.py`, `runs/drag_curve.csv`; 40 D
   its minimum (k drop 3.0-4.1), with C_D flat; density-based M 1.20 stalls at 2.2-2.4 (see above).
 * **Stagnation excess** (pressure-based): +0.09 to +0.80 % of the theoretical value from M 0.90 to 1.10 (A larger
   than B), the effect of section 2c; about 1e-4 in C_D.
-* Pending: `A_D40@M1.20` (is 20 D enough at M 1.20?).
+* **20 D is enough at M 1.20:** `A_D40@M1.20` 0.09488 against `A_medium@M1.20` 0.09495 (-0.07 %, cd_p -0.10 %, cd_v -0.01 %),
+  far below the GCI. So the domain change between M 1.10 and 1.20 does not bias the curve.
 
 ## 3. Run list, in order
 
