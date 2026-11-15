@@ -1,0 +1,12 @@
+{
+ "run": "B_medium_M1.20",
+ "mesh": "B_medium",
+ "point": "M1.20",
+ "solver": "density",
+ "p_inf": 84801.4,
+ "mach": 1.2,
+ "t_inf": 278.554,
+ "t0": 358.579,
+ "p0": 205564.0,
+ "p0_pitot": 204083.0
+}
