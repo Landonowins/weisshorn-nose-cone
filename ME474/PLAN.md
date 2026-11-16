@@ -1,12 +1,13 @@
 # ME-474 run plan, group 13 (draft for approval)
 
-> **Status 16 Nov 2026, 13:45.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
+> **Status 16 Nov 2026, 13:50.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
 > drag rise A M 0.951, B M 0.937; B lower except M 0.950-1.026; -12.8 % at M 1.20, -15.3 % at burnout. Decisions 1-3 and 6
 > taken 15 Nov (section 7): medium mesh, 40 D up to M 1.10 and 20 D above, M 0.90 added, density-based from M 1.20.
 > All queued runs done 20:13 (20 D is enough at M 1.20: -0.07 % on 40 D). 16 Nov: `A_D40@M1.02 B_D40@M1.02` done
 > 12:36 (B still +1.2 %, so A and B cross at M 1.026). Step 10 figures done 13:10 (section 10): `report_figures.py`
 > (C_D(M)) and `fluent_figs.py` (144 native Fluent figures). Headline C_D = nose + coupler (decision 7, 16 Nov):
-> drag rise A M 0.950, B M 0.937; B above A only at M 0.958-1.019. Results outline: `RESULTS_OUTLINE.md`. Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
+> drag rise A M 0.950, B M 0.937; B above A only at M 0.958-1.019. `B_medium@M1.20:pressure` done 13:41 (-0.06 %).
+> Results outline: `RESULTS_OUTLINE.md`. Fluent idle. Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
 > For a finished run without a Claude session: `python check_run.py`, commit and push `runs/<run>/` (text only), and
 > copy `runs/<run>/<run>.cas.h5` and `.dat.h5` to `Z:\ME474\runs\<run>\`.
 
@@ -248,6 +249,8 @@ cd_nose, mean of the last 100 iterations:
 ### 2i. Solver cross-check and production (groups 4, 6+7, 15 Nov)
 
 Group 4, A_medium at M 1.20: density-based 0.09495, pressure-based 0.09479 (-0.17 %; cd_p -0.20 %, cd_v -0.12 %).
+B_medium at M 1.20 (16 Nov, run 4b): density-based 0.08275, pressure-based 0.08270 (-0.06 %; cd_p +0.02 %, cd_v -0.27 %);
+pressure-based 3.1-7.2 orders, smooth Cp, stagnation 0.45 % below pitot. Nose + coupler: A -0.16 %, B -0.07 %.
 No jump at the solver switch beyond the GCI. Density-based (kept, decision 6): stagnation within 0.04 % of pitot,
 wall-pressure zigzag from x = 360 mm (Cp scatter 0.004-0.009 rms; B_medium 0.007-0.019; cone 0.018-0.021; burnout
 0.0003), continuity and energy stalled at 2.2-2.4 orders. Pressure-based: smooth Cp, 6-7 orders, but stagnation
@@ -296,6 +299,7 @@ Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20
 | 2B | B_coarse, B_medium, B_fine | mesh study for B too (decided 14 Nov); B_medium's two runs are also production | `B_coarse@M0.95 B_medium@M0.95 B_fine@M0.95 B_coarse@burnout B_medium@burnout B_fine@burnout` |
 | 3 | A_D10, A_D40 (+ A_medium from 1) | domain study at M 0.95, and at M 1.00 (added 14 Nov: near M 1 the far field has the most influence and reflected waves return near the nose; A_medium@M1.00 is production group 6, run here) | `A_D10@M0.95 A_D40@M0.95 A_D10@M1.00 A_medium@M1.00 A_D40@M1.00` |
 | 4 | A_medium | solver cross-check (the density run is also production); done 15 Nov: density 0.09495, pressure 0.09479 (-0.17 %), decision 6 | `A_medium@M1.20 A_medium@M1.20:pressure` |
+| 4b | B_medium | done 16 Nov (`queue_7.txt`, decision 7): smooth B Cp(x) at M 1.20; pressure 0.08270 vs density 0.08275 (-0.06 %) | `B_medium@M1.20:pressure` |
 | 5 | cone | validation (Taylor-Maccoll) | `cone@burnout cone@M1.20` |
 | 6+7 | A_D40, B_D40, B_medium | production (decided 15 Nov), A and B alternating; chained behind 4, `queue_5.txt` | `A_D40@M0.90 B_D40@M0.90 B_D40@M0.95 A_D40@M0.98 B_D40@M0.98 B_D40@M1.00 A_D40@M1.05 B_D40@M1.05 A_D40@M1.10 B_D40@M1.10 B_medium@M1.20 A_D40@M1.20` |
 | 8 | A_D40, B_D40 | not needed as a fallback (M 1.00 converged); run 16 Nov to pin down where A and B cross above M 1, `queue_6.txt` | `A_D40@M1.02 B_D40@M1.02` |
@@ -600,16 +604,16 @@ CPython 3.10) and `python fluent_figs.py` (PyFluent; refuses to start while `run
 * `fig_cd_mach.pdf/.png`: (a) C_D of nose + coupler (decision 7) with the band where B is above A (M 0.958-1.019)
   and the drag-rise points; (b) dC_D/dM at the interval midpoints with the 0.1 threshold; (c) pressure, (d) viscous part (nose + coupler).
   Team report style (16 cm, LV-Haack green dash-dot, Von Karman indigo solid).
-* Per run, native Fluent, 2400 x 1500, for the 18 production runs and both M 1.20 pressure-based runs:
+* Per run, native Fluent, 2400 x 1500, for the 18 production runs and both M 1.20 pressure-based runs (120):
   `fluent_mach_<run>` (x -0.3 to 0.9 m), `fluent_mach_wide_<run>` (4 x 2.5 m), `fluent_cpfield_<run>`,
   `fluent_mach_tip_<run>` (24 mm), `fluent_residuals_<run>`, `fluent_cd_<run>`. Mach range 0.7-1.3 up to M 1.10
   (M = 1 at mid-scale), 0.8-1.4 at M 1.20, 1.0-1.6 at burnout; Cp field -0.3 to 0.6.
 * Overlays along wall_nose + wall_coupler (from `<run>_wall.csv`, face values sorted by x): `fluent_cp_AB_<point>`,
   `fluent_cf_AB_<point>`, `fluent_yplus_AB_<point>` for the 9 points; `fluent_{cp,cf,yplus}_solver_{A,B}_M1.20`
-  (density- vs pressure-based). Same colours as `fig_cd_mach`.
+  (density- vs pressure-based) and `fluent_{cp,cf,yplus}_AB_M1.20_pressure` (36 overlays). Same colours as `fig_cd_mach`.
 * For the report: the M 0.98 pair shows why B is above A there: a stronger supersonic pocket at the shoulder
   (about M 1.12 against 1.07) and a sharper terminating shock, and a higher wall Cp from x = 0.1 to 0.69 m (lower
   only near the tip). At M 1.20 the density-based wall Cp zigzags (B from x = 0.27 to 0.54 m; section 2h): show A's
-  Cp(x) from the pressure-based run (`fluent_cp_solver_A_M1.20`), and say that B has no pressure-based run there.
+  and B's Cp(x) from the pressure-based runs (`fluent_cp_AB_M1.20_pressure`; B pressure-based added 16 Nov).
 * Bow shock on the axis (`<run>_axis.csv`): 146 / 50 / 18 / 7 / 3 mm ahead of A's tip at M 1.02 / 1.05 / 1.10 /
   1.20 / 1.465.

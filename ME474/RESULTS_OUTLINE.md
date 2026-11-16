@@ -90,7 +90,9 @@ Figures: `fig_cd_mach` (c), (d); Cf(x): `fluent_cf_AB_<point>`.
 * **M 1.20** (`fluent_cp_AB_M1.20_pressure`, `fluent_cp_solver_A_M1.20`, `fluent_cp_solver_B_M1.20`): the
   density-based wall Cp zigzags from face to face (A at x = 0.03-0.06, 0.38-0.41, 0.57-0.61 m; B from 0.27 to
   0.54 m), around the right mean. Show Cp(x) from the pressure-based runs, which are smooth, and keep the
-  density-based C_D (solver decision of 15 Nov). [B pressure-based run of 16 Nov: result to fill in.]
+  density-based C_D (solver decision of 15 Nov). Pressure-based, B's Cp is lower than A's over the front 0.19 m and
+  higher from there to the shoulder: the same balance as at burnout. The two solvers give the same C_D: A -0.16 %,
+  B -0.07 % (nose + coupler, pressure- against density-based).
 * Tip close-ups (`fluent_mach_tip_*`): the subsonic region behind the bow shock around the 4.5 mm tip radius.
 
 ## R.6 How far to trust the numbers (one table, citing the convergence section)
@@ -103,7 +105,7 @@ Figures: `fig_cd_mach` (c), (d); Cf(x): `fluent_cf_AB_<point>`.
 | Balances, y+ | mass and heat < 1e-3 %; y+ < 1 on every wall (max 0.72) | `runs/summary.csv` |
 | Mesh | GCI 1.08 % (A, M 0.95); 0.02 % at burnout (A and B); B at M 0.95 oscillatory, range 0.26 % | convergence section |
 | Domain | 40 D within about 0.4 % at M 0.95; at M 1.00 not converged (several %); 20 D enough at M 1.20 (-0.07 % on 40 D) | convergence section |
-| Solver switch at M 1.20 | pressure- vs density-based: A -0.17 %; B [to fill in] | R.5 |
+| Solver switch at M 1.20 | pressure- vs density-based, nose + coupler: A -0.16 %, B -0.07 % (pressure-based runs 3.1-7.3 orders down, smooth Cp; stagnation 0.45-0.74 % below pitot) | R.5 |
 | Model | stagnation pressure +0.09 to +0.90 % above theory (pressure-based, M 0.90-1.10), about 1e-4 in C_D; cone vs Taylor-Maccoll: surface Cp +1.3-1.5 %, shock angle within 0.2 deg | convergence section |
 
 Main text: one pressure-based residual plot (e.g. `fluent_residuals_A_D40_M0.98`) and one density-based
