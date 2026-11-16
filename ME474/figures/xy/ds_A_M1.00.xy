@@ -1,0 +1,8 @@
+(title "A, LV-Haack")
+(labels "Position x" "y")
+
+((xy/key/label "A, LV-Haack")
+10	0.04569
+20	0.04989
+40	0.05265
+)

@@ -1,0 +1,7 @@
+(title "outlet (pressure outlet)")
+(labels "Position x" "y")
+
+((xy/key/label "outlet (pressure outlet)")
+2.52	0.09
+2.52	7.2
+)

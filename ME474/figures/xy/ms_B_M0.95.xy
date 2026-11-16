@@ -1,0 +1,8 @@
+(title "B, Von Karman (oscillatory: no GCI)")
+(labels "Position x" "y")
+
+((xy/key/label "B, Von Karman (oscillatory: no GCI)")
+1	31.86
+1.3819	31.94
+1.8589	31.92
+)

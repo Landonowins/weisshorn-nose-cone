@@ -1,0 +1,7 @@
+(title "Taylor-Maccoll (inviscid): Cp = 0.0859 (drawn over x = 0.05-0.65 m)")
+(labels "Position x" "y")
+
+((xy/key/label "Taylor-Maccoll (inviscid): Cp = 0.0859 (drawn over x = 0.05-0.65 m)")
+0.05	0.0859
+0.65	0.0859
+)

@@ -1,0 +1,7 @@
+(title "B, Von Karman")
+(labels "Position x" "y")
+
+((xy/key/label "B, Von Karman")
+20	0.03194
+40	0.03149
+)

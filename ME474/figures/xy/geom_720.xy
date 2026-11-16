@@ -1,0 +1,7 @@
+(title "x = 720 mm: body (r = 90 mm) behind")
+(labels "Position x" "y")
+
+((xy/key/label "x = 720 mm: body (r = 90 mm) behind")
+0.72	0
+0.72	0.098
+)

@@ -1,0 +1,7 @@
+(title "A shoulder, x = 679 mm")
+(labels "Position x" "y")
+
+((xy/key/label "A shoulder, x = 679 mm")
+0.679	0.072
+0.679	0.098
+)

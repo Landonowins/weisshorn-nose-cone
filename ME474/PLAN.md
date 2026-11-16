@@ -7,7 +7,9 @@
 > 12:36 (B still +1.2 %, so A and B cross at M 1.026). Step 10 figures done 13:10 (section 10): `report_figures.py`
 > (C_D(M)) and `fluent_figs.py` (156 native Fluent figures). **Headline C_D = nose + coupler** (decision 7, 16 Nov):
 > drag rise A M 0.950, B M 0.937; B above A only at M 0.958-1.019; -13.6 % at M 1.20, -15.9 % at burnout. `B_medium@M1.20:pressure` done 13:41 (-0.06 %).
-> Results outline: `RESULTS_OUTLINE.md`. Fluent idle. Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
+> Results outline: `RESULTS_OUTLINE.md`. 16 Nov 18:00: the figures for the sections before Results (geometry, mesh, mesh and
+> domain study, cone validation; 44 native Fluent figures, `fluent_figs_study.py`, section 10). Fluent was restarted at 17:10
+> (same `server_info-A.txt`, 8 processes) after a test command blocked it with an error dialog. Fluent idle. Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
 > For a finished run without a Claude session: `python check_run.py`, commit and push `runs/<run>/` (text only), and
 > copy `runs/<run>/<run>.cas.h5` and `.dat.h5` to `Z:\ME474\runs\<run>\`.
 
@@ -617,3 +619,26 @@ CPython 3.10) and `python fluent_figs.py` (PyFluent; refuses to start while `run
   and B's Cp(x) from the pressure-based runs (`fluent_cp_AB_M1.20_pressure`; B pressure-based added 16 Nov).
 * Bow shock on the axis (`<run>_axis.csv`): 146 / 50 / 18 / 7 / 3 mm ahead of A's tip at M 1.02 / 1.05 / 1.10 /
   1.20 / 1.465.
+
+* **Sections before Results** (16 Nov, `python fluent_figs_study.py`: starts its own hidden Fluent 2024 R2, about 5 min;
+  the cone fields with `python fluent_figs.py cone_burnout cone_M1.20` in the GUI session). 44 figures:
+  * Geometry: `fluent_geometry_profiles` (r(x) of A and B from `CFD/geometry_720`, shoulders at 679 / 700 mm, x = 720 mm),
+    `fluent_geometry_tip` (first 35 mm at equal scales, the 4.5 mm tip sphere), `fluent_geometry_domains` (10 / 20 / 40 D
+    outlines, outlet, axis, wall).
+  * Mesh, Fluent's own mesh display (no mirror; width of the view = picture width): `fluent_mesh_domain_A_D40` (12 m),
+    `fluent_mesh_domain_A_medium` (6.4 m), `fluent_mesh_nose_<mesh>` (0.88 m), `fluent_mesh_tip_<mesh>` (112 mm, the 40 mm
+    tip sphere), `fluent_mesh_tipzoom_<mesh>` (16 mm, inflation layers on the tip), `fluent_mesh_wall_<mesh>` (48 mm at
+    x = 0.345 m, the 45 layers and the step to the triangles), `fluent_mesh_shoulder_<mesh>` (80 mm); A and B medium,
+    A coarse and fine (nose, tip, wall); `fluent_mesh_tip_cone`, `fluent_mesh_tipzoom_cone` (0.4 mm: the sliver fan at
+    the sharp tip, section 5). Fluent draws its ruler light grey on white, so it is off: give the view width in the caption.
+  * Mesh study: `fluent_meshstudy_M0.95` (C_D x 1000 of the nose against h/h_fine, A and B, A's Richardson value 0.03163
+    and its GCI band 1.08 %: B lies inside it), `fluent_meshstudy_change` (all four studies as change from the fine mesh,
+    with the Richardson values; burnout flat within 0.1 %).
+  * Domain study: `fluent_domainstudy_M0.95`, `fluent_domainstudy_M1.00` (C_D of the nose against L/D = 10, 20, 40;
+    B at 20 and 40 D, at M 1.00 only 40 D), `fluent_domainstudy_change` (change from 40 D in %: M 0.95 converging,
+    M 1.00 not, M 1.20 flat).
+  * Validation: `fluent_cp_cone_burnout`, `fluent_cp_cone_M1.20` (wall Cp of the sharp cone against Taylor-Maccoll over
+    x = 0.05-0.65 m; the zigzag from x = 0.29 m at M 1.20 shows), plus the six per-run figures of `cone_burnout` and
+    `cone_M1.20` (conical shock in `fluent_mach_wide_cone_*`).
+  * The XY plots take their title from Fluent's axis functions, so the study plots use custom field functions named
+    after the quantity (title e.g. "nose-drag-coefficient vs. relative-cell-size"); their values are not used.

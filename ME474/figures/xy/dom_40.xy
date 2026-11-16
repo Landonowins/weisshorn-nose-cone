@@ -1,0 +1,8 @@
+(title "40 D, M 0.90-1.10 (pressure far-field)")
+(labels "Position x" "y")
+
+((xy/key/label "40 D, M 0.90-1.10 (pressure far-field)")
+-7.2	0
+-7.2	7.2
+2.52	7.2
+)
