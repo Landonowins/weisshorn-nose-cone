@@ -1,7 +1,7 @@
 # ME-474 run plan, group 13 (draft for approval)
 
 > **Status 16 Nov 2026, 12:20.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
-> drag rise A M 0.951, B M 0.937; B lower except M 0.95-1.02; -12.8 % at M 1.20, -15.3 % at burnout. Decisions 1-3 and 6
+> drag rise A M 0.951, B M 0.937; B lower except M 0.950-1.026; -12.8 % at M 1.20, -15.3 % at burnout. Decisions 1-3 and 6
 > taken 15 Nov (section 7): medium mesh, 40 D up to M 1.10 and 20 D above, M 0.90 added, density-based from M 1.20.
 > All queued runs done 20:13 (20 D is enough at M 1.20: -0.07 % on 40 D). 16 Nov: `A_D40@M1.02 B_D40@M1.02` running
 > (`queue_6.txt`, to pin down where A and B cross above M 1). Step 10 started: `report_figures.py` (C_D(M), done) and
@@ -260,6 +260,7 @@ Production, `wall_nose` C_D (`python drag_curve.py`, `runs/drag_curve.csv`; 40 D
 | 0.95 | 0.03151 | 0.03149 | -0.1 % | 0.00269 / 0.02881 | 0.00368 / 0.02781 |
 | 0.98 | 0.03610 | 0.03956 | +9.6 % | 0.00737 / 0.02874 | 0.01207 / 0.02749 |
 | 1.00 | 0.05265 | 0.05569 | +5.8 % | 0.02422 / 0.02843 | 0.02853 / 0.02715 |
+| 1.02 | 0.07351 | 0.07441 | +1.2 % | 0.04551 / 0.02801 | 0.04764 / 0.02676 |
 | 1.05 | 0.08442 | 0.08104 | -4.0 % | 0.05681 / 0.02761 | 0.05464 / 0.02640 |
 | 1.10 | 0.09155 | 0.08308 | -9.3 % | 0.06445 / 0.02710 | 0.05712 / 0.02595 |
 | 1.20 | 0.09495 | 0.08275 | -12.8 % | 0.06868 / 0.02627 | 0.05750 / 0.02525 |
@@ -267,8 +268,9 @@ Production, `wall_nose` C_D (`python drag_curve.py`, `runs/drag_curve.csv`; 40 D
 
 * **Drag rise (dC_D/dM = 0.1, slopes at interval midpoints):** A at M 0.951, B at M 0.937 (about +-0.01 from the
   0.03-0.05 spacing). B's rise starts earlier and is steeper (0.27 against 0.15 from M 0.95 to 0.98).
-* **Lower drag:** B everywhere except M 0.95-1.02, where its earlier rise puts it up to 9.6 % above A. The curves
-  cross at M 0.950 (equal there) and M 1.024. B's viscous part is 3.5-4.5 % below A's at every Mach number; the
+* **Lower drag:** B everywhere except M 0.95-1.03, where its earlier rise puts it up to 9.6 % above A. The curves
+  cross at M 0.950 (equal there) and M 1.026 (pinned down by the M 1.02 pair of 16 Nov: B still +1.2 % there; the
+  interpolation between M 1.00 and 1.05 had given 1.024). B's viscous part is 3.5-4.5 % below A's at every Mach number; the
   swing is all pressure drag (B +64 % at M 0.98, -19 % at burnout). M 1.20 and burnout match study720 (-12.8 / -15 %).
 * **Domain error is common to A and B:** at M 0.95, 20 -> 40 D changes A by -1.47 % and B by -1.41 %; A - B is
   +0.00004 on 20 D and +0.00002 on 40 D. So B_medium@M1.00 is not needed for the comparison.

@@ -14,6 +14,7 @@ Runs on the Fluent session of the newest server_info*.txt here, so it refuses to
 """
 import csv
 import json
+import math
 import subprocess
 import sys
 import traceback
@@ -37,8 +38,9 @@ EXTRA = ["A_medium_M1.20_pressure"]
 
 
 def mach_range(mach):
-    """One range for the drag-rise points, so that they compare; the study A ranges at M 1.20 and burnout."""
-    return (0.5, 1.5) if mach <= 1.10 else (0.8, 1.4) if mach < 1.3 else (1.0, 1.6)
+    """One range for the drag-rise points, M = 1 at mid-scale so that the sonic line shows (the bow shock stands
+    146 / 50 / 18 mm ahead of the tip at M 1.02 / 1.05 / 1.10); the study A ranges at M 1.20 and burnout."""
+    return (0.7, 1.3) if mach <= 1.10 else (0.8, 1.4) if mach < 1.3 else (1.0, 1.6)
 
 
 def queue_running():
@@ -84,24 +86,27 @@ def contour(s, field, fmt, rng, view, name):
 
 
 def xy_plot(s, name):
+    """A fresh XY plot: one that exists already would keep the files read into it before."""
     plots = s.settings.results.plot.xy_plot
-    if name not in plots.get_object_names():
-        plots.create(name=name)
+    if name in plots.get_object_names():
+        del plots[name]
+    plots.create(name=name)
     return plots[name]
 
 
 def file_plot(s, name, func, curves, ylabel, prec, out):
-    """XY plot of Fluent XY files [(path, colour)]; the y function sets the title and unit, the data come from the files."""
+    """XY plot of Fluent XY files [(path, colour, pattern)]; the y function sets the title and unit, the data come from
+    the files. Fluent makes the last file read curve 0 (first in the legend), so the files are read in reverse."""
     p = xy_plot(s, name)
     p.y_axis_function = func
     p.surfaces_list = []
-    for path, _ in curves:
+    for path, _, _ in reversed(curves):
         p.read_from_file(filename=str(path))
     p.axes.labels = {"x_axis": "Position x", "y_axis": ylabel}
     p.axes.numbers = {"x_format": "float", "x_axis_precision": 2, "y_format": "float", "y_axis_precision": prec}
     p.axes.rules = {"x_axis": {"draw_major_rules": True}, "y_axis": {"draw_major_rules": True}}
-    for i, (_, color) in enumerate(curves):
-        p.curves.lines[i] = {"pattern": "----", "weight": 3, "color": color}
+    for i, (_, color, pattern) in enumerate(curves):
+        p.curves.lines[i] = {"pattern": pattern, "weight": 3, "color": color}
         p.curves.markers[i] = {"symbol": "", "size": 0.3, "color": color}
     p.display()
     save(s, out)
@@ -125,11 +130,12 @@ def wall_xy(run, col, label, tag):
 
 
 def cd_plot(s, run, cd_final):
-    """The cd-nose report plot, y range 0 to twice the converged value."""
+    """The cd-nose report plot, y range 0 to at least twice the converged value, in steps of 0.08 (Fluent draws 8
+    intervals, so the ticks come out at multiples of 0.01)."""
     rps = s.settings.solution.monitor.report_plots
     rps["cd-nose-rplot"] = {"report_defs": ["cd-nose"]}
     rp = rps["cd-nose-rplot"]
-    rp.axes.y = {"auto_range": False, "min": 0.0, "max": round(2 * cd_final + 0.005, 2), "show_major_gridlines": True,
+    rp.axes.y = {"auto_range": False, "min": 0.0, "max": 0.08 * math.ceil(2 * cd_final / 0.08), "show_major_gridlines": True,
                  "label": "Cd (wall_nose)", "number_format": {"format_type": "float", "precision": 3}}
     rp.axes.x = {"label": "Iteration", "show_major_gridlines": True}
     rp.curves[0].line = {"pattern": "----", "weight": 3, "color": "blue"}
@@ -172,18 +178,16 @@ def overlays(s, summary):
     if all(r in summary for r in ("A_medium_M1.20", "A_medium_M1.20_pressure")):
         groups.append(("solver_A_M1.20", [("A_medium_M1.20", "density-based (Roe)"),
                                           ("A_medium_M1.20_pressure", "pressure-based (Coupled)")]))
-    colors = ["dark green", "purple"]
     for tag, members in groups:
+        # A and B as in fig_cd_mach: LV-Haack green dash-dot, Von Karman indigo solid (Fluent has no purple)
+        styles = ([("red", "----"), ("dark blue", "----")] if tag.startswith("solver")
+                  else [("dark green", "-.-."), ("dark blue", "----")])
         for var, col, ylabel, prec in WALL:
-            curves = [(wall_xy(run, col, label, tag), c) for (run, label), c in zip(members, colors)]
+            curves = [(wall_xy(run, col, label, tag), c, pat) for (run, label), (c, pat) in zip(members, styles)]
             try:
                 file_plot(s, f"o-{var}-{tag}", col, curves, ylabel, prec, f"fluent_{var}_{tag}.png")
             except Exception:
-                try:  # a colour name this Fluent does not know
-                    file_plot(s, f"o2-{var}-{tag}", col, [(p, c) for (p, _), c in zip(curves, ["blue", "red"])],
-                              ylabel, prec, f"fluent_{var}_{tag}.png")
-                except Exception:
-                    print(f"FAILED overlay {var} {tag}\n" + traceback.format_exc(), flush=True)
+                print(f"FAILED overlay {var} {tag}\n" + traceback.format_exc(), flush=True)
 
 
 def main(args):
