@@ -14,6 +14,7 @@ Team study `CFD/study720`, with the fixes below. Due 1 January 2027, one PDF per
 | `run_queue.py` | Runs cases one after the other: `python run_queue.py MESH@POINT[:SOLVER] ...` |
 | `check_run.py` | Convergence and sanity checks of every run → `runs/summary.csv` (no Fluent needed) |
 | `gci.py` | Grid Convergence Index from three meshes (Celik et al. 2008) |
+| `mesh_sizes.py` | Cells, nodes and faces of every mesh, read from the case files with Ansys's Python (h5py), so only where the `*.h5` are → `runs/mesh_sizes.csv` |
 | `residuals.py` | Orders of magnitude each residual dropped, from the queue logs → `runs/residuals.csv` |
 | `drag_curve.py` | C_D(M) of the production runs, drag-rise Mach number, A-B crossovers → `runs/drag_curve.csv` (headline: nose + coupler) |
 | `report_figures.py` | `figures/fig_cd_mach` (matplotlib, team report style) |

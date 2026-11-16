@@ -373,6 +373,8 @@ On another VM, start Fluent in `ME474/`, or type the Scheme form `(chdir "C:/Use
 
 ## 5. Mesh settings (Workbench Meshing, by hand)
 
+Cells, nodes and faces of every mesh: `runs/mesh_sizes.csv` (`mesh_sizes.py`, read from the case files, 16 Nov).
+
 Recipe of study720 with the two changes of the plan (tip sphere 40 mm, no wall-size step at
 x = 720 mm), then every size × 1.5 between levels. Inflation stays the same on all levels.
 

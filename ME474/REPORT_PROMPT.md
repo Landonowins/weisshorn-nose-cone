@@ -32,6 +32,7 @@ do not start Fluent runs or change any script, mesh or setting.
    `runs/drag_curve_cd_nose.csv` (nose alone), `runs/residuals.csv` (orders of magnitude per equation).
 6. `ME474/figures/`: `fig_cd_mach.pdf` and the native Fluent PNGs (names in RESULTS_OUTLINE.md and PLAN.md section 10).
 7. `ME474/gci.py`: the GCI procedure (Celik et al. 2008).
+8. `ME474/runs/mesh_sizes.csv`: cells, nodes and faces of every mesh (read from the case files by `mesh_sizes.py`).
 
 If a number you need is not in these files, write `[TODO: ...]` in the text and list it for us. Never estimate,
 round differently or recompute a value in another way than the files do.
@@ -57,6 +58,39 @@ round differently or recompute a value in another way than the files do.
 * Solver at M 1.20 (decision 6): density-based. The pressure-based runs at M 1.20 (A and B) are a cross-check and
   give the wall Cp(x) figures, because the density-based wall pressure zigzags there.
 * Headline C_D (decision 7): nose + coupler, x = 0 to 720 mm for both designs. The nose alone is given in the table.
+
+## Explain where the inputs come from
+
+The reader must be able to see where every boundary condition and reference value comes from. Explain each of these
+in the report (in the section the checklist puts it in), from the files named; if a file does not say why, write
+`[TODO: why ...]` rather than inventing a reason.
+
+* **Free stream** (section 4): the 9 points are design A's simulated ascent, from the Rocket Team's trajectory model
+  (`ME474/make_points.py` calls `studies/total_length.py` with `configs/weisshorn_650.yaml`; flight model in
+  `nosecone/flight.py`), with the ISA troposphere (`nosecone/config.py`, `AtmosphereConfig`). For each Mach number:
+  altitude, p, T, rho, V, q, Re_L, T0, p0 (`fluent_points.csv`). Design A's points are used for both shapes so that
+  A against B compares shapes only (`make_points.py`). The values use Fluent's default air (MW 28.966, cp 1006.43
+  J/(kg K), three-coefficient Sutherland: `CFD/studyA/freestream_bc.py`), so they match what Fluent computes.
+* **Turbulence at the boundaries**: intensity 1 % and viscosity ratio 10 at inlet, far field and outlet backflow,
+  i.e. k = 1.5 (I V)^2 and omega = rho k / (mu * 10) (`CFD/studyA/freestream_bc.py`; k and omega per point in
+  `fluent_points.csv`).
+* **Boundary types** (`ME474/setup_fluent.py`): pressure far-field at inlet and far field, pressure outlet at p_inf
+  with backflow total temperature = free-stream T0 (not T_inf), axis, adiabatic no-slip walls. Reference values from
+  the inlet zone, A_ref = pi (0.09 m)^2, reference length D = 0.18 m.
+* **First-cell height and y+**: the flat-plate estimate in `freestream_bc.first_cell_height` and the resulting y+
+  (PLAN.md section 5, `summary.csv` column `yplus_max`).
+* **Taylor-Maccoll validation** (section 7.8, summed up in 9.2): what the Taylor-Maccoll equation is (inviscid,
+  axisymmetric conical flow behind an attached conical shock), how `nosecone/taylor_maccoll.py` solves it (the
+  conical-flow ODE integrated inwards from a trial shock angle, starting from the oblique-shock relations, the shock
+  angle found by root finding so that the flow meets the cone surface; surface Cp and Mach from the solution), the
+  7.1° sharp cone, the free stream used (burnout and M 1.20), the targets (Cp 0.0723 and 0.0859, shock angles 43.3°
+  and 56.7°) and how Fluent was compared: wall Cp over x = 50-650 mm, shock angle with `ME474/shock_angle.py`
+  (PLAN.md 2h). The targets were computed on our PC with scipy (PLAN.md section 1).
+* **GCI**: the Celik et al. (2008) procedure as implemented in `ME474/gci.py` (h from the cell count, apparent order,
+  Richardson extrapolation, safety factor), and why B at M 0.95 has no GCI (oscillatory convergence).
+* **Drag-rise criterion** dC_D/dM = 0.1 and how it is evaluated (decision 3, `drag_curve.py`).
+* **Checks of each run**: the columns of `check_run.py` (README.md, "Checks per run"), e.g. the pitot pressure p0
+  behind a normal shock as the upper bound of the wall pressure.
 
 ## Key results (already in RESULTS_OUTLINE.md; check against it)
 
@@ -91,8 +125,8 @@ one sentence, not a gap.
    (table), and the free stream of the 9 points (table). 4.2 External forces: gravity neglected (say why in one
    sentence). 4.3 Initial conditions: steady problem, hybrid initialisation.
 5. Computational mesh. 5.1 Mesh type: hybrid. 5.2 Cell types: quadrilateral inflation layers, triangles elsewhere.
-   5.3 Sizes and local refinements, boundary-layer mesh, total number of cells and nodes (PLAN.md section 5; node counts
-   are not recorded: `[TODO]`). 5.4 Final (medium) mesh: pictures and quality metrics.
+   5.3 Sizes and local refinements, boundary-layer mesh, total number of cells and nodes (PLAN.md section 5,
+   `runs/mesh_sizes.csv`). 5.4 Final (medium) mesh: pictures and quality metrics.
 6. Numerical methods. 6.1 Finite volumes; spatial orders. 6.2 Solvers: pressure-based coupled and density-based Roe;
    variables solved for. 6.3 Solution options: initialisation, schedules, convergence criterion. 6.4 Computed
    quantities: C_D on wall_nose + wall_coupler, reference values, C_D,p and C_D,v, wall Cp and Cf, dC_D/dM.
@@ -112,7 +146,8 @@ one sentence, not a gap.
 ## Figures
 
 * The assignment asks for readable figures: axis labels, suitable ranges, scales and fonts.
-* Use the figures in `ME474/figures/` as they are. The Fluent figures are native Fluent plots on purpose: do not
+* Use the figures in `ME474/figures/` as they are. They stay as Fluent draws them (2400 x 1500, Fluent's fonts, which
+  are small): place the Fluent plots at full text width, not side by side, so their text stays readable. The Fluent figures are native Fluent plots on purpose: do not
   redraw them in matplotlib. Captions: which run (shape, Mach number, solver), what the reader should see.
 * Figures for the sections before Results (PLAN.md section 10, last item; all native Fluent):
   * Geometry: `fluent_geometry_profiles`, `fluent_geometry_tip` (4.5 mm tip sphere), `fluent_geometry_domains`
@@ -138,8 +173,12 @@ one sentence, not a gap.
   at 2.2-2.4 orders at M 1.20; the k residual creeping back up from M 1.05 while C_D stays flat; coarse-mesh
   oscillation at burnout; tip slivers in the cone mesh; GCI refinement not in the wall-normal direction.
 * Notation: C_D, C_D,p, C_D,v, Cp, Cf, M_inf, y+; SI units; A for LV-Haack, B for Von Karman throughout.
-* No page limit is set: complete but concise. Write LaTeX (article class, A4), one file per chapter, with figures
-  included by their file names.
+* No page limit is set: complete but concise.
+* Use the ERT LaTeX template: `CFD/source/main.tex` with `CFD/source/pictures/template/` (title page background,
+  ERT logo and patch, red header and footer rules, Helvetica). Make `ME474/report/main.tex` from it with one file per
+  chapter in `ME474/report/sections/`, and point `\graphicspath` at `../figures/`. Replace the title-page text (title,
+  names with Sciper numbers, title line, doc ID, date) and the header line for this report; ask us for the doc ID
+  (`[TODO]`). Keep the template's layout as it is.
 
 ## Start
 
