@@ -1,10 +1,11 @@
 # ME-474 run plan, group 13 (draft for approval)
 
-> **Status 15 Nov 2026, 19:30.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
+> **Status 16 Nov 2026, 12:40.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
 > drag rise A M 0.951, B M 0.937; B lower except M 0.95-1.02; -12.8 % at M 1.20, -15.3 % at burnout. Decisions 1-3 and 6
 > taken 15 Nov (section 7): medium mesh, 40 D up to M 1.10 and 20 D above, M 0.90 added, density-based from M 1.20.
-> All queued runs done 20:13 (20 D is enough at M 1.20: -0.07 % on 40 D). Fluent idle. Next: post-processing and
-> report (step 10). Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
+> All queued runs done 20:13 (20 D is enough at M 1.20: -0.07 % on 40 D). 16 Nov: `A_D40@M1.02 B_D40@M1.02` running
+> (`queue_6.txt`, to pin down where A and B cross above M 1). Step 10 started: `report_figures.py` (C_D(M), done) and
+> `fluent_figs.py` (native Fluent contours, wall overlays, residuals; runs after the queue). Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
 > For a finished run without a Claude session: `python check_run.py`, commit and push `runs/<run>/` (text only), and
 > copy `runs/<run>/<run>.cas.h5` and `.dat.h5` to `Z:\ME474\runs\<run>\`.
 
@@ -294,7 +295,7 @@ Syntax of `run_queue.py`. Pressure-based up to M 1.10, density-based from M 1.20
 | 4 | A_medium | solver cross-check (the density run is also production); done 15 Nov: density 0.09495, pressure 0.09479 (-0.17 %), decision 6 | `A_medium@M1.20 A_medium@M1.20:pressure` |
 | 5 | cone | validation (Taylor-Maccoll) | `cone@burnout cone@M1.20` |
 | 6+7 | A_D40, B_D40, B_medium | production (decided 15 Nov), A and B alternating; chained behind 4, `queue_5.txt` | `A_D40@M0.90 B_D40@M0.90 B_D40@M0.95 A_D40@M0.98 B_D40@M0.98 B_D40@M1.00 A_D40@M1.05 B_D40@M1.05 A_D40@M1.10 B_D40@M1.10 B_medium@M1.20 A_D40@M1.20` |
-| 8 | (fallback) | only if M 1.00 does not converge (both A_D40 and A_medium did) | `A_D40@M1.02 B_D40@M1.02` |
+| 8 | A_D40, B_D40 | not needed as a fallback (M 1.00 converged); run 16 Nov to pin down where A and B cross above M 1, `queue_6.txt` | `A_D40@M1.02 B_D40@M1.02` |
 | 8b | A_D40 (decided 15 Nov, last in `queue_5.txt`) | the domain changes where the solver does (M 1.10 → 1.20): is 20 D enough at M 1.20? | `A_D40@M1.20` |
 | 9 | (optional) | needs a new script option, which I would ask about first | first order to convergence `A_medium@burnout`; turbulence inlet 0.1 %/1 vs 1 %/10 |
 

@@ -3,7 +3,8 @@
 Usage: python drag_curve.py [--field cd_nose|cd_p|cd_v]      (reads runs/summary.csv; writes runs/drag_curve.csv)
 
 Production set (PLAN.md section 7, decided 15 Nov): 40 D (A_D40, B_D40) up to M 1.10, 20 D (A_medium, B_medium) at
-M 1.20 and burnout. A missing run is left out and reported.
+M 1.20 and burnout. M 1.02 added 16 Nov, to pin down where A and B cross above M 1. A missing run is left out
+and reported.
 
 Drag rise: dC_D/dM = 0.1 (decision 3), from finite differences between neighbouring points: the slope of each interval
 is put at its midpoint, and the first crossing of 0.1 is interpolated linearly between midpoints.
@@ -15,7 +16,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 RUNS = HERE / "runs"
-POINTS = ("M0.90", "M0.95", "M0.98", "M1.00", "M1.05", "M1.10", "M1.20", "burnout")
+POINTS = ("M0.90", "M0.95", "M0.98", "M1.00", "M1.02", "M1.05", "M1.10", "M1.20", "burnout")
 SLOPE = 0.1
 
 
