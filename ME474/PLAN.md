@@ -1,12 +1,12 @@
 # ME-474 run plan, group 13 (draft for approval)
 
 > **Status 16 Nov 2026, 13:50.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
-> drag rise A M 0.951, B M 0.937; B lower except M 0.950-1.026; -12.8 % at M 1.20, -15.3 % at burnout. Decisions 1-3 and 6
+> nose alone, drag rise A M 0.951, B M 0.937; B lower except M 0.950-1.026; -12.8 % at M 1.20, -15.3 % at burnout. Decisions 1-3 and 6
 > taken 15 Nov (section 7): medium mesh, 40 D up to M 1.10 and 20 D above, M 0.90 added, density-based from M 1.20.
 > All queued runs done 20:13 (20 D is enough at M 1.20: -0.07 % on 40 D). 16 Nov: `A_D40@M1.02 B_D40@M1.02` done
 > 12:36 (B still +1.2 %, so A and B cross at M 1.026). Step 10 figures done 13:10 (section 10): `report_figures.py`
-> (C_D(M)) and `fluent_figs.py` (144 native Fluent figures). Headline C_D = nose + coupler (decision 7, 16 Nov):
-> drag rise A M 0.950, B M 0.937; B above A only at M 0.958-1.019. `B_medium@M1.20:pressure` done 13:41 (-0.06 %).
+> (C_D(M)) and `fluent_figs.py` (156 native Fluent figures). **Headline C_D = nose + coupler** (decision 7, 16 Nov):
+> drag rise A M 0.950, B M 0.937; B above A only at M 0.958-1.019; -13.6 % at M 1.20, -15.9 % at burnout. `B_medium@M1.20:pressure` done 13:41 (-0.06 %).
 > Results outline: `RESULTS_OUTLINE.md`. Fluent idle. Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
 > For a finished run without a Claude session: `python check_run.py`, commit and push `runs/<run>/` (text only), and
 > copy `runs/<run>/<run>.cas.h5` and `.dat.h5` to `Z:\ME474\runs\<run>\`.
