@@ -1,11 +1,11 @@
 # ME-474 run plan, group 13 (draft for approval)
 
-> **Status 16 Nov 2026, 12:20.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
+> **Status 16 Nov 2026, 13:10.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
 > drag rise A M 0.951, B M 0.937; B lower except M 0.950-1.026; -12.8 % at M 1.20, -15.3 % at burnout. Decisions 1-3 and 6
 > taken 15 Nov (section 7): medium mesh, 40 D up to M 1.10 and 20 D above, M 0.90 added, density-based from M 1.20.
-> All queued runs done 20:13 (20 D is enough at M 1.20: -0.07 % on 40 D). 16 Nov: `A_D40@M1.02 B_D40@M1.02` running
-> (`queue_6.txt`, to pin down where A and B cross above M 1). Step 10 started: `report_figures.py` (C_D(M), done) and
-> `fluent_figs.py` (native Fluent contours, wall overlays, residuals; runs after the queue). Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
+> All queued runs done 20:13 (20 D is enough at M 1.20: -0.07 % on 40 D). 16 Nov: `A_D40@M1.02 B_D40@M1.02` done
+> 12:36 (B still +1.2 %, so A and B cross at M 1.026). Step 10 figures done 13:10 (section 10): `report_figures.py`
+> (C_D(M)) and `fluent_figs.py` (144 native Fluent figures). Fluent idle. Next: the report text. Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
 > For a finished run without a Claude session: `python check_run.py`, commit and push `runs/<run>/` (text only), and
 > copy `runs/<run>/<run>.cas.h5` and `.dat.h5` to `Z:\ME474\runs\<run>\`.
 
@@ -584,3 +584,25 @@ Results
   the nose (Mach angle about 90°).
 * **B geometry:** the study720 Discovery geometry used for all B meshes lies within 2 µm of the CAD rebuilt from
   the exact equations (`CFD/geometry_720/B_vonkarman_700_c20_rn4.5_2d.step`).
+
+## 10. Figures (step 10, 16 Nov)
+
+All in `ME474/figures/`. Regenerate with `python report_figures.py` (a Python with matplotlib, e.g. the Ansys
+CPython 3.10) and `python fluent_figs.py` (PyFluent; refuses to start while `run_queue.py` runs, ~13 min for all).
+
+* `fig_cd_mach.pdf/.png`: (a) nose C_D of A and B with the band where B is above A (M 0.950-1.026) and the
+  drag-rise points; (b) dC_D/dM at the interval midpoints with the 0.1 threshold; (c) pressure, (d) viscous part.
+  Team report style (16 cm, LV-Haack green dash-dot, Von Karman indigo solid).
+* Per run, native Fluent, 2400 x 1500, for the 18 production runs and `A_medium_M1.20_pressure`:
+  `fluent_mach_<run>` (x -0.3 to 0.9 m), `fluent_mach_wide_<run>` (4 x 2.5 m), `fluent_cpfield_<run>`,
+  `fluent_mach_tip_<run>` (24 mm), `fluent_residuals_<run>`, `fluent_cd_<run>`. Mach range 0.7-1.3 up to M 1.10
+  (M = 1 at mid-scale), 0.8-1.4 at M 1.20, 1.0-1.6 at burnout; Cp field -0.3 to 0.6.
+* Overlays along wall_nose + wall_coupler (from `<run>_wall.csv`, face values sorted by x): `fluent_cp_AB_<point>`,
+  `fluent_cf_AB_<point>`, `fluent_yplus_AB_<point>` for the 9 points; `fluent_{cp,cf,yplus}_solver_A_M1.20`
+  (density- vs pressure-based). Same colours as `fig_cd_mach`.
+* For the report: the M 0.98 pair shows why B is above A there: a stronger supersonic pocket at the shoulder
+  (about M 1.12 against 1.07) and a sharper terminating shock, and a higher wall Cp from x = 0.1 to 0.69 m (lower
+  only near the tip). At M 1.20 the density-based wall Cp zigzags (B from x = 0.27 to 0.54 m; section 2h): show A's
+  Cp(x) from the pressure-based run (`fluent_cp_solver_A_M1.20`), and say that B has no pressure-based run there.
+* Bow shock on the axis (`<run>_axis.csv`): 146 / 50 / 18 / 7 / 3 mm ahead of A's tip at M 1.02 / 1.05 / 1.10 /
+  1.20 / 1.465.
