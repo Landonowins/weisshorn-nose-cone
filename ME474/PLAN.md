@@ -1,6 +1,6 @@
 # ME-474 run plan, group 13 (draft for approval)
 
-> **Status 16 Nov 2026, 12:40.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
+> **Status 16 Nov 2026, 12:20.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
 > drag rise A M 0.951, B M 0.937; B lower except M 0.95-1.02; -12.8 % at M 1.20, -15.3 % at burnout. Decisions 1-3 and 6
 > taken 15 Nov (section 7): medium mesh, 40 D up to M 1.10 and 20 D above, M 0.90 added, density-based from M 1.20.
 > All queued runs done 20:13 (20 D is enough at M 1.20: -0.07 % on 40 D). 16 Nov: `A_D40@M1.02 B_D40@M1.02` running
