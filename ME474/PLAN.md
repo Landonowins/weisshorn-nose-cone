@@ -7,7 +7,7 @@
 > 12:36 (B still +1.2 %, so A and B cross at M 1.026). Step 10 figures done 13:10 (section 10): `report_figures.py`
 > (C_D(M)) and `fluent_figs.py` (156 native Fluent figures). **Headline C_D = nose + coupler** (decision 7, 16 Nov):
 > drag rise A M 0.950, B M 0.937; B above A only at M 0.958-1.019; -13.6 % at M 1.20, -15.9 % at burnout. `B_medium@M1.20:pressure` done 13:41 (-0.06 %).
-> Results outline: `RESULTS_OUTLINE.md`. 16 Nov 18:00: the figures for the sections before Results (geometry, mesh, mesh and
+> Results outline: `RESULTS_OUTLINE.md`. 16 Nov 17:40: the figures for the sections before Results (geometry, mesh, mesh and
 > domain study, cone validation; 44 native Fluent figures, `fluent_figs_study.py`, section 10). Fluent was restarted at 17:10
 > (same `server_info-A.txt`, 8 processes) after a test command blocked it with an error dialog. Fluent idle. Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
 > For a finished run without a Claude session: `python check_run.py`, commit and push `runs/<run>/` (text only), and
