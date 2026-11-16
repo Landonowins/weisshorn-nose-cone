@@ -8,12 +8,18 @@ Team study `CFD/study720`, with the fixes below. Due 1 January 2027, one PDF per
 
 | File | What it does |
 |---|---|
-| `make_points.py` | Free stream at M 0.95, 0.98, 1.00, 1.02, 1.05, 1.10, 1.20 and burnout on design A's simulated ascent: `python ME474/make_points.py` |
+| `make_points.py` | Free stream at M 0.90, 0.95, 0.98, 1.00, 1.02, 1.05, 1.10, 1.20 and burnout on design A's simulated ascent: `python ME474/make_points.py` |
 | `fluent_points.csv` | Its output: p, T, ρ, V, q, Re_L, T0, p0, pitot p0, k, ω per point |
 | `setup_fluent.py` | Fluent setup: models, boundary conditions, reports, solver schedules, exports |
 | `run_queue.py` | Runs cases one after the other: `python run_queue.py MESH@POINT[:SOLVER] ...` |
 | `check_run.py` | Convergence and sanity checks of every run → `runs/summary.csv` (no Fluent needed) |
 | `gci.py` | Grid Convergence Index from three meshes (Celik et al. 2008) |
+| `residuals.py` | Orders of magnitude each residual dropped, from the queue logs → `runs/residuals.csv` |
+| `drag_curve.py` | C_D(M) of the production runs, drag-rise Mach number, A-B crossovers → `runs/drag_curve.csv` (headline: nose + coupler) |
+| `report_figures.py` | `figures/fig_cd_mach` (matplotlib, team report style) |
+| `fluent_figs.py` | The native Fluent figures in `figures/` (contours, wall overlays, residuals, C_D histories) |
+| `PLAN.md` | The run plan, every result and decision (start here) |
+| `RESULTS_OUTLINE.md`, `REPORT_PROMPT.md` | Outline of the Results section; the prompt for drafting the report with Claude |
 | `meshes/` | The new meshes (`A_coarse.msh`, `A_medium.msh`, ...). `A_study720` and `B_study720` are the Rocket Team meshes in `CFD/study720/mesh` (174k cells), used where they are |
 | `runs/<run>/` | Everything a run writes. Git keeps the text outputs and ignores the case/data files (`*.h5`) and `autosave/` |
 
@@ -29,9 +35,7 @@ Team study `CFD/study720`, with the fixes below. Due 1 January 2027, one PDF per
 4. **Parametric runs:** any mesh in `meshes/` at any point of `fluent_points.csv`, with all files in
    `runs/<run>/`. The 300 K wall stage is dropped, since the course study keeps the walls adiabatic.
 
-Items 2 and 3 have **not run in Fluent yet**. The first run is a smoke test: check that
-`<run>_flux.out`, `<run>_axis.csv` and `<run>_report.txt` appear and that `check_run.py` fills every
-column. If the flux report keys are refused, `flux_reports` prints the allowed values.
+All four have run since 13 Nov 2026: 39 runs, all in `runs/summary.csv` (status and results in `PLAN.md`).
 
 ## Running on the VM
 
@@ -56,6 +60,7 @@ continue the case already in the session until it converges.
 
 | Point | z [m] | M | p [Pa] | T [K] | T0 [K] | p0 [Pa] | pitot p0 [Pa] |
 |---|---:|---:|---:|---:|---:|---:|---:|
+| M0.90 | 830 | 0.90 | 91744.7 | 282.756 | 328.449 | 155125 | 155125 |
 | M0.95 | 923 | 0.95 | 90714.2 | 282.149 | 332.951 | 162098 | 162098 |
 | M0.98 | 982 | 0.98 | 90066.7 | 281.765 | 335.752 | 166532 | 166532 |
 | M1.00 | 1023 | 1.00 | 89623.2 | 281.500 | 337.660 | 169597 | 169597 |
@@ -65,8 +70,8 @@ continue the case already in the session until it converges.
 | M1.20 | 1476 | 1.20 | 84801.4 | 278.554 | 358.579 | 205564 | 204083 |
 | burnout | 2185 | 1.46548 | 77684.7 | 273.947 | 391.323 | 271231 | 255044 |
 
-M 0.95, 1.20 and burnout are the study720 values. M 0.98 and 1.02 are the fall-backs if M 1.00
-does not converge. "pitot p0" is the total pressure behind a normal shock: the highest wall pressure
+M 0.95, 1.20 and burnout are the study720 values. M 0.90 was added on 15 Nov (the drag rise lies below
+M 0.95), M 1.02 on 16 Nov (to pin down where A and B cross above M 1). "pitot p0" is the total pressure behind a normal shock: the highest wall pressure
 of a converged run cannot exceed it.
 
 ## Checks per run (`check_run.py`)
