@@ -2,6 +2,6 @@
 (labels "Position x" "y")
 
 ((xy/key/label "A, Richardson extrapolation to h = 0: 0.03163")
-1	31.91
-0	31.6338
+1	0.03191
+0	0.0316338
 )

@@ -625,13 +625,15 @@ CPython 3.10) and `python fluent_figs.py` (PyFluent; refuses to start while `run
   * Geometry: `fluent_geometry_profiles` (r(x) of A and B from `CFD/geometry_720`, shoulders at 679 / 700 mm, x = 720 mm),
     `fluent_geometry_tip` (first 35 mm at equal scales, the 4.5 mm tip sphere), `fluent_geometry_domains` (10 / 20 / 40 D
     outlines, outlet, axis, wall).
-  * Mesh, Fluent's own mesh display (no mirror; width of the view = picture width): `fluent_mesh_domain_A_D40` (12 m),
+  * Mesh, Fluent's own mesh display (no mirror) with Fluent's scale bar at the bottom centre (width of the view = picture
+    width): `fluent_mesh_domain_A_D40` (12.8 m),
     `fluent_mesh_domain_A_medium` (6.4 m), `fluent_mesh_nose_<mesh>` (0.88 m), `fluent_mesh_tip_<mesh>` (112 mm, the 40 mm
     tip sphere), `fluent_mesh_tipzoom_<mesh>` (16 mm, inflation layers on the tip), `fluent_mesh_wall_<mesh>` (48 mm at
     x = 0.345 m, the 45 layers and the step to the triangles), `fluent_mesh_shoulder_<mesh>` (80 mm); A and B medium,
     A coarse and fine (nose, tip, wall); `fluent_mesh_tip_cone`, `fluent_mesh_tipzoom_cone` (0.4 mm: the sliver fan at
-    the sharp tip, section 5). Fluent draws its ruler light grey on white, so it is off: give the view width in the caption.
-  * Mesh study: `fluent_meshstudy_M0.95` (C_D x 1000 of the nose against h/h_fine, A and B, A's Richardson value 0.03163
+    the sharp tip, section 5). The scale bar is Fluent's ruler drawn in the foreground colour, set to black (Fluent's
+    default draws it light grey on the white background).
+  * Mesh study: `fluent_meshstudy_M0.95` (C_D of the nose against h/h_fine, axis 0.0312-0.0328, A and B, A's Richardson value 0.03163
     and its GCI band 1.08 %: B lies inside it), `fluent_meshstudy_change` (all four studies as change from the fine mesh,
     with the Richardson values; burnout flat within 0.1 %).
   * Domain study: `fluent_domainstudy_M0.95`, `fluent_domainstudy_M1.00` (C_D of the nose against L/D = 10, 20, 40;
@@ -641,4 +643,6 @@ CPython 3.10) and `python fluent_figs.py` (PyFluent; refuses to start while `run
     x = 0.05-0.65 m; the zigzag from x = 0.29 m at M 1.20 shows), plus the six per-run figures of `cone_burnout` and
     `cone_M1.20` (conical shock in `fluent_mach_wide_cone_*`).
   * The XY plots take their title from Fluent's axis functions, so the study plots use custom field functions named
-    after the quantity (title e.g. "nose-drag-coefficient vs. relative-cell-size"); their values are not used.
+    after the quantity (title e.g. "nose-drag-coefficient vs. relative-cell-size", hyphenated like Fluent's own
+    "pressure-coefficient"); their values are not used. Fluent cannot hide the title, and a name with spaces breaks the
+    custom field function (tested 16 Nov: the define fails and Fluent hangs).

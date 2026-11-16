@@ -9,13 +9,14 @@ files in figures/xy/. About 5 minutes.
 geometry  fluent_geometry_profiles   r(x) of both noses and couplers (CFD/geometry_720), shoulders and x = 720 mm
           fluent_geometry_tip        the first 30 mm: 4.5 mm tip sphere, where the profiles part
           fluent_geometry_domains    the 10 D, 20 D and 40 D domains and their boundary types (PLAN.md section 6)
-mesh      fluent_mesh_<view>_<mesh>  Fluent's own mesh display, no mirror; width of the view (= picture width):
-                                     domain 12 m (40 D) or 6.4 m (20 D); nose 0.88 m; tip 112 mm (the 40 mm tip
-                                     sphere); tipzoom 16 mm (inflation layers on the 4.5 mm tip); wall 48 mm at
-                                     x = 0.345 m (45 layers, 18.3 mm); shoulder 80 mm around x = 0.70 m; cone
-                                     tipzoom 0.4 mm (the sliver fan at the sharp tip). A and B medium, A coarse
-                                     and fine (nose, tip, wall) for the mesh study. Fluent's ruler is drawn light
-                                     grey on the white background, so it is left off: give the width in the caption.
+mesh      fluent_mesh_<view>_<mesh>  Fluent's own mesh display, no mirror, with Fluent's scale bar (ruler) at the
+                                     bottom centre; width of the view (= picture width): domain 12.8 m (40 D) or
+                                     6.4 m (20 D); nose 0.88 m; tip 112 mm (the 40 mm tip sphere); tipzoom 16 mm
+                                     (inflation layers on the 4.5 mm tip); wall 48 mm at x = 0.345 m (45 layers,
+                                     18.3 mm); shoulder 80 mm around x = 0.70 m; cone tipzoom 0.4 mm (the sliver fan
+                                     at the sharp tip). A and B medium, A coarse and fine (nose, tip, wall) for the
+                                     mesh study. The ruler takes the foreground colour: black here (Fluent's default
+                                     draws it light grey on the white background).
 studies   fluent_meshstudy_M0.95     C_D of the nose against h/h_fine (A and B), A's Richardson value and GCI band
           fluent_meshstudy_change    the four mesh studies as change from the fine mesh in %
           fluent_domainstudy_M0.95, fluent_domainstudy_M1.00, fluent_domainstudy_change   C_D against domain size L/D
@@ -26,7 +27,9 @@ cone      fluent_cp_cone_{burnout,M1.20}   wall Cp of the sharp cone against Tay
 Values: mesh study at M 0.95 = last iteration (runs/summary.csv, as PLAN.md 2c and 2e); at burnout = mean of the last
 500 iterations (PLAN.md 2d, 2f: the coarse meshes oscillate); Richardson extrapolation and GCI from gci.py. Domain study
 = runs/summary.csv. Fluent titles an XY plot "<y function> vs. <x function>", so the axis functions here are custom field
-functions whose names say what is plotted; their values are never used (the data come from the XY files).
+functions whose names say what is plotted; their values are never used (the data come from the XY files). Fluent
+cannot hide that title, and a function name with spaces breaks Fluent (the define command fails and Fluent hangs), so
+the names are hyphenated like Fluent's own ("pressure-coefficient").
 """
 import csv
 import math
@@ -166,19 +169,23 @@ def wall_r(shape, x):
 
 
 def views(shape):
-    """name -> camera (centre x, centre y, width, height), all 1.6 : 1 like the picture."""
+    """name -> camera (centre x, centre y, width, height), all 1.6 : 1 like the picture. Fluent draws the ruler at the
+    bottom centre, over the lowest 6 % of the picture: each view puts that inside the body or below the axis (white)."""
     r_wall = wall_r(shape, 0.345)
-    return {"nose": (0.36, 0.26, 0.88, 0.55), "tip": (0.0, 0.034, 0.112, 0.07), "tipzoom": (0.004, 0.005, 0.016, 0.01),
+    return {"nose": (0.36, 0.26, 0.88, 0.55), "tip": TIP, "tipzoom": (0.004, 0.005, 0.016, 0.01),
             "wall": (0.345, r_wall + 0.0095, 0.048, 0.03), "shoulder": (0.70, 0.10, 0.08, 0.05)}
 
 
+TIP = (0.0, 0.0305, 0.112, 0.07)  # the 40 mm tip sphere; the bottom 4.5 mm (the ruler) below the axis
+
+
 MESHES = [  # (run whose case holds the mesh, mesh name, views)
-    ("A_D40_M0.95", "A_D40", {"domain": (-2.34, 3.55, 12.0, 7.5)}),
+    ("A_D40_M0.95", "A_D40", {"domain": (-2.34, 3.45, 12.8, 8.0)}),  # bottom 0.55 m (the ruler) below the axis
     ("A_medium_M0.95", "A_medium", {"domain": (-0.54, 1.75, 6.4, 4.0), **views("A")}),
     ("B_medium_M0.95", "B_medium", views("B")),
     ("A_coarse_M0.95", "A_coarse", {k: v for k, v in views("A").items() if k in ("nose", "tip", "wall")}),
     ("A_fine_M0.95", "A_fine", {k: v for k, v in views("A").items() if k in ("nose", "tip", "wall")}),
-    ("cone_burnout", "cone", {"tip": (0.0, 0.034, 0.112, 0.07), "tipzoom": (0.0, 0.0001, 0.0004, 0.00025)}),
+    ("cone_burnout", "cone", {"tip": TIP, "tipzoom": (0.0, 0.00009, 0.0004, 0.00025)}),
 ]
 
 
@@ -188,6 +195,8 @@ def mesh_pictures(s):
         read_case(s, run)
         g = s.settings.results.graphics
         g.views.mirror_zones = []
+        g.colors.foreground = "black"  # the ruler's colour; mesh pictures come last, after the XY plots
+        g.windows.ruler = True
         if "mesh-all" not in g.mesh.get_object_names():
             g.mesh.create(name="mesh-all")
         m = g.mesh["mesh-all"]
@@ -229,19 +238,18 @@ def studies(s, summary):
         print(sh, pt, [(round(h, 3), round(c, 6)) for h, c in pts], "p", round(res["p"], 2), "f_ext",
               round(res["f_ext"], 6), "GCI fine %", round(res["gci_fine_pct"], 3), "oscillatory", res["oscillatory"])
 
-    # C_D at M 0.95 against h/h_fine, in units of 1e-3 (a fixed range 0.031-0.033 gets no middle label)
+    # C_D at M 0.95 against h/h_fine; 0.0312-0.0328 is a range Fluent labels at the ends and the middle
     (pa, ra), (pb, _) = ms[("A", "M0.95")], ms[("B", "M0.95")]
     f1, gfine = pa[0][1], ra["gci_fine_pct"] / 100
-    k = 1000
-    curves = [(xy("ms_A_M0.95", "A, LV-Haack", [(h, k * c) for h, c in pa]), *STYLE["A"], "(o)", 3),
-              (xy("ms_B_M0.95", "B, Von Karman (oscillatory: no GCI)", [(h, k * c) for h, c in pb]), *STYLE["B"], "[]", 3),
+    curves = [(xy("ms_A_M0.95", "A, LV-Haack", pa), *STYLE["A"], "(o)", 3),
+              (xy("ms_B_M0.95", "B, Von Karman (oscillatory: no GCI)", pb), *STYLE["B"], "[]", 3),
               (xy("ms_A_M0.95_rich", f"A, Richardson extrapolation to h = 0: {ra['f_ext']:.5f}",
-                  [(1.0, k * f1), (0.0, k * ra["f_ext"])]), STYLE["A"][0], "....", "<>", 2),
+                  [(1.0, f1), (0.0, ra["f_ext"])]), STYLE["A"][0], "....", "<>", 2),
               (xy("ms_A_M0.95_gci", f"A, GCI of the fine mesh: {100 * gfine:.2f} % either side",
-                  [(1.0, k * f1 * (1 - gfine)), (1.0, k * f1 * (1 + gfine))]), "red", "----", "", 3)]
+                  [(1.0, f1 * (1 - gfine)), (1.0, f1 * (1 + gfine))]), "red", "----", "", 3)]
     xy_files(s, "s-mesh-M0.95", curves, "relative-cell-size", "nose-drag-coefficient",
-             ("Relative cell size h/h_fine, h = (A/N)^1/2", "Cd of the nose (wall_nose) x 1000, M 0.95"),
-             ((0.0, 2.0), (31.0, 33.0)), (1, 1), "fluent_meshstudy_M0.95.png")
+             ("Relative cell size h/h_fine, h = (A/N)^1/2", "Cd of the nose (wall_nose), M 0.95"),
+             ((0.0, 2.0), (0.0312, 0.0328)), (1, 4), "fluent_meshstudy_M0.95.png")
 
     # all four as change from the fine mesh
     curves = []

@@ -89,13 +89,14 @@ No appendix about the Rocket Team project and none about the use of Claude or ot
     (10 / 20 / 40 D). The dimensions go in the caption or the text: the plots have no dimension lines.
   * Mesh: `fluent_mesh_domain_A_D40`, `fluent_mesh_nose_A_medium`, `fluent_mesh_tip_A_medium`,
     `fluent_mesh_tipzoom_A_medium`, `fluent_mesh_wall_A_medium`, `fluent_mesh_shoulder_A_medium` (and the same for
-    B_medium; A coarse and fine for the mesh study). They have no scale bar: give the width of the view in the caption
-    (PLAN.md section 10 lists it per view).
+    B_medium; A coarse and fine for the mesh study). Each has Fluent's scale bar at the bottom centre; PLAN.md
+    section 10 also lists the width of each view.
   * Convergence: `fluent_meshstudy_M0.95`, `fluent_meshstudy_change`, `fluent_domainstudy_M0.95`,
     `fluent_domainstudy_M1.00`, `fluent_domainstudy_change`; validation `fluent_cp_cone_burnout`, `fluent_cp_cone_M1.20`,
     `fluent_mach_wide_cone_burnout`; the sliver fan at the cone's sharp tip: `fluent_mesh_tipzoom_cone`.
-  * Fluent titles the study plots after custom field functions ("nose-drag-coefficient vs. relative-cell-size"):
-    the caption carries the real title.
+  * Every Fluent XY plot carries Fluent's own title, the plotted functions ("pressure-coefficient" on the Results
+    plots, "nose-drag-coefficient vs. relative-cell-size" on the study plots). Leave it; the caption says what the
+    figure shows, as for any figure.
 * If a figure you need is not there, put a `[FIGURE TODO: ...]` placeholder with what it must show, and list it for us.
 
 ## Writing rules
