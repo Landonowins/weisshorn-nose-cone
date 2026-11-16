@@ -4,7 +4,8 @@ Start Claude Code in a clone of the repository (branch `me474-2d-study`) and pas
 In a Claude chat instead, attach `ME474/PLAN.md`, `ME474/RESULTS_OUTLINE.md`, `ME474/README.md`,
 `ME474/setup_fluent.py`, `ME474/fluent_points.csv`, `ME474/runs/summary.csv`, `ME474/runs/drag_curve.csv`,
 `ME474/runs/drag_curve_cd_nose.csv`, `ME474/runs/residuals.csv`, `ME474/figures/fig_cd_mach.pdf`, the Fluent
-figures you want discussed, and the course template from Moodle.
+figures you want discussed, the course checklist / report template (`Checklist-Report_template.pdf`, E. Boujo) and
+last year's example report (Assessment 2, December 2025, NACA 4412 in ground effect), both on the shared Drive.
 
 ---
 
@@ -66,22 +67,51 @@ round differently or recompute a value in another way than the files do.
 * The A-B differences are well above the numerical uncertainty except at M 1.02 (equal); see R.3 and R.6 for the
   bands and the limits (M 1.00 is not domain-converged, B's domain sensitivity at M 1.00 was not tested).
 
-## Structure (last year's example report)
+## Structure: the course checklist / report template, section by section
 
-1. Introduction: the vehicle context in one paragraph, the two designs, the two questions.
-2. Geometry: both profiles, dimensions, couplers, tip radius; the computational domain.
-3. Physics and models.
-4. Boundary conditions and free-stream conditions (table of the 9 points).
-5. Mesh: recipe (PLAN.md section 5), cell counts, quality, y+ < 1.
-6. Numerics: both solvers, schedules, convergence criterion.
-7. Convergence study: mesh (GCI), domain, iterative convergence, validation against Taylor-Maccoll.
+Last year's example report follows the checklist one to one (title page, abstract, contents, acronyms and symbols,
+chapters 1-9, references, one appendix; about 33 pages). Use the same numbering; a sub-point with nothing to say gets
+one sentence, not a gap.
+
+* Front matter: title page (ME-474 Numerical Flow Simulation, Assessment 2, title, date, group 13 with names and
+  Sciper numbers: `[TODO]`), abstract (one paragraph: the questions, the method, the answers with numbers), table of
+  contents, list of acronyms and of symbols with units.
+1. Introduction. 1.1 Context and goals: the vehicle in one paragraph, the two designs, the two questions; literature
+   only from references we give you. 1.2 Type of analysis, methodology: 2D axisymmetric steady RANS at 9 Mach points,
+   mesh and domain studies, validation, the data available (`fluent_points.csv`).
+2. Geometric modelling and hypotheses. 2.1 Geometry: both profiles, dimensions, couplers, tip radius, and the
+   simplifications (body continued to the outlet, no fins, zero angle of attack). 2.2 Unit system: SI. 2.3 Characteristic
+   dimensions and dimensionless numbers: D, L = 0.72 m, M_inf, Re_L (`fluent_points.csv`). 2.4 Symmetry: axisymmetric
+   at zero angle of attack (geometry and boundary conditions). 2.5 Geometrical space: 2D axisymmetric; the 10 / 20 / 40 D
+   domains.
+3. Physical modelling and hypotheses. 3.1 Physical behaviour: compressible ideal gas, Newtonian, Sutherland viscosity,
+   energy equation, steady. 3.2 Fluid properties with values and units. 3.3 Turbulence: k-omega SST, wall-resolved
+   (y+ < 1).
+4. Boundary conditions, external forces, initial conditions. 4.1 Boundary conditions: type, location, values, units
+   (table), and the free stream of the 9 points (table). 4.2 External forces: gravity neglected (say why in one
+   sentence). 4.3 Initial conditions: steady problem, hybrid initialisation.
+5. Computational mesh. 5.1 Mesh type: hybrid. 5.2 Cell types: quadrilateral inflation layers, triangles elsewhere.
+   5.3 Sizes and local refinements, boundary-layer mesh, total number of cells and nodes (PLAN.md section 5; node counts
+   are not recorded: `[TODO]`). 5.4 Final (medium) mesh: pictures and quality metrics.
+6. Numerical methods. 6.1 Finite volumes; spatial orders. 6.2 Solvers: pressure-based coupled and density-based Roe;
+   variables solved for. 6.3 Solution options: initialisation, schedules, convergence criterion. 6.4 Computed
+   quantities: C_D on wall_nose + wall_coupler, reference values, C_D,p and C_D,v, wall Cp and Cf, dC_D/dM.
+7. Mesh size / domain size convergence study. 7.1 Criterion: C_D of the nose. 7.2 The meshes and domains: pictures,
+   table of cells. 7.3 Results on the coarsest mesh / smallest domain. 7.4 Results on the finest mesh / largest domain.
+   7.5 Relative error: GCI (Celik et al. 2008), domain change. 7.6 Choice: medium mesh, 40 D / 20 D. Then 7.7 iterative
+   convergence and 7.8 validation against Taylor-Maccoll (summed up again in 9.2).
 8. Results: follow RESULTS_OUTLINE.md, R.0 to R.7.
-9. Conclusion: the answers to the two questions with their uncertainty, the limitations, what we would do next.
-
-No appendix about the Rocket Team project and none about the use of Claude or other AI tools.
+9. Analysis and conclusions. 9.1 Summary of the results. 9.2 Accuracy and uncertainty: the limitations with their size,
+   verification and validation. 9.3 Criteria and the comparison of A and B (drag-rise criterion dC_D/dM = 0.1).
+   9.4 Conclusion: answer the two questions. 9.5 Recommendations, for the simulation and for the vehicle.
+* References: only sources we give you or that the files name (e.g. Celik et al. 2008); never invent one, write
+  `[REF TODO: what it must support]`.
+* Appendix: only study material (e.g. the residual plots of all runs). No appendix about the Rocket Team project and
+  none about the use of Claude or other AI tools.
 
 ## Figures
 
+* The assignment asks for readable figures: axis labels, suitable ranges, scales and fonts.
 * Use the figures in `ME474/figures/` as they are. The Fluent figures are native Fluent plots on purpose: do not
   redraw them in matplotlib. Captions: which run (shape, Mach number, solver), what the reader should see.
 * Figures for the sections before Results (PLAN.md section 10, last item; all native Fluent):
@@ -108,8 +138,8 @@ No appendix about the Rocket Team project and none about the use of Claude or ot
   at 2.2-2.4 orders at M 1.20; the k residual creeping back up from M 1.05 while C_D stays flat; coarse-mesh
   oscillation at burnout; tip slivers in the cone mesh; GCI refinement not in the wall-normal direction.
 * Notation: C_D, C_D,p, C_D,v, Cp, Cf, M_inf, y+; SI units; A for LV-Haack, B for Von Karman throughout.
-* Follow the template's format and page limit. Without the template, write LaTeX (article class, A4), one file per
-  section, with figures included by their file names.
+* No page limit is set: complete but concise. Write LaTeX (article class, A4), one file per chapter, with figures
+  included by their file names.
 
 ## Start
 

@@ -567,6 +567,9 @@ share, so I have not written there. `fluent_figs.py` then reads the cases from Z
 ## 9. To mention in the report (collected while running)
 
 Mesh
+* **B meshes, axis warning:** Fluent's mesh check warns "Invalid axisymmetric mesh with nodes lying below the
+  x-axis" for all 15 B runs (not for A). The lowest node is at y = -9.3e-15 m (`<run>_report.txt`): round-off
+  from the mesh export, no effect on the solution (found 16 Nov).
 * **Cone tip (validation mesh):** about 20 sliver triangles between the axis and the cone surface at the sharp
   tip (x = -0.07 mm, y = 0-0.02 mm) give skewness max 0.992 and orthogonal quality min 0.0099, just below Fluent's
   guideline of 0.01. Cause: the 45 inflation layers end against the axis at the 7.1° tip, instead of lying along
