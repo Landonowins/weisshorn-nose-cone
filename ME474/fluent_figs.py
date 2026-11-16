@@ -1,13 +1,14 @@
 """Native Fluent figures of the ME-474 runs, in the style of CFD/study720/fluent_figs.py: 2400 x 1500 PNG, white background.
 
-Usage: python fluent_figs.py [RUN ...]     default: the production set (drag_curve.py) and A_medium_M1.20_pressure
+Usage: python fluent_figs.py [RUN ...]     default: the production set (drag_curve.py) and both M 1.20 pressure-based runs
        python fluent_figs.py --overlays    only the wall overlays (on whatever case is loaded)
 
 Per run (runs/<run>/<run>.cas.h5 + .dat.h5): Mach field around the nose and wide (bow shock and sonic region), Cp field,
 Mach close-up of the tip, the residual history and the cd-nose history.
-Overlays, after the runs: Cp, Cf and y+ along wall_nose + wall_coupler, A against B at every production point, and
-A_medium at M 1.20 density- against pressure-based (the Roe zigzag, PLAN.md section 2h). The wall data come from each
-run's <run>_wall.csv (face values, sorted by x), so the overlays need no case of their own.
+Overlays, after the runs: Cp, Cf and y+ along wall_nose + wall_coupler, A against B at every production point;
+A and B at M 1.20 density- against pressure-based (the Roe zigzag, PLAN.md section 2h); A against B pressure-based at
+M 1.20. The wall data come from each run's <run>_wall.csv (face values, sorted by x), so the overlays need no case
+of their own.
 Writes figures/fluent_*.png and the XY files in figures/xy/.
 
 Runs on the Fluent session of the newest server_info*.txt here, so it refuses to start while run_queue.py is running.
@@ -34,7 +35,7 @@ WALL = [("cp", "pressure-coefficient", "Pressure coefficient Cp", 2),
 CAMERA = {"full": (0.30, 0.0, 1.2, 0.75), "wide": (0.0, 0.0, 4.0, 2.5), "tip": (0.004, 0.0, 0.024, 0.015)}
 CP_RANGE = (-0.3, 0.6)  # study720
 SHAPE_LABEL = {"A": "A, LV-Haack", "B": "B, Von Karman"}
-EXTRA = ["A_medium_M1.20_pressure"]
+EXTRA = ["A_medium_M1.20_pressure", "B_medium_M1.20_pressure"]  # for the M 1.20 Cp(x) without the Roe zigzag
 
 
 def mach_range(mach):
@@ -175,9 +176,13 @@ def overlays(s, summary):
         runs = [dc.run_name(sh, point) for sh in "AB"]
         if all(r in summary for r in runs):
             groups.append((f"AB_{point}", [(runs[0], SHAPE_LABEL["A"]), (runs[1], SHAPE_LABEL["B"])]))
-    if all(r in summary for r in ("A_medium_M1.20", "A_medium_M1.20_pressure")):
-        groups.append(("solver_A_M1.20", [("A_medium_M1.20", "density-based (Roe)"),
-                                          ("A_medium_M1.20_pressure", "pressure-based (Coupled)")]))
+    for sh in "AB":  # M 1.20, density- vs pressure-based (the zigzag)
+        dens, pres = f"{sh}_medium_M1.20", f"{sh}_medium_M1.20_pressure"
+        if dens in summary and pres in summary:
+            groups.append((f"solver_{sh}_M1.20", [(dens, "density-based (Roe)"), (pres, "pressure-based (Coupled)")]))
+    if all(f"{sh}_medium_M1.20_pressure" in summary for sh in "AB"):  # smooth A-vs-B wall Cp at M 1.20
+        groups.append(("AB_M1.20_pressure", [("A_medium_M1.20_pressure", SHAPE_LABEL["A"]),
+                                             ("B_medium_M1.20_pressure", SHAPE_LABEL["B"])]))
     for tag, members in groups:
         # A and B as in fig_cd_mach: LV-Haack green dash-dot, Von Karman indigo solid (Fluent has no purple)
         styles = ([("red", "----"), ("dark blue", "----")] if tag.startswith("solver")

@@ -10,6 +10,8 @@ Columns (missing inputs give empty cells):
   cd_nose, cd_total  C_D of wall_nose and of all walls, last iteration
   cd_spread_pct    (max - min) / mean of cd-nose over the last 500 iterations   [target < 0.1 %]
   cd_p, cd_v       pressure and viscous C_D of wall_nose, from the wall-forces transcript
+  cd_coupler       C_D of wall_coupler (a cylinder: friction only), same transcript. The headline C_D of the
+                   report is nose + coupler, x = 0 to 720 mm for both designs (decided 16 Nov)
   mass_imb_pct     |net mass flux| / |inlet mass flux|, last iteration           [target < 0.2 %]
   heat_imb_pct     |net heat flux| / |inlet heat flux|, last iteration           [target < 0.2 %]
   p0_inlet_pct     total pressure at the upstream end of the axis vs the free-stream p0
@@ -31,7 +33,7 @@ HERE = Path(__file__).resolve().parent
 RUNS = HERE / "runs"
 STUDY720 = HERE.parent / "CFD" / "study720" / "mesh"   # the Rocket Team meshes, used as they are
 COLS = ["run", "mesh", "cells", "point", "mach", "solver", "iterations", "cd_nose", "cd_total", "cd_spread_pct",
-        "cd_p", "cd_v", "mass_imb_pct", "heat_imb_pct", "p0_inlet_pct", "p0_axis_max_pct", "p_stag_pct",
+        "cd_p", "cd_v", "cd_coupler", "mass_imb_pct", "heat_imb_pct", "p0_inlet_pct", "p0_axis_max_pct", "p_stag_pct",
         "yplus_max", "min_orth_q", "max_aspect"]
 NUM = r"[-+]?\d+(?:\.\d*)?(?:[eE][-+]?\d+)?"
 
@@ -125,10 +127,13 @@ def check(d):
         txt = f.read_text(errors="ignore")
         for line in txt.splitlines():
             parts = line.split()
-            if parts and parts[0] == "wall_nose":
+            if parts and parts[0] in ("wall_nose", "wall_coupler"):
                 nums = [p for p in parts[1:] if re.fullmatch(NUM, p)]
                 if len(nums) >= 6:  # pressure, viscous, total force, then the same as coefficients
-                    row["cd_p"], row["cd_v"] = nums[-3], nums[-2]
+                    if parts[0] == "wall_nose":
+                        row["cd_p"], row["cd_v"] = nums[-3], nums[-2]
+                    else:
+                        row["cd_coupler"] = nums[-1]
         m = re.search(rf"Minimum Orthogonal Quality\s*=\s*({NUM})", txt)
         row["min_orth_q"] = m.group(1) if m else ""
         m = re.search(rf"Maximum Aspect Ratio\s*=\s*({NUM})", txt)

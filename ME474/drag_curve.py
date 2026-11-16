@@ -1,6 +1,10 @@
 """C_D(M) of the production runs for A and B, the drag-rise Mach number and where A and B cross.
 
-Usage: python drag_curve.py [--field cd_nose|cd_p|cd_v]      (reads runs/summary.csv; writes runs/drag_curve.csv)
+Usage: python drag_curve.py [--field cd_720|cd_p|cd_v720|cd_nose|cd_v]   (reads runs/summary.csv; writes runs/drag_curve.csv)
+
+Fields: cd_720 (default) is the headline decided on 16 Nov: nose + coupler, x = 0 to 720 mm for both designs
+(A: 679 mm nose + 41 mm coupler, B: 700 + 20). cd_p is its pressure part (the cylindrical coupler adds none), cd_v720
+its viscous part. cd_nose and cd_v are wall_nose alone.
 
 Production set (PLAN.md section 7, decided 15 Nov): 40 D (A_D40, B_D40) up to M 1.10, 20 D (A_medium, B_medium) at
 M 1.20 and burnout. M 1.02 added 16 Nov, to pin down where A and B cross above M 1. A missing run is left out
@@ -18,6 +22,13 @@ HERE = Path(__file__).resolve().parent
 RUNS = HERE / "runs"
 POINTS = ("M0.90", "M0.95", "M0.98", "M1.00", "M1.02", "M1.05", "M1.10", "M1.20", "burnout")
 SLOPE = 0.1
+FIELDS = {
+    "cd_720": lambda r: float(r["cd_nose"]) + float(r["cd_coupler"]),
+    "cd_p": lambda r: float(r["cd_p"]),
+    "cd_v720": lambda r: float(r["cd_v"]) + float(r["cd_coupler"]),
+    "cd_nose": lambda r: float(r["cd_nose"]),
+    "cd_v": lambda r: float(r["cd_v"]),
+}
 
 
 def run_name(shape, point):
@@ -35,7 +46,7 @@ def drag_rise(ms, cds):
 
 
 def main(args):
-    field = args[args.index("--field") + 1] if "--field" in args else "cd_nose"
+    field = args[args.index("--field") + 1] if "--field" in args else "cd_720"
     rows = {r["run"]: r for r in csv.DictReader(open(RUNS / "summary.csv"))}
     table, missing = [], []
     for point in POINTS:
@@ -43,10 +54,11 @@ def main(args):
         if not (ra and rb):
             missing += [run_name(s, point) for s, r in (("A", ra), ("B", rb)) if not r]
             continue
-        a, b = float(ra[field]), float(rb[field])
+        a, b = FIELDS[field](ra), FIELDS[field](rb)
         table.append({"point": point, "mach": float(ra["mach"]), "A": a, "B": b, "A-B": a - b,
                       "B_vs_A_pct": 100 * (b / a - 1), "run_A": ra["run"], "run_B": rb["run"]})
-    with open(RUNS / "drag_curve.csv", "w", newline="") as fh:
+    out = RUNS / ("drag_curve.csv" if field == "cd_720" else f"drag_curve_{field}.csv")
+    with open(out, "w", newline="") as fh:
         wr = csv.DictWriter(fh, list(table[0]))
         wr.writeheader()
         wr.writerows(table)
@@ -64,7 +76,7 @@ def main(args):
         if t0["A-B"] * t1["A-B"] < 0:
             m = t0["mach"] + t0["A-B"] / (t0["A-B"] - t1["A-B"]) * (t1["mach"] - t0["mach"])
             print(f"A and B cross at M = {m:.3f} (between {t0['point']} and {t1['point']})")
-    print(f"-> {RUNS / 'drag_curve.csv'}")
+    print(f"-> {out}")
 
 
 if __name__ == "__main__":

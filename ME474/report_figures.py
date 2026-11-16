@@ -4,9 +4,10 @@ Usage: python report_figures.py      (a Python with matplotlib, e.g. the Ansys C
 
 Writes figures/fig_cd_mach.pdf and .png, 16 cm wide, in the style of the team's report figures
 (nosecone/plotting/style.py: LV-Haack and Von Karman colours, line styles and markers):
-  (a) wall_nose C_D, with the band where B is above A and the drag-rise Mach numbers
+  (a) C_D of nose + coupler (x = 0 to 720 mm for both designs, the headline decided 16 Nov), with the band where
+      B is above A and the drag-rise Mach numbers
   (b) dC_D/dM at the interval midpoints, with the drag-rise threshold dC_D/dM = 0.1 (PLAN.md decision 3)
-  (c) pressure part, (d) viscous part
+  (c) pressure part (all on the nose), (d) viscous part (nose + coupler)
 The points, the drag rise and the crossovers are those of drag_curve.py. Every other figure (contours, Cp and Cf along
 the wall, residuals, C_D histories) is a native Fluent plot: fluent_figs.py.
 """
@@ -27,7 +28,8 @@ import drag_curve as dc  # noqa: E402
 from nosecone.plotting import style as fs  # noqa: E402
 
 SHAPES = {"A": ("lvhaack", r"A, LV-Haack"), "B": ("vonkarman", r"B, Von K\'arm\'an")}
-FIELDS = ("mach", "cd_nose", "cd_p", "cd_v")
+# plotted field -> drag_curve.FIELDS: the headline nose + coupler, its pressure part and its viscous part
+FIELDS = {"cd": "cd_720", "cd_p": "cd_p", "cd_v": "cd_v720"}
 
 
 def table():
@@ -39,7 +41,7 @@ def table():
             missing.append(point)
             continue
         for s, r in (("A", ra), ("B", rb)):
-            out[s].append({k: float(r[k]) for k in FIELDS})
+            out[s].append({"mach": float(r["mach"]), **{k: dc.FIELDS[f](r) for k, f in FIELDS.items()}})
     if missing:
         print("left out (a run missing):", " ".join(missing))
     return out
@@ -47,7 +49,7 @@ def table():
 
 def crossovers(tab):
     ms = [r["mach"] for r in tab["A"]]
-    d = [a["cd_nose"] - b["cd_nose"] for a, b in zip(tab["A"], tab["B"])]
+    d = [a["cd"] - b["cd"] for a, b in zip(tab["A"], tab["B"])]
     return [m0 + d0 / (d0 - d1) * (m1 - m0) for m0, m1, d0, d1 in zip(ms, ms[1:], d, d[1:]) if d0 * d1 < 0]
 
 
@@ -65,7 +67,7 @@ def main():
     rise = {}
     for s in SHAPES:
         ms = [r["mach"] for r in tab[s]]
-        cd = [r["cd_nose"] for r in tab[s]]
+        cd = [r["cd"] for r in tab[s]]
         mdr, mids, slopes = dc.drag_rise(ms, cd)
         rise[s] = mdr
         a.plot(ms, cd, **style(s))
@@ -84,7 +86,7 @@ def main():
                va="top", rotation=90, fontsize=7, color=fs.INK2)
     for ax in (a, b, c, d):
         ax.axvline(1.0, color=fs.INK2, lw=0.5, ls=(0, (1, 2)), zorder=0)
-    a.set_ylabel(r"nose $C_D$")
+    a.set_ylabel(r"$C_D$, nose + coupler")
     a.set_ylim(0, None)
     b.axhline(dc.SLOPE, color=fs.INK2, lw=0.6, ls=(0, (4, 2)), zorder=0)
     b.axhline(0, color=fs.GRID, lw=0.6, zorder=0)

@@ -1,11 +1,12 @@
 # ME-474 run plan, group 13 (draft for approval)
 
-> **Status 16 Nov 2026, 13:10.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
+> **Status 16 Nov 2026, 13:45.** All studies done (sections 2c-2h) and **production done** (section 2i, `drag_curve.py`):
 > drag rise A M 0.951, B M 0.937; B lower except M 0.950-1.026; -12.8 % at M 1.20, -15.3 % at burnout. Decisions 1-3 and 6
 > taken 15 Nov (section 7): medium mesh, 40 D up to M 1.10 and 20 D above, M 0.90 added, density-based from M 1.20.
 > All queued runs done 20:13 (20 D is enough at M 1.20: -0.07 % on 40 D). 16 Nov: `A_D40@M1.02 B_D40@M1.02` done
 > 12:36 (B still +1.2 %, so A and B cross at M 1.026). Step 10 figures done 13:10 (section 10): `report_figures.py`
-> (C_D(M)) and `fluent_figs.py` (144 native Fluent figures). Fluent idle. Next: the report text. Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
+> (C_D(M)) and `fluent_figs.py` (144 native Fluent figures). Headline C_D = nose + coupler (decision 7, 16 Nov):
+> drag rise A M 0.950, B M 0.937; B above A only at M 0.958-1.019. Results outline: `RESULTS_OUTLINE.md`. Fluent 2024 R2 runs in this folder with `server_info-A.txt`. **Disconnect RDP, never sign out.**
 > For a finished run without a Claude session: `python check_run.py`, commit and push `runs/<run>/` (text only), and
 > copy `runs/<run>/<run>.cas.h5` and `.dat.h5` to `Z:\ME474\runs\<run>\`.
 
@@ -532,6 +533,12 @@ value is expected.
    (0.00006 rms), 6-7 orders on continuity and energy, k / omega 3.4 / 3.8 orders with some creep, but the stagnation
    pressure 0.74 % below pitot and +1.7 % total-pressure overshoot on the axis at the bow shock. Proposal: keep
    density-based from M 1.20 (no numerics change), report both, draw the M 1.20 Cp(x) from the pressure-based run.
+7. **Headline C_D: decided 16 Nov, nose + coupler** (`wall_nose` + `wall_coupler`, x = 0 to 720 mm for both designs:
+   A 679 + 41 mm, B 700 + 20 mm), since that is what differs between the designs. `drag_curve.py` defaults to it
+   (`cd_720`; `--field cd_nose` for the nose alone), `check_run.py` gives `cd_coupler`. It moves the comparison:
+   B is above A only at M 0.958-1.019 (at most +6.3 %, M 0.98; nose alone 0.950-1.026, +9.6 %), B is 2.7 % lower at
+   M 0.95 (nose alone: equal), -13.6 / -15.9 % at M 1.20 / burnout; the drag rise stays at A 0.950, B 0.937.
+   Also decided 16 Nov: `B_medium@M1.20:pressure` (queue_7), for a smooth B Cp(x) at M 1.20.
 
 ## 8. Case and data files of the final runs
 
@@ -590,15 +597,15 @@ Results
 All in `ME474/figures/`. Regenerate with `python report_figures.py` (a Python with matplotlib, e.g. the Ansys
 CPython 3.10) and `python fluent_figs.py` (PyFluent; refuses to start while `run_queue.py` runs, ~13 min for all).
 
-* `fig_cd_mach.pdf/.png`: (a) nose C_D of A and B with the band where B is above A (M 0.950-1.026) and the
-  drag-rise points; (b) dC_D/dM at the interval midpoints with the 0.1 threshold; (c) pressure, (d) viscous part.
+* `fig_cd_mach.pdf/.png`: (a) C_D of nose + coupler (decision 7) with the band where B is above A (M 0.958-1.019)
+  and the drag-rise points; (b) dC_D/dM at the interval midpoints with the 0.1 threshold; (c) pressure, (d) viscous part (nose + coupler).
   Team report style (16 cm, LV-Haack green dash-dot, Von Karman indigo solid).
-* Per run, native Fluent, 2400 x 1500, for the 18 production runs and `A_medium_M1.20_pressure`:
+* Per run, native Fluent, 2400 x 1500, for the 18 production runs and both M 1.20 pressure-based runs:
   `fluent_mach_<run>` (x -0.3 to 0.9 m), `fluent_mach_wide_<run>` (4 x 2.5 m), `fluent_cpfield_<run>`,
   `fluent_mach_tip_<run>` (24 mm), `fluent_residuals_<run>`, `fluent_cd_<run>`. Mach range 0.7-1.3 up to M 1.10
   (M = 1 at mid-scale), 0.8-1.4 at M 1.20, 1.0-1.6 at burnout; Cp field -0.3 to 0.6.
 * Overlays along wall_nose + wall_coupler (from `<run>_wall.csv`, face values sorted by x): `fluent_cp_AB_<point>`,
-  `fluent_cf_AB_<point>`, `fluent_yplus_AB_<point>` for the 9 points; `fluent_{cp,cf,yplus}_solver_A_M1.20`
+  `fluent_cf_AB_<point>`, `fluent_yplus_AB_<point>` for the 9 points; `fluent_{cp,cf,yplus}_solver_{A,B}_M1.20`
   (density- vs pressure-based). Same colours as `fig_cd_mach`.
 * For the report: the M 0.98 pair shows why B is above A there: a stronger supersonic pocket at the shoulder
   (about M 1.12 against 1.07) and a sharper terminating shock, and a higher wall Cp from x = 0.1 to 0.69 m (lower
