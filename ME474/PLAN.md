@@ -274,8 +274,8 @@ Production, `wall_nose` C_D (`python drag_curve.py`, `runs/drag_curve.csv`; 40 D
 * **Convergence:** every production run met the 0.1 % C_D criterion (at most one extra block: M 0.98 and 1.00).
   Residuals (`residuals.py`): pressure-based 3.6-8 orders; from M 1.05 the k residual creeps back up 1-2 orders after
   its minimum (k drop 3.0-4.1), with C_D flat; density-based M 1.20 stalls at 2.2-2.4 (see above).
-* **Stagnation excess** (pressure-based): +0.09 to +0.80 % of the theoretical value from M 0.90 to 1.10 (A larger
-  than B), the effect of section 2c; about 1e-4 in C_D.
+* **Stagnation excess** (pressure-based): +0.09 to +0.90 % of the theoretical value from M 0.90 to 1.10 (A larger
+  than B; max A_D40@M1.00 +0.897 %), the effect of section 2c; about 1e-4 in C_D.
 * **20 D is enough at M 1.20:** `A_D40@M1.20` 0.09488 against `A_medium@M1.20` 0.09495 (-0.07 %, cd_p -0.10 %, cd_v -0.01 %),
   far below the GCI. So the domain change between M 1.10 and 1.20 does not bias the curve.
 
