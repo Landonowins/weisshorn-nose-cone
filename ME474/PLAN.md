@@ -650,6 +650,11 @@ CPython 3.10) and `python fluent_figs.py` (PyFluent; refuses to start while `run
   * Validation: `fluent_cp_cone_burnout`, `fluent_cp_cone_M1.20` (wall Cp of the sharp cone against Taylor-Maccoll over
     x = 0.05-0.65 m; the zigzag from x = 0.29 m at M 1.20 shows), plus the six per-run figures of `cone_burnout` and
     `cone_M1.20` (conical shock in `fluent_mach_wide_cone_*`).
+  * Checklist 7.3 / 7.4 (16 Nov evening, `python fluent_figs.py A_coarse_M0.95 A_fine_M0.95 A_coarse_burnout A_fine_burnout A_D10_M0.95 A_D10_M1.00`
+    in the GUI session): Mach, wide Mach, Cp field, tip, residuals and C_D history of the coarsest and finest mesh and the
+    smallest domain (36 figures). `fluent_cd_history_burnout_{A,B}` (`fluent_figs_study.py history`): the last 1000
+    iterations of C_D at burnout on the three meshes; coarse oscillates 0.10 % (A) / 0.13 % (B) peak to peak, medium and
+    fine flat.
   * The XY plots take their title from Fluent's axis functions, so the study plots use custom field functions named
     after the quantity (title e.g. "nose-drag-coefficient vs. relative-cell-size", hyphenated like Fluent's own
     "pressure-coefficient"); their values are not used. Fluent cannot hide the title, and a name with spaces breaks the

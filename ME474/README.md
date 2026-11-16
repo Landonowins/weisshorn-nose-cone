@@ -20,7 +20,7 @@ Team study `CFD/study720`, with the fixes below. Due 1 January 2027, one PDF per
 | `drag_curve.py` | C_D(M) of the production runs, drag-rise Mach number, A-B crossovers → `runs/drag_curve.csv` (headline: nose + coupler) |
 | `report_figures.py` | `figures/fig_cd_mach` (matplotlib, team report style) |
 | `fluent_figs.py` | The native Fluent figures in `figures/` (contours, wall overlays, residuals, C_D histories) |
-| `fluent_figs_study.py` | Native Fluent figures for the sections before Results: geometry, mesh pictures, mesh and domain study, cone vs Taylor-Maccoll. Starts its own hidden Fluent, so it never touches an open session |
+| `fluent_figs_study.py` | Native Fluent figures for the sections before Results: geometry, mesh pictures, mesh and domain study, C_D histories at burnout, cone vs Taylor-Maccoll. Starts its own hidden Fluent, so it never touches an open session |
 | `PLAN.md` | The run plan, every result and decision (start here) |
 | `RESULTS_OUTLINE.md`, `REPORT_PROMPT.md` | Outline of the Results section; the prompt for drafting the report with Claude |
 | `meshes/` | The new meshes (`A_coarse.msh`, `A_medium.msh`, ...). `A_study720` and `B_study720` are the Rocket Team meshes in `CFD/study720/mesh` (174k cells), used where they are |

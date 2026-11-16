@@ -164,6 +164,15 @@ one sentence, not a gap.
   * Convergence: `fluent_meshstudy_M0.95`, `fluent_meshstudy_change`, `fluent_domainstudy_M0.95`,
     `fluent_domainstudy_M1.00`, `fluent_domainstudy_change`; validation `fluent_cp_cone_burnout`, `fluent_cp_cone_M1.20`,
     `fluent_mach_wide_cone_burnout`; the sliver fan at the cone's sharp tip: `fluent_mesh_tipzoom_cone`.
+  * 7.3 / 7.4, fields on the coarsest and finest mesh and the smallest domain (same views and colour ranges as the
+    production figures): `fluent_{mach,mach_wide,cpfield,mach_tip}_<run>` with their `fluent_residuals_<run>` and
+    `fluent_cd_<run>`, for `A_coarse_M0.95`, `A_fine_M0.95`, `A_coarse_burnout`, `A_fine_burnout`, `A_D10_M0.95`,
+    `A_D10_M1.00`. Compare with `A_medium_burnout` and `A_D40_M0.95` / `A_D40_M1.00` (production). The white strip
+    left of the A_D10 wide views is outside the 10 D domain.
+  * Iterative convergence at burnout: `fluent_cd_history_burnout_A`, `_B` (last 1000 iterations of C_D on the three
+    meshes: the coarse meshes oscillate 0.10 % (A) and 0.13 % (B) peak to peak, so they ran to 8000 iterations and the
+    mesh study uses the mean of the last 500; medium and fine are flat). `fluent_cd_<run>` spans 0 to 2 C_D and
+    cannot show it.
   * Every Fluent XY plot carries Fluent's own title, the plotted functions ("pressure-coefficient" on the Results
     plots, "nose-drag-coefficient vs. relative-cell-size" on the study plots). Leave it; the caption says what the
     figure shows, as for any figure.

@@ -1,6 +1,6 @@
 """Native Fluent figures for the report sections before Results: geometry, mesh, mesh and domain study, cone validation.
 
-Usage: python fluent_figs_study.py [geometry] [mesh] [studies] [cone]     (default: all four)
+Usage: python fluent_figs_study.py [geometry] [mesh] [studies] [history] [cone]     (default: all five)
 
 Starts its own Fluent 2024 R2 (hidden GUI, 4 processes) and closes it at the end, so it never touches an open Fluent
 session or a running queue. Writes figures/fluent_*.png (2400 x 1500, white background, as fluent_figs.py) and the XY
@@ -20,6 +20,10 @@ mesh      fluent_mesh_<view>_<mesh>  Fluent's own mesh display, no mirror, with 
 studies   fluent_meshstudy_M0.95     C_D of the nose against h/h_fine (A and B), A's Richardson value and GCI band
           fluent_meshstudy_change    the four mesh studies as change from the fine mesh in %
           fluent_domainstudy_M0.95, fluent_domainstudy_M1.00, fluent_domainstudy_change   C_D against domain size L/D
+history   fluent_cd_history_burnout_{A,B}  C_D of the nose over the last 1000 iterations of the burnout mesh study:
+          the coarse meshes oscillate (0.10 % A, 0.13 % B peak to peak), so they ran to 8000 iterations and the mesh
+          study takes the mean of the last 500; medium and fine are flat (fluent_cd_<run> spans 0 to 2 C_D, too wide
+          to show it)
 cone      fluent_cp_cone_{burnout,M1.20}   wall Cp of the sharp cone against Taylor-Maccoll (PLAN.md section 2h).
           The cone's Mach and Cp fields come from `python fluent_figs.py cone_burnout cone_M1.20` (in the GUI session:
           in this hidden session Fluent draws the colour-bar text far too large).
@@ -56,7 +60,7 @@ TIP_RADIUS = 0.0045
 OUTLET_X = 2.52
 TM = {"burnout": (0.0723, "M 1.465 (burnout)"), "M1.20": (0.0859, "M 1.20")}  # PLAN.md section 6, Taylor-Maccoll
 CFF = ["nose-drag-coefficient", "change-from-fine-mesh", "change-from-40d-domain", "relative-cell-size",
-       "domain-size"]
+       "domain-size", "iterations-before-end"]
 
 
 # ---------------------------------------------------------------- session and plots
@@ -291,6 +295,23 @@ def studies(s, summary):
              ((0.0, 50.0), (-15.0, 15.0)), (0, 0), "fluent_domainstudy_change.png")
 
 
+# ---------------------------------------------------------------- iterative convergence at burnout
+def histories(s):
+    """Last 1000 iterations of C_D (nose) on the three burnout meshes, against iterations before the end of each run
+    (the coarse runs end at 8000, medium and fine at 4000), from runs/<run>/<run>_cd.out."""
+    for sh, rng in (("A", (0.0932, 0.0936)), ("B", (0.0789, 0.0793))):
+        curves = []
+        for mesh, color, pattern in (("coarse", "red", "----"), ("medium", *STYLE[sh]), ("fine", "dark gray", "- -")):
+            run = f"{sh}_{mesh}_burnout"
+            rows = cr.read_report(dc.RUNS / run / f"{run}_cd.out")
+            its = sorted(rows)[-1000:]
+            curves.append((xy(f"hist_{run}", f"{sh} {mesh}, iterations {its[0]}-{its[-1]}",
+                              [(i - its[-1], rows[i]["cd-nose"]) for i in its]), color, pattern, "", 2))
+        xy_files(s, f"h-{sh}", curves, "iterations-before-end", "nose-drag-coefficient",
+                 ("Iterations before the end of the run", f"Cd of the nose (wall_nose), burnout, {LABEL[sh]}"),
+                 ((-1000.0, 0.0), rng), (0, 5), f"fluent_cd_history_burnout_{sh}.png")  # ticks 0.00005 apart
+
+
 # ---------------------------------------------------------------- cone validation
 def cone(s):
     for point, (cp_tm, mach) in TM.items():
@@ -307,7 +328,7 @@ def cone(s):
 
 
 def main(args):
-    parts = args or ["geometry", "mesh", "studies", "cone"]
+    parts = args or ["geometry", "mesh", "studies", "history", "cone"]
     ff.FIG.mkdir(exist_ok=True)
     ff.XY.mkdir(exist_ok=True)
     summary = {r["run"]: r for r in csv.DictReader(open(dc.RUNS / "summary.csv"))}
@@ -318,6 +339,8 @@ def main(args):
             geometry(s)
         if "studies" in parts:
             studies(s, summary)
+        if "history" in parts:
+            histories(s)
         if "cone" in parts:
             read_case(s, "cone_burnout")
             cone(s)
