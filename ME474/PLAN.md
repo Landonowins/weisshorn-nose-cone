@@ -25,7 +25,7 @@ from one measurement: the pressure-based speed on the old 174k mesh.
 | Cores | i7-11700: 8 physical cores, 16 threads, 64 GB RAM. Fluent runs 8 processes (n0-n7), one per core |
 | Licences | Not a limit: `cfd_solve_level1/2` 1650 seats each (15 in use), `anshpc` 2700 (568 in use). This session holds 4 `anshpc` for its 8 processes. The limit is the 8 cores per VM |
 | Disk | `C:` 550 GB free (purged with the profile). `Z:` = `\\files9\data\feig` (personal EPFL home) 2.3 GB free of 5 GB. `M:` = `\\sti-nas1.rcp.epfl.ch\MAKE` 67.7 GB free of 2 TB (has `rocket_team\`) |
-| PyFluent | 0.43.0 on Python 3.14.7, `C:\Program Files\Python314\python.exe` (mcp 2.3.0). scipy is not installed, so `nosecone/taylor_maccoll.py` does not run here (the cone targets below come from your PC) |
+| PyFluent | 0.43.0 on Python 3.14.7, `C:\Program Files\Python314\python.exe` (mcp 2.3.0). scipy is not installed, so `nosecone/taylor_maccoll.py` does not run with it; Ansys's Python (`commonfiles/CPython/3_10`) has scipy and runs it: `taylor_maccoll_targets.py` (16 Nov) reproduces the cone targets below |
 | Session limits | Group policy (`HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services`): `MaxIdleTime` = 12 h (an idle session is **disconnected**; `fResetBroken` is not set, so it is not ended), `MaxDisconnectionTime` = 24 h (a disconnected session is **logged off**: Fluent dies and C: may be purged), no `MaxConnectionTime` (no total limit). So it is not "2 h idle / 24 h total": a queue survives **24 h after you close RDP** (or 12 + 24 h with RDP open and idle). Reconnect at least once a day while runs go on |
 | Last boot | 13 Nov 2026 19:03 |
 
@@ -223,6 +223,9 @@ cd_nose, mean of the last 100 iterations:
 * All five runs converged (one extra block for A_medium and A_D40 at M 1.00); mass and heat balance below 1e-3 %.
 
 ### 2h. Validation: sharp cone vs Taylor-Maccoll (group 5, 15 Nov)
+
+Targets: `taylor_maccoll_targets.py` → `runs/taylor_maccoll_targets.csv` (cone half-angle atan(90/720) = 7.125°,
+gamma 1.4): burnout Cp 0.07230, shock 43.27°, surface M 1.3928; M 1.20 Cp 0.08588, shock 56.73°, surface M 1.1354.
 
 | | burnout (M 1.465) | M 1.20 |
 |---|---:|---:|

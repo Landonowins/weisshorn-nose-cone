@@ -82,15 +82,20 @@ in the report (in the section the checklist puts it in), from the files named; i
 * **Taylor-Maccoll validation** (section 7.8, summed up in 9.2): what the Taylor-Maccoll equation is (inviscid,
   axisymmetric conical flow behind an attached conical shock), how `nosecone/taylor_maccoll.py` solves it (the
   conical-flow ODE integrated inwards from a trial shock angle, starting from the oblique-shock relations, the shock
-  angle found by root finding so that the flow meets the cone surface; surface Cp and Mach from the solution), the
-  7.1° sharp cone, the free stream used (burnout and M 1.20), the targets (Cp 0.0723 and 0.0859, shock angles 43.3°
-  and 56.7°) and how Fluent was compared: wall Cp over x = 50-650 mm, shock angle with `ME474/shock_angle.py`
-  (PLAN.md 2h). The targets were computed on our PC with scipy (PLAN.md section 1).
+  angle found by root finding so that the flow meets the cone surface; surface Cp from the total-pressure loss
+  across the shock and isentropic flow behind it), the sharp cone (720 mm, base radius 90 mm, half-angle
+  atan(90/720) = 7.125°), gamma = 1.4, the free stream used (burnout and M 1.20), the targets and how Fluent was
+  compared: wall Cp over x = 50-650 mm, shock angle with `ME474/shock_angle.py` (PLAN.md 2h). The targets come from
+  `ME474/taylor_maccoll_targets.py` → `runs/taylor_maccoll_targets.csv`: Cp 0.07230 / 0.08588, shock angle 43.27° /
+  56.73°, surface Mach 1.3928 / 1.1354 (burnout / M 1.20). Quote these theoretical values, not rounded ones.
 * **GCI**: the Celik et al. (2008) procedure as implemented in `ME474/gci.py` (h from the cell count, apparent order,
   Richardson extrapolation, safety factor), and why B at M 0.95 has no GCI (oscillatory convergence).
 * **Drag-rise criterion** dC_D/dM = 0.1 and how it is evaluated (decision 3, `drag_curve.py`).
-* **Checks of each run**: the columns of `check_run.py` (README.md, "Checks per run"), e.g. the pitot pressure p0
-  behind a normal shock as the upper bound of the wall pressure.
+* **Other theoretical reference values**: the free-stream total pressure p0 (isentropic) and the pitot pressure
+  behind a normal shock (`make_points.pitot`, columns `p0_Pa` and `p0_pitot_Pa` of `fluent_points.csv`) are the
+  theoretical upper bounds of the stagnation pressure; Fluent's maximum wall pressure is compared with them in every
+  run (`check_run.py`, `p_stag_pct`, `p0_inlet_pct`, `p0_axis_max_pct`; README.md, "Checks per run"). Give the
+  formulas and the comparison (PLAN.md, "Stagnation excess": +0.09 to +0.90 % above theory in the pressure-based runs at M 0.90-1.10).
 
 ## Key results (already in RESULTS_OUTLINE.md; check against it)
 
