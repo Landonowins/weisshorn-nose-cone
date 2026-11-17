@@ -23,6 +23,8 @@ Team study `CFD/study720`, with the fixes below. Due 1 January 2027, one PDF per
 | `fluent_figs_study.py` | Native Fluent figures for the sections before Results: geometry, mesh pictures, mesh and domain study, C_D histories at burnout, cone vs Taylor-Maccoll. Starts its own hidden Fluent, so it never touches an open session |
 | `PLAN.md` | The run plan, every result and decision (start here) |
 | `RESULTS_OUTLINE.md`, `REPORT_PROMPT.md` | Outline of the Results section; the prompt for drafting the report with Claude |
+| `RERUN.md` | How to redo everything: software, geometry, meshes, the 39 runs (`run_queue.py` specs), then the numbers and figures |
+| `workbench/` | The Workbench 2024 R2 project with the Discovery geometry and mesh settings of every mesh (`RERUN.md`, step 2) |
 | `meshes/` | The new meshes (`A_coarse.msh`, `A_medium.msh`, ...). `A_study720` and `B_study720` are the Rocket Team meshes in `CFD/study720/mesh` (174k cells), used where they are |
 | `runs/<run>/` | Everything a run writes. Git keeps the text outputs and ignores the case/data files (`*.h5`) and `autosave/` |
 
