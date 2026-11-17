@@ -44,14 +44,12 @@ mesh to `meshes/<name>.msh`.
 | B | `FFF-1` | `FFF-1.agdb` (B's 2D geometry) | B_coarse, B_medium, B_fine (last export B_medium) |
 | A_D10 | `FFF-2` | `FFF-2.dsco` | A_D10 |
 | A_D40 | `FFF-3` | `FFF-3.dsco` | A_D40 (the export left in `FFF-3/MECH/FFF-3.msh` is an older one, equal to A_medium; A_D40.msh is in `meshes/`) |
-| (cone) | `FFF-4` | `FFF-4.dsco` | cone |
-| (B_D40) | `FFF-5` | `FFF-5.dsco` | B_D40 (duplicate of B's system) |
+| Cone | `FFF-4` | `FFF-4.dsco` | cone |
+| B_D40 | `FFF-5` | `FFF-5.dsco` | B_D40 (duplicate of B's system) |
 
-The project was copied from the open Workbench session on 17 Nov. Its last save (15 Nov 00:18) is from before the cone
-and B_D40 systems were added, so the project shows four systems; the geometry (`FFF-4.dsco`, `FFF-5.dsco`), mesh
-databases (`dp0/global/MECH/FFF-4.mshdb`, `FFF-5.mshdb`) and exported meshes of those two are in the folder all the
-same. The `.msh` exports inside the project are byte-identical to the files in `meshes/` named in the table
-(except `FFF-3.msh`, see above); A_coarse, A_fine, B_coarse and B_fine exist only in `meshes/`.
+The project was saved on 17 Nov at 12:27 with all six systems and copied unchanged (without Workbench's lock and
+cache files). The `.msh` exports inside it are byte-identical to the files in `meshes/` named in the table (except
+`FFF-3.msh`, see above); A_coarse, A_fine, B_coarse and B_fine exist only in `meshes/`.
 
 The Rocket Team's original project of the study720 meshes is `../CFD/study720/workbench/nose720_A_B.wbpj` (its B
 export is byte-identical to `B_mesh.msh`).
